@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Light theme colors -->
+    <color name="background">#F8FBFE</color>
+    <color name="foreground">#2C3E50</color>
+
+    <color name="card">#FFFFFF</color>
+    <color name="card_foreground">#2C3E50</color>
+
+    <color name="primary">#4FC3F7</color>
+    <color name="primary_foreground">#FFFFFF</color>
+    <color name="primary_light">#B3E5FC</color>
+    <color name="primary_soft">#E1F5FE</color>
+
+    <color name="secondary">#F5F7FA</color>
+    <color name="secondary_foreground">#34495E</color>
+
+    <color name="muted">#F8F9FA</color>
+    <color name="muted_foreground">#7F8C8D</color>
+
+    <color name="accent">#FF9800</color>
+    <color name="accent_foreground">#FFFFFF</color>
+    <color name="accent_light">#FFE0B2</color>
+    <color name="accent_soft">#FFF3E0</color>
+
+    <color name="success">#66BB6A</color>
+    <color name="success_foreground">#FFFFFF</color>
+    <color name="success_light">#C8E6C9</color>
+
+    <color name="warning">#FFD54F</color>
+    <color name="warning_foreground">#FFFFFF</color>
+    <color name="warning_light">#FFF9C4</color>
+
+    <color name="destructive">#EF5350</color>
+    <color name="destructive_foreground">#FFFFFF</color>
+
+    <color name="border">#E1E8ED</color>
+    <color name="input">#E8F4FD</color>
+</resources>

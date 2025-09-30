@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">TallyUp</string>
+    <string name="home">Home</string>
+    <string name="transactions">Transactions</string>
+    <string name="budget">Budget</string>
+    <string name="goals">Goals</string>
+    <string name="profile">Profile</string>
+    <string name="add_transaction">Add Transaction</string>
+    <string name="welcome">Welcome to TallyUp!</string>
+    <string name="available_to_spend">Available to Spend</string>
+    <string name="recent_activity">Recent Activity</string>
+    <string name="your_goals">Your Goals</string>
+    <string name="no_transactions">No transactions yet</string>
+    <string name="no_goals">No goals yet</string>
+    <string name="create_first_goal">Create your first goal</string>
+</resources>
