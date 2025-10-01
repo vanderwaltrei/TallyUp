@@ -2,6 +2,7 @@
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
@@ -27,6 +28,7 @@
                 android:orientation="horizontal"
                 android:padding="16dp">
 
+                <!-- Welcome Text and Subtitle -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -34,9 +36,10 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/welcomeText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Hey there! 👋"
+                        tools:text="Hey John!"
                         android:textColor="@color/foreground"
                         android:textSize="24sp"
                         android:textStyle="bold" />
@@ -51,19 +54,52 @@
 
                 </LinearLayout>
 
-                <!-- Character Display -->
-                <ImageView
-                    android:id="@+id/character_display"
-                    android:layout_width="64dp"
-                    android:layout_height="64dp"
-                    android:src="@drawable/character_happy"
-                    android:contentDescription="@string/character" />
+                <!-- Character and Coin Display (IDs added/restored) -->
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:gravity="center_horizontal">
+
+                    <ImageView
+                        android:id="@+id/characterImage"
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:src="@drawable/character_happy"
+                        android:contentDescription="@string/character" />
+
+                    <!-- Mood Indicator (Hidden by default, shown when character is SAD) -->
+                    <ImageView
+                        android:id="@+id/moodIndicator"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@android:drawable/ic_dialog_alert"
+                        android:visibility="gone"
+                        android:layout_alignEnd="@id/characterImage"
+                        app:tint="@color/accent"
+                        android:contentDescription="Mood" />
+
+                    <TextView
+                        android:id="@+id/coinsText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/characterImage"
+                        android:layout_centerHorizontal="true"
+                        android:text="0"
+                        android:drawablePadding="4dp"
+                        android:textColor="@color/foreground"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        app:drawableStartCompat="@drawable/ic_coin"
+                        android:layout_marginTop="4dp"
+                        tools:text="100" />
+                </RelativeLayout>
 
             </LinearLayout>
 
         </androidx.cardview.widget.CardView>
 
-        <!-- Quick Actions -->
+        <!-- Quick Actions (No changes needed here) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -90,8 +126,8 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/ic_trending_up"
-                        android:tint="@color/primary"
-                        android:contentDescription="@string/budget_dashboard" />
+                        android:contentDescription="@string/budget_dashboard"
+                        app:tint="@color/primary" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -126,8 +162,8 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/ic_bar_chart"
-                        android:tint="@color/accent"
-                        android:contentDescription="@string/insights" />
+                        android:contentDescription="@string/insights"
+                        app:tint="@color/accent" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -160,7 +196,9 @@
                 android:padding="32dp"
                 android:gravity="center">
 
+                <!-- ID added for availableSubtitle -->
                 <TextView
+                    android:id="@+id/availableSubtitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Available to Spend"
@@ -178,109 +216,137 @@
                         android:layout_height="match_parent"
                         android:src="@drawable/circular_progress_bg" />
 
+                    <!-- ID added for availableAmount -->
                     <TextView
+                        android:id="@+id/availableAmount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="$350"
+                        tools:text="$350.00"
                         android:textColor="@color/primary"
                         android:textSize="24sp"
                         android:textStyle="bold"
                         android:layout_centerInParent="true" />
 
+                    <!-- Placeholder for progressText (hidden, but present for ViewBinding compatibility) -->
+                    <TextView
+                        android:id="@+id/progressText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        tools:text="50%"
+                        android:layout_centerInParent="true"/>
+
                 </RelativeLayout>
 
+                <!-- ID added for statusText -->
                 <TextView
+                    android:id="@+id/statusText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="On Track!"
-                    android:textColor="@color/success"
                     android:background="@color/success_light"
+                    android:gravity="center"
                     android:paddingHorizontal="12dp"
                     android:paddingVertical="4dp"
+                    android:text="On Track!"
+                    android:textColor="#33691E"
                     android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:gravity="center" />
+                    android:textStyle="bold" />
 
             </LinearLayout>
 
         </androidx.cardview.widget.CardView>
 
-        <!-- Recent Activity -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Recent Activity"
-            android:textColor="@color/foreground"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp" />
-
-        <androidx.cardview.widget.CardView
+        <!-- Recent Activity Section (Wrapped in recentSection LinearLayout) -->
+        <LinearLayout
+            android:id="@+id/recentSection"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="12dp"
-            app:cardBackgroundColor="@color/card_background"
-            app:cardElevation="2dp">
+            android:orientation="vertical"
+            android:layout_marginBottom="16dp">
 
-            <LinearLayout
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Recent Activity"
+                android:textColor="@color/foreground"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
+                app:cardCornerRadius="12dp"
+                app:cardBackgroundColor="@color/card_background"
+                app:cardElevation="2dp">
 
-                <!-- Recent transactions will be populated here -->
-                <TextView
-                    android:id="@+id/no_transactions_text"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="No transactions yet"
-                    android:textColor="@color/muted_foreground"
-                    android:textSize="14sp"
-                    android:gravity="center"
-                    android:padding="32dp" />
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-            </LinearLayout>
+                    <!-- Recent transactions will be populated here -->
+                    <TextView
+                        android:id="@+id/no_transactions_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="No transactions yet"
+                        android:textColor="@color/muted_foreground"
+                        android:textSize="14sp"
+                        android:gravity="center"
+                        android:padding="32dp" />
 
-        </androidx.cardview.widget.CardView>
+                </LinearLayout>
 
-        <!-- Your Goals -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Your Goals"
-            android:textColor="@color/foreground"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp" />
+            </androidx.cardview.widget.CardView>
+        </LinearLayout>
 
-        <androidx.cardview.widget.CardView
+
+        <!-- Your Goals Section (Wrapped in goalsSection LinearLayout) -->
+        <LinearLayout
+            android:id="@+id/goalsSection"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="12dp"
-            app:cardBackgroundColor="@color/card_background"
-            app:cardElevation="2dp">
+            android:orientation="vertical">
 
-            <LinearLayout
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Your Goals"
+                android:textColor="@color/foreground"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
+                app:cardCornerRadius="12dp"
+                app:cardBackgroundColor="@color/card_background"
+                app:cardElevation="2dp">
 
-                <!-- Goals will be populated here -->
-                <TextView
-                    android:id="@+id/no_goals_text"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="No goals yet"
-                    android:textColor="@color/muted_foreground"
-                    android:textSize="14sp"
-                    android:gravity="center"
-                    android:padding="32dp" />
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-            </LinearLayout>
+                    <!-- Goals will be populated here -->
+                    <TextView
+                        android:id="@+id/no_goals_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="No goals yet"
+                        android:textColor="@color/muted_foreground"
+                        android:textSize="14sp"
+                        android:gravity="center"
+                        android:padding="32dp" />
 
-        </androidx.cardview.widget.CardView>
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+        </LinearLayout>
 
     </LinearLayout>
 

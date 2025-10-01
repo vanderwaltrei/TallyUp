@@ -6,12 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import za.ac.iie.TallyUp.databinding.FragmentDashboardBinding
-import za.ac.iie.TallyUp.model.AppState
+// FIXED: Changed to the correct package 'models'
+import za.ac.iie.TallyUp.models.AppState
 import za.ac.iie.TallyUp.data.AppRepository
 
 class DashboardFragment : Fragment() {
 
     private var _binding: FragmentDashboardBinding? = null
+    // The FragmentDashboardBinding error is fixed by the correct package path above and the presence of the binding class.
     private val binding get() = _binding!!
     private lateinit var repository: AppRepository
     private lateinit var appState: AppState
@@ -34,6 +36,7 @@ class DashboardFragment : Fragment() {
         binding.welcomeText.text = "Hey ${appState.user?.firstName ?: "there"}!"
 
         // Available to spend
+        // 'it' error is resolved by fixing the AppState import above.
         val totalBudget = appState.budgetCategories.sumOf { it.budgeted }
         val totalSpent = appState.budgetCategories.sumOf { it.spent }
         val availableToSpend = totalBudget - totalSpent
@@ -42,7 +45,8 @@ class DashboardFragment : Fragment() {
         binding.availableSubtitle.text = "Available to Spend"
 
         // Progress circle (simplified)
-        val spentPercentage = if (totalBudget > 0) (totalSpent / totalBudget * 100).toInt() else 0
+        // Ensure floating point division for correct percentage calculation
+        val spentPercentage = if (totalBudget > 0.0) ((totalSpent / totalBudget) * 100.0).toInt() else 0
         binding.progressText.text = "${spentPercentage}%"
 
         // Status indicator
@@ -73,14 +77,15 @@ class DashboardFragment : Fragment() {
 
         // Character display
         appState.user?.character?.let { character ->
-            val characterRes = if (character.type == za.ac.iie.TallyUp.model.CharacterType.FEMALE) {
+            // FIXED: Changed to the correct package 'models' for CharacterType and Mood
+            val characterRes = if (character.type == za.ac.iie.TallyUp.models.CharacterType.FEMALE) {
                 za.ac.iie.TallyUp.R.drawable.character_female
             } else {
                 za.ac.iie.TallyUp.R.drawable.character_male
             }
             binding.characterImage.setImageResource(characterRes)
 
-            if (character.mood == za.ac.iie.TallyUp.model.Mood.SAD) {
+            if (character.mood == za.ac.iie.TallyUp.models.Mood.SAD) {
                 binding.moodIndicator.visibility = View.VISIBLE
             } else {
                 binding.moodIndicator.visibility = View.GONE

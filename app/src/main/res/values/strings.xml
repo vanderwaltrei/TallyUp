@@ -6,11 +6,18 @@
     <string name="goals">Goals</string>
     <string name="profile">Profile</string>
     <string name="add_transaction">Add Transaction</string>
+    <string name="back">Back</string>
+    <string name="filter">Filter</string>
+    <string name="no_transactions">No transactions yet</string>
+    <string name="no_goals">No goals yet</string>
+    <string name="add_goal">Add Goal</string>
+    <string name="character">Character</string>
+    <string name="coins">Coins</string>
+    <string name="budget_dashboard">Budget Dashboard</string>
+    <string name="insights">Insights</string>
+    <string name="create_first_goal">Create your first goal</string>
     <string name="welcome">Welcome to TallyUp!</string>
     <string name="available_to_spend">Available to Spend</string>
     <string name="recent_activity">Recent Activity</string>
     <string name="your_goals">Your Goals</string>
-    <string name="no_transactions">No transactions yet</string>
-    <string name="no_goals">No goals yet</string>
-    <string name="create_first_goal">Create your first goal</string>
 </resources>

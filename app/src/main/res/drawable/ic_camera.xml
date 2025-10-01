@@ -1,0 +1,11 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="#9E9E9E">
+    <!-- Represents a camera for the receipt upload button. -->
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M12,12m-3.2,0a3.2,3.2 0,1 0,6.4 0a3.2,3.2 0,1 0,-6.4 0M20,4h-3.17l-1.83,-2H9l-1.83,2H4c-1.1,0 -2,0.9 -2,2v12c0,1.1 0.9,2 2,2h16c1.1,0 2,-0.9 2,-2V6c0,-1.1 -0.9,-2 -2,-2zM20,18H4V6h4.05l0.9,-1h6.07l0.9,1H20v12z" />
+</vector>

@@ -1,5 +1,7 @@
 package za.ac.iie.TallyUp.models
 
+import za.ac.iie.TallyUp.model.Goal // Note the package "model" (singular)
+
 data class AppState(
     val transactions: List<Transaction> = emptyList(),
     val goals: List<Goal> = emptyList(),

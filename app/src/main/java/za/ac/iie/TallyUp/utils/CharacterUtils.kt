@@ -1,6 +1,7 @@
 package za.ac.iie.TallyUp.utils
 
-import za.ac.iie.TallyUp.model.Character
+import za.ac.iie.TallyUp.models.Character // <-- CORRECTED: Added 's' to models
+import za.ac.iie.TallyUp.models.Mood // <-- ADDED: Explicit import for Mood
 import java.util.*
 
 object CharacterUtils {
@@ -15,7 +16,8 @@ object CharacterUtils {
         val shouldBeSad = shouldCharacterBeSad(checkDate)
 
         return character.copy(
-            mood = if (shouldBeSad) za.ac.iie.TallyUp.model.Mood.SAD else za.ac.iie.TallyUp.model.Mood.HAPPY,
+            // FIXED: Used imported Mood class instead of long reference
+            mood = if (shouldBeSad) Mood.SAD else Mood.HAPPY,
             lastActiveDate = Date()
         )
     }

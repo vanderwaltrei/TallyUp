@@ -124,9 +124,9 @@
                             <ImageView
                                 android:layout_width="16dp"
                                 android:layout_height="16dp"
-                                android:src="@drawable/ic_coins"
-                                android:tint="@color/accent"
-                                android:contentDescription="@string/coins" />
+                                android:src="@drawable/ic_coin"
+                                android:contentDescription="@string/coins"
+                                app:tint="@color/accent" />
 
                             <TextView
                                 android:id="@+id/coins_count"

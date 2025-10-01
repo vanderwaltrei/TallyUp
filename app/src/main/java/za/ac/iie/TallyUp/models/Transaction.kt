@@ -1,4 +1,4 @@
-package za.iie.TallyUp.models
+package za.ac.iie.TallyUp.models
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

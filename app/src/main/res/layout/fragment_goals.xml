@@ -28,8 +28,8 @@
                 android:layout_height="48dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_arrow_left"
-                android:tint="@color/foreground"
-                android:contentDescription="@string/back" />
+                android:contentDescription="@string/back"
+                app:tint="@color/foreground" />
 
             <TextView
                 android:layout_width="0dp"
@@ -47,8 +47,8 @@
                 android:layout_height="48dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_add"
-                android:tint="@color/accent"
-                android:contentDescription="@string/add_goal" />
+                android:contentDescription="@string/add_goal"
+                app:tint="@color/accent" />
 
         </LinearLayout>
 
@@ -77,9 +77,9 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:src="@drawable/ic_target"
-            android:tint="@color/muted_foreground"
             android:contentDescription="@string/no_goals"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginBottom="16dp"
+            app:tint="@color/muted_foreground" />
 
         <TextView
             android:layout_width="wrap_content"

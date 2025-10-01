@@ -1,4 +1,4 @@
-package com.cutewallet.app.model
+package za.ac.iie.TallyUp.models
 
 enum class TransactionType {
     INCOME, EXPENSE

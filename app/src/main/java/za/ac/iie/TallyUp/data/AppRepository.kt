@@ -1,7 +1,7 @@
 package za.ac.iie.TallyUp.data
 
 import android.content.Context
-import za.ac.iie.TallyUp.model.*
+import za.ac.iie.TallyUp.models.*
 import com.google.gson.Gson
 
 class AppRepository(private val context: Context) {
