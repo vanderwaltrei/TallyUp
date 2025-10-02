@@ -23,7 +23,7 @@
                 android:id="@+id/back_button"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:background="@android:color/transparent"
                 android:src="@drawable/ic_arrow_left"
                 android:contentDescription="@string/back"
                 app:tint="@color/foreground" />
