@@ -12,7 +12,7 @@ android {
     defaultConfig {
         applicationId = "za.ac.iie.TallyUp"
         minSdk = 23
-        targetSdk = 36 // Targeting the latest stable SDK
+        this.targetSdk = 36 // Targeting the latest stable SDK
         versionCode = 1
         versionName = "1.0"
 
