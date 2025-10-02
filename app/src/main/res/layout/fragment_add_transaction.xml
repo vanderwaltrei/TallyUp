@@ -2,6 +2,7 @@
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
@@ -124,14 +125,15 @@
                         android:id="@+id/amount_input"
                         android:layout_width="120dp"
                         android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:inputType="numberDecimal"
+                        android:maxLines="1"
                         android:text="0"
+                        android:textAlignment="center"
                         android:textColor="@color/foreground"
                         android:textSize="32sp"
                         android:textStyle="bold"
-                        android:inputType="numberDecimal"
-                        android:background="@android:color/transparent"
-                        android:textAlignment="center"
-                        android:maxLines="1" />
+                        tools:ignore="TouchTargetSizeCheck" />
 
                 </LinearLayout>
 
