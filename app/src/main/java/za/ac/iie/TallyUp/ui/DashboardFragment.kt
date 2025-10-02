@@ -5,15 +5,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import za.ac.iie.TallyUp.R
 import za.ac.iie.TallyUp.databinding.FragmentDashboardBinding
-// FIXED: Changed to the correct package 'models'
 import za.ac.iie.TallyUp.models.AppState
+import za.ac.iie.TallyUp.models.CharacterType
+import za.ac.iie.TallyUp.models.Mood
 import za.ac.iie.TallyUp.data.AppRepository
+import za.ac.iie.TallyUp.ui.budget.BudgetDashboardFragment
+import za.ac.iie.TallyUp.ui.insights.InsightsFragment
 
 class DashboardFragment : Fragment() {
 
     private var _binding: FragmentDashboardBinding? = null
-    // The FragmentDashboardBinding error is fixed by the correct package path above and the presence of the binding class.
     private val binding get() = _binding!!
     private lateinit var repository: AppRepository
     private lateinit var appState: AppState
@@ -28,7 +31,32 @@ class DashboardFragment : Fragment() {
         appState = repository.loadAppState()
 
         setupUI()
+        setupQuickActions()
         return binding.root
+    }
+
+    private fun setupQuickActions() {
+        binding.budgetDashboardCard.setOnClickListener {
+            navigateToBudgetDashboard()
+        }
+
+        binding.insightsCard.setOnClickListener {
+            navigateToInsights()
+        }
+    }
+
+    private fun navigateToInsights() {
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, InsightsFragment())
+            .addToBackStack(null)
+            .commit()
+    }
+
+    private fun navigateToBudgetDashboard() {
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, BudgetDashboardFragment())
+            .addToBackStack(null)
+            .commit()
     }
 
     private fun setupUI() {
@@ -36,17 +64,16 @@ class DashboardFragment : Fragment() {
         binding.welcomeText.text = "Hey ${appState.user?.firstName ?: "there"}!"
 
         // Available to spend
-        // 'it' error is resolved by fixing the AppState import above.
         val totalBudget = appState.budgetCategories.sumOf { it.budgeted }
         val totalSpent = appState.budgetCategories.sumOf { it.spent }
         val availableToSpend = totalBudget - totalSpent
 
-        binding.availableAmount.text = "$${"%.2f".format(availableToSpend)}"
+        binding.availableAmount.text = "R${"%.2f".format(availableToSpend)}"
         binding.availableSubtitle.text = "Available to Spend"
 
         // Progress circle (simplified)
-        // Ensure floating point division for correct percentage calculation
-        val spentPercentage = if (totalBudget > 0.0) ((totalSpent / totalBudget) * 100.0).toInt() else 0
+        val spentPercentage =
+            if (totalBudget > 0.0) ((totalSpent / totalBudget) * 100.0).toInt() else 0
         binding.progressText.text = "${spentPercentage}%"
 
         // Status indicator
@@ -59,37 +86,23 @@ class DashboardFragment : Fragment() {
 
         // Recent transactions
         val recentTransactions = appState.transactions.take(3)
-        if (recentTransactions.isEmpty()) {
-            binding.recentSection.visibility = View.GONE
-        } else {
-            binding.recentSection.visibility = View.VISIBLE
-            // Setup recycler view for transactions (to be implemented)
-        }
+        binding.recentSection.visibility = if (recentTransactions.isEmpty()) View.GONE else View.VISIBLE
 
         // Goals
         val goals = appState.goals.take(2)
-        if (goals.isEmpty()) {
-            binding.goalsSection.visibility = View.GONE
-        } else {
-            binding.goalsSection.visibility = View.VISIBLE
-            // Setup recycler view for goals (to be implemented)
-        }
+        binding.goalsSection.visibility = if (goals.isEmpty()) View.GONE else View.VISIBLE
 
         // Character display
         appState.user?.character?.let { character ->
-            // FIXED: Changed to the correct package 'models' for CharacterType and Mood
-            val characterRes = if (character.type == za.ac.iie.TallyUp.models.CharacterType.FEMALE) {
-                za.ac.iie.TallyUp.R.drawable.character_female
+            val characterRes = if (character.type == CharacterType.FEMALE) {
+                R.drawable.character_female
             } else {
-                za.ac.iie.TallyUp.R.drawable.character_male
+                R.drawable.character_male
             }
             binding.characterImage.setImageResource(characterRes)
 
-            if (character.mood == za.ac.iie.TallyUp.models.Mood.SAD) {
-                binding.moodIndicator.visibility = View.VISIBLE
-            } else {
-                binding.moodIndicator.visibility = View.GONE
-            }
+            binding.moodIndicator.visibility =
+                if (character.mood == Mood.SAD) View.VISIBLE else View.GONE
 
             binding.coinsText.text = "${appState.user?.coins ?: 0}"
         }

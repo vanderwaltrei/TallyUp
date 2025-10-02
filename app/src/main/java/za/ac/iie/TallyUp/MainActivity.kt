@@ -9,7 +9,6 @@ import za.ac.iie.TallyUp.ui.TransactionsFragment
 import za.ac.iie.TallyUp.ui.budget.BudgetDashboardFragment
 import za.ac.iie.TallyUp.ui.GoalsFragment
 import za.ac.iie.TallyUp.ui.ProfileFragment
-import za.ac.iie.TallyUp.ui.insights.InsightsFragment // Add this import
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,7 +20,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setupToolbar()
-        setupBottomNavigation() // This calls the single function
+        setupBottomNavigation()
         setupFAB()
 
         // Load default fragment
@@ -54,7 +53,6 @@ class MainActivity : AppCompatActivity() {
                     loadFragment(GoalsFragment())
                     true
                 }
-                // no insights pls
                 R.id.navigation_profile -> {
                     loadFragment(ProfileFragment())
                     true
