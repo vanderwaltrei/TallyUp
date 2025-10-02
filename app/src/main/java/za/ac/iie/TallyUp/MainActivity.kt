@@ -54,10 +54,7 @@ class MainActivity : AppCompatActivity() {
                     loadFragment(GoalsFragment())
                     true
                 }
-                R.id.navigation_insights -> { // Add insights navigation
-                    loadFragment(InsightsFragment())
-                    true
-                }
+                // no insights pls
                 R.id.navigation_profile -> {
                     loadFragment(ProfileFragment())
                     true
