@@ -46,4 +46,9 @@
 
     <!-- Card color alias for compatibility -->
     <color name="card">@color/card_background</color>
+
+    <color name="icon_default">#6C757D</color>
+    <color name="icon_active">#1E90FF</color>
+
+
 </resources>
