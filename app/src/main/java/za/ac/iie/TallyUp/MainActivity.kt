@@ -6,7 +6,7 @@ import androidx.fragment.app.Fragment
 import za.ac.iie.TallyUp.databinding.ActivityMainBinding
 import za.ac.iie.TallyUp.ui.DashboardFragment
 import za.ac.iie.TallyUp.ui.TransactionsFragment
-import za.ac.iie.TallyUp.ui.BudgetFragment
+import za.ac.iie.TallyUp.ui.budget.BudgetDashboardFragment
 import za.ac.iie.TallyUp.ui.GoalsFragment
 import za.ac.iie.TallyUp.ui.ProfileFragment
 
@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.navigation_budget -> {
-                    loadFragment(BudgetFragment())
+                    loadFragment(BudgetDashboardFragment())
                     true
                 }
                 R.id.navigation_goals -> {

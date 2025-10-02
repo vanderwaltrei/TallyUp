@@ -67,10 +67,10 @@
                         android:layout_height="64dp"
                         android:src="@drawable/ic_user"
                         android:background="@color/accent_light"
-                        android:tint="@color/accent_foreground"
                         android:padding="16dp"
                         android:contentDescription="@string/profile"
-                        app:cornerRadius="32dp" />
+                        app:cornerRadius="32dp"
+                        app:tint="@color/accent_foreground" />
 
                     <LinearLayout
                         android:layout_width="0dp"
