@@ -20,4 +20,6 @@
     <string name="available_to_spend">Available to Spend</string>
     <string name="recent_activity">Recent Activity</string>
     <string name="your_goals">Your Goals</string>
+    <string name="error_empty_fields">Please enter both email and password</string>
+    <string name="error_invalid_credentials">Invalid credentials. Try again.</string>
 </resources>

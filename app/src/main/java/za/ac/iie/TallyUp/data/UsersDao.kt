@@ -3,12 +3,13 @@ package za.ac.iie.TallyUp.data
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import za.ac.iie.TallyUp.data.User
 
 @Dao
 interface UserDao {
+    @Query("SELECT * FROM users WHERE email = :email AND password = :password LIMIT 1")
+    suspend fun login(email: String, password: String): User?
+
     @Insert
     suspend fun insertUser(user: User)
-
-    @Query("SELECT * FROM users WHERE username = :username AND password = :password")
-    suspend fun login(username: String, password: String): User?
 }

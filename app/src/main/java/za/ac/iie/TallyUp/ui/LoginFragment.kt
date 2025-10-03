@@ -1,0 +1,66 @@
+package za.ac.iie.TallyUp.ui
+import za.ac.iie.TallyUp.data.DatabaseProvider
+import com.google.android.material.textfield.TextInputEditText
+import android.widget.Button
+import android.widget.TextView
+import android.widget.ProgressBar
+import android.os.Bundle
+import android.view.View
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
+import za.ac.iie.TallyUp.R
+
+class LoginFragment : Fragment(R.layout.fragment_login) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val emailInput = view.findViewById<TextInputEditText>(R.id.email_input)
+        val passwordInput = view.findViewById<TextInputEditText>(R.id.password_input)
+        val loginButton = view.findViewById<Button>(R.id.login_button)
+        val errorText = view.findViewById<TextView>(R.id.error_text)
+        val progressBar = view.findViewById<ProgressBar>(R.id.progress_indicator)
+
+        // Handle login button click
+        loginButton.setOnClickListener {
+            val email = emailInput.text.toString().trim()
+            val password = passwordInput.text.toString().trim()
+
+            // 🛡️ Check for empty fields
+            if (email.isEmpty() || password.isEmpty()) {
+                errorText.text = getString(R.string.error_empty_fields)
+                errorText.visibility = View.VISIBLE
+                return@setOnClickListener
+            }
+
+            //Disable login button to prevent multiple taps
+            loginButton.isEnabled = false
+            progressBar.visibility = View.VISIBLE
+            errorText.visibility = View.GONE
+
+            //Access to RoomDB
+            val db = DatabaseProvider.getDatabase(requireContext())
+
+            // Query the database in the background
+            lifecycleScope.launch {
+                val user = db.userDao().login(email, password)
+
+                // Re-enable login button after query finishes
+                loginButton.isEnabled = true
+                progressBar.visibility = View.GONE
+
+                if (user != null) {
+                    // Login success — navigate to home
+                    requireActivity().supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, DashboardFragment()) // or HomeFragment()
+                        .addToBackStack(null)
+                        .commit()
+                } else {
+                    // Login failed — show error
+                    errorText.text = getString(R.string.error_invalid_credentials)
+                    errorText.visibility = View.VISIBLE
+                }
+            }
+        }
+    }
+}

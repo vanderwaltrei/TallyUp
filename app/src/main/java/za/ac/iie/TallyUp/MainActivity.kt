@@ -10,6 +10,9 @@ import za.ac.iie.TallyUp.ui.budget.BudgetDashboardFragment
 import za.ac.iie.TallyUp.ui.BudgetFragment
 import za.ac.iie.TallyUp.ui.GoalsFragment
 import za.ac.iie.TallyUp.ui.ProfileFragment
+import androidx.navigation.fragment.NavHostFragment
+import za.ac.iie.TallyUp.R
+
 
 class MainActivity : AppCompatActivity() {
 
