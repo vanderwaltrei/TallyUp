@@ -55,59 +55,60 @@
     </androidx.cardview.widget.CardView>
 
     <!-- Transaction List -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/transactions_recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:padding="16dp" />
 
     <!-- Empty State -->
+
     <LinearLayout
         android:id="@+id/empty_state"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:orientation="vertical"
         android:gravity="center"
-        android:padding="32dp"
-        android:visibility="gone">
+        android:orientation="vertical"
+        android:padding="32dp">
 
         <ImageView
             android:layout_width="64dp"
             android:layout_height="64dp"
-            android:src="@drawable/ic_list"
-            android:contentDescription="@string/no_transactions"
             android:layout_marginBottom="16dp"
+            android:contentDescription="@string/no_transactions"
+            android:src="@drawable/ic_list"
             app:tint="@color/muted_foreground" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
             android:text="No transactions yet"
             android:textColor="@color/foreground"
             android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp" />
+            android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:gravity="center"
             android:text="Start tracking your expenses and income to see them here"
             android:textColor="@color/muted_foreground"
-            android:textSize="14sp"
-            android:gravity="center"
-            android:layout_marginBottom="24dp" />
+            android:textSize="14sp" />
 
         <Button
             android:id="@+id/add_first_transaction_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add Your First Transaction"
             android:backgroundTint="@color/accent"
-            android:textColor="@color/accent_foreground"
             android:paddingHorizontal="24dp"
-            android:paddingVertical="12dp" />
+            android:paddingVertical="12dp"
+            android:text="Add Your First Transaction"
+            android:textColor="@color/accent_foreground" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/transactions_recycler_view"
+            android:layout_width="411dp"
+            android:layout_height="407dp"
+            android:layout_weight="1"
+            android:padding="16dp" />
 
     </LinearLayout>
 
