@@ -166,6 +166,56 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
+        <!-- No Spending Data (always shown under analytics) -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_no_data"
+                    android:contentDescription="@string/no_spending_data_icon"
+                    app:tint="@android:color/darker_gray" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="No Spending Data"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="8dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Start adding transactions to see your spending insights!"
+                    android:textSize="14sp"
+                    android:gravity="center"
+                    android:textColor="@android:color/darker_gray"
+                    android:layout_marginTop="4dp" />
+
+                <Button
+                    android:id="@+id/addFirstTransactionBtnAlt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:backgroundTint="@android:color/holo_orange_light"
+                    android:text="Add Your First Transaction" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+
         <!-- Spending Insights -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"

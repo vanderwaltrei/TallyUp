@@ -28,4 +28,6 @@
     <string name="email">Email</string>
     <string name="sign_in_to_your_tally_up_account">Sign in to your Tally Up account</string>
     <string name="welcome_back">Welcome Back</string>
+    <string name="no_spending_data_icon">No spending data icon</string>
+
 </resources>
