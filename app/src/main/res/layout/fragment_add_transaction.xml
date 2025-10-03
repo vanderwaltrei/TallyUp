@@ -10,45 +10,58 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
         <!-- Header -->
+
+        <!-- Type Toggle -->
+
+        <!-- Amount Input -->
+
+        <!-- Category Selection -->
+
+
+        <!-- Description -->
+
+        <!-- Photo Upload -->
+
+        <!-- Save Button -->
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:layout_marginBottom="24dp"
             android:gravity="center_vertical"
-            android:layout_marginBottom="24dp">
+            android:orientation="horizontal">
 
             <ImageButton
                 android:id="@+id/back_button"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_arrow_left"
                 android:contentDescription="@string/back"
+                android:src="@drawable/ic_arrow_left"
                 app:tint="@color/foreground" />
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
                 android:layout_weight="1"
                 android:text="Add Transaction"
                 android:textColor="@color/foreground"
                 android:textSize="20sp"
-                android:textStyle="bold"
-                android:layout_marginStart="16dp" />
+                android:textStyle="bold" />
 
         </LinearLayout>
 
-        <!-- Type Toggle -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
-            app:cardCornerRadius="24dp"
             app:cardBackgroundColor="@color/muted"
+            app:cardCornerRadius="24dp"
             app:cardElevation="0dp">
 
             <com.google.android.material.button.MaterialButtonToggleGroup
@@ -63,9 +76,9 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:backgroundTint="@color/accent"
                     android:text="Expense (-)"
                     android:textColor="@color/foreground"
-                    android:backgroundTint="@color/accent"
                     app:cornerRadius="24dp" />
 
                 <Button
@@ -74,52 +87,51 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:backgroundTint="@color/success"
                     android:text="Income (+)"
                     android:textColor="@color/foreground"
-                    android:backgroundTint="@color/success"
                     app:cornerRadius="24dp" />
 
             </com.google.android.material.button.MaterialButtonToggleGroup>
 
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Amount Input -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
-            app:cardCornerRadius="12dp"
             app:cardBackgroundColor="@color/card_background"
+            app:cardCornerRadius="12dp"
             app:cardElevation="8dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:orientation="vertical"
-                android:padding="24dp"
-                android:gravity="center">
+                android:padding="24dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
                     android:text="Amount"
                     android:textColor="@color/muted_foreground"
-                    android:textSize="14sp"
-                    android:layout_marginBottom="16dp" />
+                    android:textSize="14sp" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="$"
+                        android:layout_marginEnd="8dp"
+                        android:text="R"
                         android:textColor="@color/muted_foreground"
-                        android:textSize="32sp"
-                        android:layout_marginEnd="8dp" />
+                        android:textSize="32sp" />
 
                     <EditText
                         android:id="@+id/amount_input"
@@ -141,15 +153,14 @@
 
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Category Selection -->
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
             android:text="Category"
             android:textColor="@color/foreground"
             android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="16dp" />
+            android:textStyle="bold" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/categories_recycler_view"
@@ -157,26 +168,25 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp" />
 
-        <!-- Description -->
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
             android:text="What was this for?"
             android:textColor="@color/foreground"
             android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp" />
+            android:textStyle="bold" />
 
         <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            app:boxBackgroundColor="@color/card_background"
             app:boxCornerRadiusBottomEnd="12dp"
             app:boxCornerRadiusBottomStart="12dp"
             app:boxCornerRadiusTopEnd="12dp"
-            app:boxCornerRadiusTopStart="12dp"
-            app:boxBackgroundColor="@color/card_background">
+            app:boxCornerRadiusTopStart="12dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/description_input"
@@ -188,39 +198,37 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Photo Upload -->
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
             android:text="Receipt Photo (Optional)"
             android:textColor="@color/foreground"
             android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp" />
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/photo_upload_button"
+            style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="match_parent"
-            android:layout_height="120dp"
-            android:text="Add Receipt Photo"
-            android:textColor="@color/muted_foreground"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
             android:backgroundTint="@color/card_background"
             android:drawableTop="@drawable/ic_camera"
             android:gravity="center"
-            style="@style/Widget.Material3.Button.OutlinedButton"
-            android:layout_marginBottom="24dp" />
+            android:text="Add Receipt Photo"
+            android:textColor="@color/muted_foreground" />
 
-        <!-- Save Button -->
         <Button
             android:id="@+id/save_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/accent"
+            android:paddingVertical="16dp"
             android:text="Save Transaction"
             android:textColor="@color/accent_foreground"
-            android:backgroundTint="@color/accent"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:paddingVertical="16dp"
             app:cornerRadius="12dp" />
 
     </LinearLayout>
