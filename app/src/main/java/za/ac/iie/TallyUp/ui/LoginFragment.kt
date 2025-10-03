@@ -1,4 +1,5 @@
 package za.ac.iie.TallyUp.ui
+import android.content.Context
 import za.ac.iie.TallyUp.data.DatabaseProvider
 import com.google.android.material.textfield.TextInputEditText
 import android.widget.Button
@@ -6,10 +7,12 @@ import android.widget.TextView
 import android.widget.ProgressBar
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import za.ac.iie.TallyUp.R
+import androidx.core.content.edit
 
 class LoginFragment : Fragment(R.layout.fragment_login) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -40,6 +43,25 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
             //Access to RoomDB
             val db = DatabaseProvider.getDatabase(requireContext())
+
+            lifecycleScope.launch {
+                val user = db.userDao().login(email, password)
+
+                if (user != null) {
+                    // Save email for profile access
+                    val prefs = requireContext().getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
+                    prefs.edit { putString("loggedInEmail", email) }
+
+                    Toast.makeText(requireContext(), "Welcome back!", Toast.LENGTH_SHORT).show()
+
+                    requireActivity().supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, DashboardFragment())
+                        .addToBackStack(null)
+                        .commit()
+                } else {
+                    Toast.makeText(requireContext(), "Invalid credentials", Toast.LENGTH_SHORT).show()
+                }
+            }
 
             // Query the database in the background
             lifecycleScope.launch {
