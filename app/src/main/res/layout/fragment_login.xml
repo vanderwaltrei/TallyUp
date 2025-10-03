@@ -35,7 +35,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Welcome Back"
+            android:text="@string/welcome_back"
             android:textColor="@color/foreground"
             android:textSize="24sp"
             android:textStyle="bold"
@@ -44,7 +44,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sign in to your Tally Up account"
+            android:text="@string/sign_in_to_your_tally_up_account"
             android:textColor="@color/muted_foreground"
             android:textSize="16sp"
             android:layout_marginBottom="32dp" />
@@ -80,7 +80,7 @@
                         android:id="@+id/email_input"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Email"
+                        android:hint="@string/email"
                         android:inputType="textEmailAddress"
                         android:padding="16dp"
                         android:textColor="@color/foreground" />
@@ -107,7 +107,7 @@
                         android:id="@+id/password_input"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Password"
+                        android:hint="@string/password"
                         android:inputType="textPassword"
                         android:padding="16dp"
                         android:textColor="@color/foreground" />
@@ -129,7 +129,7 @@
                     android:id="@+id/login_button"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Sign In"
+                    android:text="@string/sign_in"
                     android:textColor="@color/accent_foreground"
                     android:backgroundTint="@color/accent"
                     android:textSize="16sp"
@@ -155,7 +155,7 @@
             android:id="@+id/sign_up_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Don't have an account yet? Sign Up"
+            android:text="@string/don_t_have_an_account_yet_sign_up"
             android:textColor="@color/muted_foreground"
             android:textSize="14sp"
             android:layout_marginTop="24dp">

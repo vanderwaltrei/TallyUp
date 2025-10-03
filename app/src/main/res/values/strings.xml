@@ -22,4 +22,10 @@
     <string name="your_goals">Your Goals</string>
     <string name="error_empty_fields">Please enter both email and password</string>
     <string name="error_invalid_credentials">Invalid credentials. Try again.</string>
+    <string name="don_t_have_an_account_yet_sign_up">Don\'t have an account yet? Sign Up</string>
+    <string name="sign_in">Sign In</string>
+    <string name="password">Password</string>
+    <string name="email">Email</string>
+    <string name="sign_in_to_your_tally_up_account">Sign in to your Tally Up account</string>
+    <string name="welcome_back">Welcome Back</string>
 </resources>
