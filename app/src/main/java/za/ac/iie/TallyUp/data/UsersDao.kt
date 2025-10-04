@@ -3,7 +3,8 @@ package za.ac.iie.TallyUp.data
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import za.ac.iie.TallyUp.data.User
+import androidx.room.Update
+
 
 @Dao
 interface UserDao {
@@ -15,4 +16,7 @@ interface UserDao {
 
     @Insert
     suspend fun insertUser(user: User)
+
+    @Update
+    suspend fun updateUser(user: User)
 }

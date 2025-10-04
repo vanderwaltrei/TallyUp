@@ -13,6 +13,15 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import za.ac.iie.TallyUp.R
 import androidx.core.content.edit
+import android.graphics.Color
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
+import android.text.style.ForegroundColorSpan
+import android.text.style.UnderlineSpan
+import android.text.TextPaint
+import androidx.core.content.ContextCompat
 
 class LoginFragment : Fragment(R.layout.fragment_login) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -23,6 +32,35 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         val loginButton = view.findViewById<Button>(R.id.login_button)
         val errorText = view.findViewById<TextView>(R.id.error_text)
         val progressBar = view.findViewById<ProgressBar>(R.id.progress_indicator)
+
+        val signUpText = view.findViewById<TextView>(R.id.sign_up_text)
+        val fullText = getString(R.string.don_t_have_an_account_yet_sign_up)
+        val spannable = SpannableString(fullText)
+        val start = fullText.indexOf("Sign up")
+        val end = start + "Sign up".length
+
+        val clickableSpan = object : ClickableSpan() {
+            override fun onClick(widget: View) {
+                requireActivity().supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, SignUpFragment())
+                    .addToBackStack(null)
+                    .commit()
+            }
+
+            override fun updateDrawState(ds: TextPaint) {
+                super.updateDrawState(ds)
+                ds.color = ContextCompat.getColor(requireContext(), R.color.accent)
+                ds.isUnderlineText = true
+            }
+        }
+
+        spannable.setSpan(clickableSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(requireContext(), R.color.accent)), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        spannable.setSpan(UnderlineSpan(), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+        signUpText.text = spannable
+        signUpText.movementMethod = LinkMovementMethod.getInstance()
+        signUpText.highlightColor = Color.TRANSPARENT
 
         // Handle login button click
         loginButton.setOnClickListener {
@@ -83,6 +121,9 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                     errorText.visibility = View.VISIBLE
                 }
             }
+
+
+
         }
     }
 }
