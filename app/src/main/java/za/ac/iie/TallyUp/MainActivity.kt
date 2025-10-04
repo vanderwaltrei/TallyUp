@@ -10,9 +10,9 @@ import za.ac.iie.TallyUp.ui.budget.BudgetDashboardFragment
 import za.ac.iie.TallyUp.ui.BudgetFragment
 import za.ac.iie.TallyUp.ui.GoalsFragment
 import za.ac.iie.TallyUp.ui.ProfileFragment
-import androidx.navigation.fragment.NavHostFragment
+import za.ac.iie.TallyUp.ui.LoginFragment
+import android.content.Context
 import za.ac.iie.TallyUp.R
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -29,7 +29,13 @@ class MainActivity : AppCompatActivity() {
 
         // Load default fragment
         if (savedInstanceState == null) {
-            loadFragment(DashboardFragment())
+            if (userIsLoggedIn()) {
+                // If logged in, show login screen first
+                loadFragment(LoginFragment())
+            } else {
+                // If not logged in, show login screen anyway
+                loadFragment(LoginFragment())
+            }
         }
     }
 
@@ -68,7 +74,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupFAB() {
         binding.fabAddTransaction.setOnClickListener {
-            // Open Add Transaction screen (to be implemented)
             android.widget.Toast.makeText(this, "Add Transaction clicked", android.widget.Toast.LENGTH_SHORT).show()
         }
     }
@@ -77,5 +82,11 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
             .commit()
+    }
+
+    private fun userIsLoggedIn(): Boolean {
+        val prefs = getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
+        val email = prefs.getString("loggedInEmail", null)
+        return email != null
     }
 }
