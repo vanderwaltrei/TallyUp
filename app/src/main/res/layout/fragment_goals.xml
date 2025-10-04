@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/background">
+    android:background="@color/background"
+    android:orientation="vertical">
 
     <!-- Header -->
 
@@ -206,7 +205,7 @@
     </androidx.cardview.widget.CardView>
 
     <ScrollView
-        android:id="@+id/goal_list"
+        android:id="@+id/category_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone">
@@ -363,6 +362,65 @@
 
         </LinearLayout>
     </ScrollView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/add_money"
+        android:layout_width="match_parent"
+        android:layout_height="165dp"
+        android:translationY="20dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/textView9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Amount To Add"
+            android:textStyle="bold"
+            android:translationX="20dp"
+            android:translationY="30dp" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="387dp"
+            android:layout_height="wrap_content"
+            android:translationX="10dp"
+            android:translationY="50dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="R0.00" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/textView8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add Money To &quot;_&quot;"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:translationX="110dp" />
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="249dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#FF9800"
+            android:text="Add Money"
+            android:translationX="75dp"
+            android:translationY="115dp" />
+
+        <Button
+            android:id="@+id/button3"
+            android:layout_width="62dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#0000BCD4"
+            android:text="X"
+            android:textColor="#020202"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:translationX="350dp" />
+    </androidx.cardview.widget.CardView>
+
     <!-- End of "Create New Goal" page -->
 
 </LinearLayout>
