@@ -35,32 +35,38 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
         val signUpText = view.findViewById<TextView>(R.id.sign_up_text)
         val fullText = getString(R.string.don_t_have_an_account_yet_sign_up)
-        val spannable = SpannableString(fullText)
         val start = fullText.indexOf("Sign up")
         val end = start + "Sign up".length
 
-        val clickableSpan = object : ClickableSpan() {
-            override fun onClick(widget: View) {
-                requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, SignUpFragment())
-                    .addToBackStack(null)
-                    .commit()
+        if (start >= 0) {
+            val spannable = SpannableString(fullText)
+
+            val clickableSpan = object : ClickableSpan() {
+                override fun onClick(widget: View) {
+                    requireActivity().supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, SignUpFragment())
+                        .addToBackStack(null)
+                        .commit()
+                }
+
+                override fun updateDrawState(ds: TextPaint) {
+                    super.updateDrawState(ds)
+                    ds.color = ContextCompat.getColor(requireContext(), R.color.accent)
+                    ds.isUnderlineText = true
+                }
             }
 
-            override fun updateDrawState(ds: TextPaint) {
-                super.updateDrawState(ds)
-                ds.color = ContextCompat.getColor(requireContext(), R.color.accent)
-                ds.isUnderlineText = true
-            }
+            spannable.setSpan(clickableSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(requireContext(), R.color.accent)), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            spannable.setSpan(UnderlineSpan(), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+            signUpText.text = spannable
+            signUpText.movementMethod = LinkMovementMethod.getInstance()
+            signUpText.highlightColor = Color.TRANSPARENT
+        } else {
+            signUpText.text = fullText // fallback if "Sign up" not found
         }
 
-        spannable.setSpan(clickableSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(requireContext(), R.color.accent)), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        spannable.setSpan(UnderlineSpan(), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-
-        signUpText.text = spannable
-        signUpText.movementMethod = LinkMovementMethod.getInstance()
-        signUpText.highlightColor = Color.TRANSPARENT
 
         // Handle login button click
         loginButton.setOnClickListener {
