@@ -2,8 +2,8 @@
 plugins {
     // Android Gradle Plugin (AGP) - Locked to 8.11.1 to match the max supported version
     // mentioned in the error message, ensuring stability with your current environment.
-    id("com.android.application") version "8.13.0" apply false
-    id("com.android.library") version "8.13.0" apply false
+    id("com.android.application") version "8.11.2" apply false
+    id("com.android.library") version "8.11.2" apply false
 
     // Kotlin Gradle Plugin (KGP) and KAPT - Updated to the latest stable version 2.2.20
     id("org.jetbrains.kotlin.android") version "2.2.20" apply false
