@@ -144,7 +144,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Category"
+                    android:text="Food"
                     android:textSize="16sp"
                     android:translationX="50dp"
                     android:translationY="20dp" />
@@ -198,7 +198,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Category"
+                    android:text="Transport"
                     android:textSize="16sp"
                     android:translationX="50dp"
                     android:translationY="20dp" />
@@ -252,7 +252,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Category"
+                    android:text="Books"
                     android:textSize="16sp"
                     android:translationX="50dp"
                     android:translationY="20dp" />
@@ -306,7 +306,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Category"
+                    android:text="Fun"
                     android:textSize="16sp"
                     android:translationX="50dp"
                     android:translationY="20dp" />
@@ -360,7 +360,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Category"
+                    android:text="Shopping"
                     android:textSize="16sp"
                     android:translationX="50dp"
                     android:translationY="20dp" />
@@ -414,7 +414,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Category"
+                    android:text="Other"
                     android:textSize="16sp"
                     android:translationX="50dp"
                     android:translationY="20dp" />
