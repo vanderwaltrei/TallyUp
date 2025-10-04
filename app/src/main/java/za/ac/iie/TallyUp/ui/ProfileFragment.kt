@@ -1,10 +1,12 @@
 package za.ac.iie.TallyUp.ui
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -96,16 +98,15 @@ class ProfileFragment : Fragment() {
                     val user = db.userDao().getUserByEmail(email)
                     user?.let {
                         val updatedUser = it.copy(firstName = firstName, lastName = lastName)
-                        db.userDao().insertUser(updatedUser) // This will update due to same primary key
+                        db.userDao().updateUser(updatedUser)
 
-                        // Update displayed name
+                        @SuppressLint("SetTextI18n")
                         binding.userName.text = "$firstName $lastName"
 
-                        // Show success message
-                        android.widget.Toast.makeText(
+                        Toast.makeText(
                             requireContext(),
-                            "Profile updated successfully!",
-                            android.widget.Toast.LENGTH_SHORT
+                            getString(R.string.profile_updated_successfully),
+                            Toast.LENGTH_SHORT
                         ).show()
                     }
                 }
