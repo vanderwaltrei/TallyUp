@@ -3,6 +3,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.kapt") // KAPT must be applied for Room
+    id("kotlin-parcelize")
 }
 
 

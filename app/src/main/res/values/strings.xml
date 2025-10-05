@@ -44,4 +44,5 @@
     <string name="user_not_found">User not found</string>
     <string name="no_user_logged_in">No user logged in</string>
     <string name="profile_updated_successfully">Profile updated successfully</string>
+    <string name="date_of_transaction">Date of Transaction</string>
 </resources>
