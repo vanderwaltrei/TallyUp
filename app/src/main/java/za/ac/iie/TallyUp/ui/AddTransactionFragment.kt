@@ -288,7 +288,15 @@ class AddTransactionFragment : Fragment() {
                 val name = nameInput.text.toString().trim()
 
                 if (name.isNotEmpty()) {
-                    val newCategory = Category(name = name, type = selectedType, color = selectedColor)
+                    val currentUserId = getCurrentUserId()
+
+                    val newCategory = Category(
+                        name = name,
+                        type = selectedType,
+                        color = selectedColor,
+                        userId = currentUserId
+                    )
+
                     val db = DatabaseProvider.getDatabase(requireContext())
                     lifecycleScope.launch {
                         db.categoryDao().insertCategory(newCategory)
@@ -300,8 +308,6 @@ class AddTransactionFragment : Fragment() {
             .setNegativeButton("Cancel", null)
             .show()
     }
-
-
 
     override fun onDestroyView() {
         super.onDestroyView()

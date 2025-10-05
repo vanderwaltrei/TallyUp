@@ -1,5 +1,6 @@
 package za.ac.iie.TallyUp.ui
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
@@ -22,6 +23,7 @@ class SwatchAdapter(
 
     override fun getItemCount(): Int = colors.size
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onBindViewHolder(holder: SwatchViewHolder, position: Int) {
         val colorHex = colors[position]
         holder.bind(colorHex, colorHex == selectedColor)
@@ -35,6 +37,7 @@ class SwatchAdapter(
     inner class SwatchViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val swatchView: View = view.findViewById(R.id.swatchColor)
 
+        @SuppressLint("UseKtx")
         fun bind(colorHex: String, isSelected: Boolean) {
             val drawable = swatchView.background as GradientDrawable
             drawable.setColor(Color.parseColor(colorHex))

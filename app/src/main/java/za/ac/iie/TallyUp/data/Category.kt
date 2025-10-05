@@ -9,6 +9,7 @@ data class Category(
     val name: String,
     val type: String, // "Income" or "Expense"
     val color: String = "#FFFFFF" // default white
+    val userId: String // or Int, depending on your user model
 )
 
 
