@@ -48,5 +48,12 @@
     <string name="add_new_category">Add new category</string>
     <string name="add">Add</string>
     <string name="category">Category</string>
+    <string name="add_new">Add New</string>
+    <string name="what_was_this_for">What was this for?</string>
+    <string name="e_g_coffee_with_sam">e.g., Coffee with Sam</string>
+    <string name="receipt_photo_optional">Receipt Photo (Optional)</string>
+    <string name="add_receipt_photo">Add Receipt Photo</string>
+    <string name="today">Today</string>
+    <string name="save_transaction">Save Transaction</string>
 
 </resources>
