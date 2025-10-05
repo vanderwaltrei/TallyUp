@@ -246,13 +246,14 @@
             android:translationY="50dp">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/goalAdd"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="R0.00" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
-            android:id="@+id/textView8"
+            android:id="@+id/tvAddMoney"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Add Money To &quot;_&quot;"
@@ -261,7 +262,7 @@
             android:translationX="110dp" />
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/btnAddMoney"
             android:layout_width="249dp"
             android:layout_height="wrap_content"
             android:backgroundTint="#FF9800"
@@ -270,7 +271,7 @@
             android:translationY="115dp" />
 
         <Button
-            android:id="@+id/button3"
+            android:id="@+id/goalBack"
             android:layout_width="62dp"
             android:layout_height="wrap_content"
             android:backgroundTint="#0000BCD4"
@@ -280,7 +281,5 @@
             android:textStyle="bold"
             android:translationX="350dp" />
     </androidx.cardview.widget.CardView>
-
-    <!-- End of "Create New Goal" page -->
 
 </LinearLayout>

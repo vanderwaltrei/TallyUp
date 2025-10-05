@@ -4,18 +4,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import za.ac.iie.TallyUp.R
 import za.ac.iie.TallyUp.model.Goal
+import kotlin.math.roundToInt
 
-class GoalAdapter(private val goals: List<Goal>) :
-    RecyclerView.Adapter<GoalAdapter.GoalViewHolder>() {
+class GoalAdapter(
+    private val goals: List<Goal>,
+    private val onAddMoneyClicked: (Goal) -> Unit,
+    private val onCompleteGoalClicked: (Goal) -> Unit
+) : RecyclerView.Adapter<GoalAdapter.GoalViewHolder>() {
 
-    class GoalViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val icon: ImageView = itemView.findViewById(R.id.goalIcon)
+    inner class GoalViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val name: TextView = itemView.findViewById(R.id.goalName)
         val amount: TextView = itemView.findViewById(R.id.goalAmount)
         val deadline: TextView = itemView.findViewById(R.id.goalDeadline)
@@ -33,22 +35,23 @@ class GoalAdapter(private val goals: List<Goal>) :
     override fun onBindViewHolder(holder: GoalViewHolder, position: Int) {
         val goal = goals[position]
 
-        // Bind data to the card
         holder.name.text = goal.name
         holder.amount.text = "R${goal.current.toInt()} / R${goal.target.toInt()}"
         holder.deadline.text = "Deadline: ${goal.deadline}"
-        val percent = goal.progressPercent()
-        holder.percentage.text = "$percent%"
-        holder.progress.progress = percent
+        holder.percentage.text = "${goal.progressPercent()}%"
+        holder.progress.progress = goal.progressPercent()
 
-        // Set button text based on progress
-        holder.button.text = if (goal.current >= goal.target) "Complete Goal" else "Add Money"
-        holder.button.setOnClickListener {
-            // Later: implement adding money or completing goal
+        if (goal.current >= goal.target) {
+            holder.button.text = "Complete Goal"
+            holder.button.setOnClickListener {
+                onCompleteGoalClicked(goal)
+            }
+        } else {
+            holder.button.text = "Add Money"
+            holder.button.setOnClickListener {
+                onAddMoneyClicked(goal)
+            }
         }
-
-        // Optionally, set an icon based on goal state
-        // holder.icon.setImageResource(R.drawable.character_happy)
     }
 
     override fun getItemCount(): Int = goals.size

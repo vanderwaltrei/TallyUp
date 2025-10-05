@@ -36,11 +36,7 @@
             app:layout_constraintStart_toEndOf="@id/goalIcon"
             app:layout_constraintTop_toTopOf="@id/goalIcon" />
 
-        <!-- Goal Amount -->
 
-        <!-- Goal Deadline -->
-
-        <!-- Goal Percentage -->
         <TextView
             android:id="@+id/goalDeadline"
             android:layout_width="0dp"
@@ -62,9 +58,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- Progress Bar -->
-
-        <!-- Action Button -->
 
         <ProgressBar
             android:id="@+id/goalProgress"
