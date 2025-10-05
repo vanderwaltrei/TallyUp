@@ -28,12 +28,16 @@ class Question2TutorialFragment : Fragment(R.layout.fragment_question2_tutorial)
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
 
-        // Start Saving button click listener
+        // Start Saving button click listener - UPDATED to go to Character Selection
         startSavingButton.setOnClickListener {
             val savingGoal = savingGoalInput.text.toString().trim()
             if (savingGoal.isNotEmpty()) {
                 saveSavingGoal(savingGoal)
-                navigateToDashboard()
+                // Navigate to Character Selection instead of Dashboard
+                requireActivity().supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, ChooseCharacterTutorialFragment())
+                    .addToBackStack("question2_to_character")
+                    .commit()
             }
         }
     }
@@ -44,13 +48,5 @@ class Question2TutorialFragment : Fragment(R.layout.fragment_question2_tutorial)
         val editor = prefs.edit()
         editor.putString("saving_goal", goal)
         editor.apply()
-    }
-
-    private fun navigateToDashboard() {
-        // Navigate to main dashboard
-        requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, DashboardFragment())
-            .addToBackStack("question2_to_dashboard")
-            .commit()
     }
 }
