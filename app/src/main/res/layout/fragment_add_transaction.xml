@@ -175,37 +175,13 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <!-- 🌟 Optional header -->
-                <TextView
-                    android:id="@+id/categoryHeader"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Select a Category"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/foreground"
-                    android:layout_marginBottom="8dp" />
-
-                <!-- ✅ RecyclerView grid -->
+                <!--RecyclerView grid -->
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/categoryGrid"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:clipToPadding="false"
                     android:scrollbars="vertical"
-                    android:layout_marginBottom="16dp" />
-
-                <!-- ➕ Add New button -->
-                <Button
-                    android:id="@+id/buttonAddNew"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Add New Category"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:backgroundTint="@color/success"
-                    android:textColor="@color/background"
-                    android:layout_marginTop="8dp"
                     android:layout_marginBottom="16dp" />
 
             </LinearLayout>
