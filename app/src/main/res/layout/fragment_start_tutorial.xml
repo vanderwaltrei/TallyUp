@@ -18,8 +18,8 @@
         app:cardElevation="8dp">
 
         <ImageView
-            android:layout_width="135dp"
-            android:layout_height="135dp"
+            android:layout_width="134dp"
+            android:layout_height="134dp"
             android:layout_gravity="center"
             android:src="@drawable/character_happy"
             android:contentDescription="@string/character" />
