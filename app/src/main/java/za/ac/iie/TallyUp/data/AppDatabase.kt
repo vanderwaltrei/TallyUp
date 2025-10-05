@@ -9,7 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import android.util.Log
 
-@Database(entities = [User::class, Category::class, Transaction::class], version = 4)
+@Database(entities = [User::class, Category::class, Transaction::class], version = 5)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
@@ -27,7 +27,8 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "tallyup_database"
                 )
-                    .fallbackToDestructiveMigration(true) // true = drop all tables if needed
+                    .addMigrations(MIGRATION_4_5)
+                    .fallbackToDestructiveMigration()
                     .build()
 
                 INSTANCE = instance
@@ -41,18 +42,21 @@ abstract class AppDatabase : RoomDatabase() {
                 try {
                     val existing = db.categoryDao().getAllCategories()
                     if (existing.isEmpty()) {
+                        val defaultUserId = "default" // or use real user ID if available
+
                         val defaultCategories = listOf(
-                            Category(name = "Food", type = "Expense", color = "#FFB085"),       // orange
-                            Category(name = "Transport", type = "Expense", color = "#A3D5FF"),  // blue
-                            Category(name = "Books", type = "Expense", color = "#B2E2B2"),      // green
-                            Category(name = "Fun", type = "Expense", color = "#FFF4A3"),        // yellow
-                            Category(name = "Shopping", type = "Expense", color = "#FFB6C1"),   // pink
-                            Category(name = "Other", type = "Expense", color = "#E0E0E0"),      // gray
-                            Category(name = "Salary", type = "Income", color = "#D1B3FF"),      // purple
-                            Category(name = "Gift", type = "Income", color = "#D1B3FF"),        // purple
-                            Category(name = "Freelance", type = "Income", color = "#D1B3FF"),   // purple
-                            Category(name = "Allowance", type = "Income", color = "#D1B3FF")    // purple
+                            Category(name = "Food", type = "Expense", color = "#FFB085", userId = defaultUserId),
+                            Category(name = "Transport", type = "Expense", color = "#A3D5FF", userId = defaultUserId),
+                            Category(name = "Books", type = "Expense", color = "#B2E2B2", userId = defaultUserId),
+                            Category(name = "Fun", type = "Expense", color = "#FFF4A3", userId = defaultUserId),
+                            Category(name = "Shopping", type = "Expense", color = "#FFB6C1", userId = defaultUserId),
+                            Category(name = "Other", type = "Expense", color = "#E0E0E0", userId = defaultUserId),
+                            Category(name = "Salary", type = "Income", color = "#D1B3FF", userId = defaultUserId),
+                            Category(name = "Gift", type = "Income", color = "#D1B3FF", userId = defaultUserId),
+                            Category(name = "Freelance", type = "Income", color = "#D1B3FF", userId = defaultUserId),
+                            Category(name = "Allowance", type = "Income", color = "#D1B3FF", userId = defaultUserId)
                         )
+
                         db.categoryDao().insertCategories(defaultCategories)
                         Log.d("AppDatabase", "Default categories populated")
                     }
@@ -61,5 +65,11 @@ abstract class AppDatabase : RoomDatabase() {
                 }
             }
         }
+    }
+}
+
+val MIGRATION_4_5 = object : Migration(4, 5) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE transactions ADD COLUMN userId TEXT NOT NULL DEFAULT ''")
     }
 }
