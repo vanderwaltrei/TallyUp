@@ -10,9 +10,10 @@ import kotlinx.parcelize.Parcelize
 data class Transaction(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val amount: Double,
-    val type: String,
+    val type: String,   // "Income" or "Expense"
     val category: String,
     val description: String?,
     val photoUris: List<String>, // List of photo URIs
-    val date: Long
+    val date: Long,
+    val userId: String
 ) : Parcelable
