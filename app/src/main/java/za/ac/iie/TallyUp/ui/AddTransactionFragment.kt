@@ -89,14 +89,8 @@ class AddTransactionFragment : Fragment() {
             updateTypeUI()
         }
 
-        // Category selection (example: grid buttons)
-//        binding.categoryFood.setOnClickListener {
-//            selectedCategory = "Food"
-//        }
-//
-//        binding.categoryTransport.setOnClickListener {
-//            selectedCategory = "Transport"
-//        }
+        loadCategories()
+
 
         // Save button logic
         binding.saveButton.setOnClickListener {
@@ -125,6 +119,9 @@ class AddTransactionFragment : Fragment() {
                 Toast.makeText(requireContext(), "Transaction saved!", Toast.LENGTH_SHORT).show()
                 parentFragmentManager.popBackStack()
             }
+
+
+
         }
     }
 
@@ -245,6 +242,66 @@ class AddTransactionFragment : Fragment() {
             }
         }
     }
+
+    private fun loadCategories() {
+        val db = DatabaseProvider.getDatabase(requireContext())
+
+        lifecycleScope.launch {
+            val categories = db.categoryDao().getCategoriesByType(selectedType)
+
+            val allItems = categories + Category(name = "Add New", type = selectedType, color = "#A3D5FF")
+
+            binding.categoryGrid.layoutManager = GridLayoutManager(requireContext(), 3)
+            binding.categoryGrid.adapter = CategoryAdapter(
+                allItems,
+                onCategorySelected = { category ->
+                    selectedCategory = category.name
+                },
+                onAddNewClicked = {
+                    showAddCategoryDialog() // 💫 this opens your dialog
+                }
+            )
+        }
+    }
+
+    private fun showAddCategoryDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_add_category, null)
+        val nameInput = dialogView.findViewById<EditText>(R.id.categoryNameInput)
+        val swatchGrid = dialogView.findViewById<RecyclerView>(R.id.colorSwatchGrid)
+
+        val pastelColors = listOf(
+            "#FFB085", "#A3D5FF", "#B2E2B2", "#FFF4A3",
+            "#FFB6C1", "#D1B3FF", "#E0E0E0"
+        )
+
+        var selectedColor = pastelColors.first()
+
+        swatchGrid.layoutManager = GridLayoutManager(requireContext(), 4)
+        swatchGrid.adapter = SwatchAdapter(pastelColors) { color ->
+            selectedColor = color
+        }
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("Add Category")
+            .setView(dialogView)
+            .setPositiveButton("Add") { _, _ ->
+                val name = nameInput.text.toString().trim()
+
+                if (name.isNotEmpty()) {
+                    val newCategory = Category(name = name, type = selectedType, color = selectedColor)
+                    val db = DatabaseProvider.getDatabase(requireContext())
+                    lifecycleScope.launch {
+                        db.categoryDao().insertCategory(newCategory)
+                        Toast.makeText(requireContext(), "Category added!", Toast.LENGTH_SHORT).show()
+                        loadCategories()
+                    }
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+
 
     override fun onDestroyView() {
         super.onDestroyView()

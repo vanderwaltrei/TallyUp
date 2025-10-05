@@ -55,5 +55,7 @@
     <string name="add_receipt_photo">Add Receipt Photo</string>
     <string name="today">Today</string>
     <string name="save_transaction">Save Transaction</string>
+    <string name="category_name">Category name</string>
+    <string name="pick_a_icon_colour">Pick an icon colour</string>
 
 </resources>
