@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView
 import za.ac.iie.TallyUp.R
 import za.ac.iie.TallyUp.data.Category
 import za.ac.iie.TallyUp.utils.CharacterManager
-import android.os.Bundle
 
 class CategoryAdapter(
     private val categories: List<Category>,
