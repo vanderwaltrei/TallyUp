@@ -176,7 +176,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:text="What was this for?"
+            android:text="@string/what_was_this_for"
             android:textColor="@color/foreground"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -196,7 +196,7 @@
                 android:id="@+id/description_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="e.g., Coffee with Sam"
+                android:hint="@string/e_g_coffee_with_sam"
                 android:inputType="text"
                 android:padding="16dp" />
 
@@ -206,7 +206,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:text="Receipt Photo (Optional)"
+            android:text="@string/receipt_photo_optional"
             android:textColor="@color/foreground"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -263,7 +263,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Add Receipt Photo"
+                android:text="@string/add_receipt_photo"
                 android:textColor="@color/muted_foreground"
                 android:drawableTop="@drawable/ic_camera"
                 android:backgroundTint="@color/card_background" />
@@ -282,7 +282,7 @@
             android:id="@+id/dateDisplay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Today"
+            android:text="@string/today"
             android:textSize="16sp"
             android:textColor="@color/foreground"
             android:padding="12dp"
@@ -297,7 +297,7 @@
             android:layout_height="wrap_content"
             android:backgroundTint="@color/accent"
             android:paddingVertical="16dp"
-            android:text="Save Transaction"
+            android:text="@string/save_transaction"
             android:textColor="@color/accent_foreground"
             android:textSize="16sp"
             android:textStyle="bold"
