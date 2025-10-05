@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -24,6 +25,7 @@ class GoalsFragment : Fragment() {
     private lateinit var goalAdapter: GoalAdapter
     private lateinit var database: GoalDatabase
     private var goalsList = mutableListOf<Goal>()
+    private var currentGoalForAddingMoney: Goal? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,21 +38,27 @@ class GoalsFragment : Fragment() {
         database = GoalDatabase.getDatabase(requireContext())
 
         // RecyclerView setup
-        goalAdapter = GoalAdapter(goalsList)
+        goalAdapter = GoalAdapter(
+            goalsList,
+            onAddMoneyClicked = { goal -> openAddMoneyMenu(goal) },
+            onCompleteGoalClicked = { goal -> completeGoal(goal) }
+        )
         binding.goalsGrid.adapter = goalAdapter
         binding.goalsGrid.layoutManager = LinearLayoutManager(requireContext())
 
         // Load goals from database
         loadGoalsFromDatabase()
 
-        // ---- Initial visibility ----
+        // Initial visibility
         updateEmptyState()
 
-        // ---- Buttons ----
+        // Buttons
         binding.createFirstGoalButton.setOnClickListener { openCreateGoalPage() }
         binding.addGoalButton.setOnClickListener { openCreateGoalPage(hideGoals = true) }
         binding.backButton.setOnClickListener { handleBackButton() }
         binding.createGoalSubmitButton.setOnClickListener { saveNewGoal() }
+        binding.goalBack.setOnClickListener { closeAddMoneyMenu() }
+        binding.btnAddMoney.setOnClickListener { addMoneyToGoal() }
 
         return binding.root
     }
@@ -64,8 +72,7 @@ class GoalsFragment : Fragment() {
     private fun handleBackButton() {
         if (binding.createGoalPage.visibility == View.VISIBLE) {
             binding.createGoalPage.visibility = View.GONE
-            binding.emptyState.visibility = if (goalsList.isEmpty()) View.VISIBLE else View.GONE
-            binding.goalsGrid.visibility = if (goalsList.isEmpty()) View.GONE else View.VISIBLE
+            updateEmptyState()
         } else {
             val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.bottom_navigation)
             bottomNav?.selectedItemId = R.id.navigation_home
@@ -103,8 +110,8 @@ class GoalsFragment : Fragment() {
 
         val newGoal = Goal(
             name = nameInput,
-            description = "", // optional
-            target = amountInput.toDoubleOrNull() ?: 0.0,
+            description = "",
+            target = amountInput.toDouble(),
             current = 0.0,
             deadline = deadlineInput
         )
@@ -118,6 +125,50 @@ class GoalsFragment : Fragment() {
                 goalAdapter.notifyDataSetChanged()
                 binding.createGoalPage.visibility = View.GONE
                 binding.goalsGrid.visibility = View.VISIBLE
+                updateEmptyState()
+            }
+        }
+    }
+
+    private fun openAddMoneyMenu(goal: Goal) {
+        currentGoalForAddingMoney = goal
+        binding.addMoney.visibility = View.VISIBLE
+        binding.goalsGrid.visibility = View.GONE
+        binding.tvAddMoney.text = "Add Money To ${goal.name}"
+        binding.goalAdd.text?.clear()
+    }
+
+    private fun closeAddMoneyMenu() {
+        binding.addMoney.visibility = View.GONE
+        binding.goalsGrid.visibility = View.VISIBLE
+    }
+
+    private fun addMoneyToGoal() {
+        val goal = currentGoalForAddingMoney ?: return
+        val inputText = binding.goalAdd.text.toString().replace("R", "").trim()
+        val amount = inputText.toDoubleOrNull() ?: return
+
+        CoroutineScope(Dispatchers.IO).launch {
+            goal.current += amount
+            database.goalDao().updateGoal(goal)
+            val updatedGoals = database.goalDao().getAllGoals()
+            withContext(Dispatchers.Main) {
+                goalsList.clear()
+                goalsList.addAll(updatedGoals)
+                goalAdapter.notifyDataSetChanged()
+                closeAddMoneyMenu()
+            }
+        }
+    }
+
+    private fun completeGoal(goal: Goal) {
+        CoroutineScope(Dispatchers.IO).launch {
+            database.goalDao().deleteGoal(goal)
+            val updatedGoals = database.goalDao().getAllGoals()
+            withContext(Dispatchers.Main) {
+                goalsList.clear()
+                goalsList.addAll(updatedGoals)
+                goalAdapter.notifyDataSetChanged()
                 updateEmptyState()
             }
         }

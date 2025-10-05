@@ -9,7 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import android.util.Log
 
-@Database(entities = [User::class, Category::class, Transaction::class], version = 4)
+@Database(entities = [User::class, Category::class, Transaction::class], version = 3)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao

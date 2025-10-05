@@ -13,7 +13,7 @@ data class Goal(
     val target: Double,
     var current: Double = 0.0,
     val deadline: String,
-    val createdAt: String = "" // store the date as a string
+    val createdAt: String = ""
 ) {
     fun progressPercent(): Int {
         if (target <= 0.0) return 0
