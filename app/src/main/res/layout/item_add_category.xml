@@ -14,7 +14,7 @@
         android:layout_height="64dp"
         android:background="@drawable/circle_background"
         android:src="@drawable/ic_add"
-        app:tint="@color/accent_foreground"
+        app:tint="@color/black"
         android:scaleType="centerInside"
         android:contentDescription="@string/add_new_category" />
 

@@ -47,5 +47,6 @@
     <string name="date_of_transaction">Date of Transaction</string>
     <string name="add_new_category">Add new category</string>
     <string name="add">Add</string>
+    <string name="category">Category</string>
 
 </resources>

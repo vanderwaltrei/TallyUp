@@ -51,7 +51,7 @@ class CategoryAdapter(
 
     inner class CategoryViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val icon: ImageView = view.findViewById(R.id.categoryIcon)
-        private val label: TextView = view.findViewById(R.id.categoryLabel)
+        private val label: TextView = view.findViewById(R.id.categoryName)
 
         fun bind(category: Category) {
             label.text = category.name
