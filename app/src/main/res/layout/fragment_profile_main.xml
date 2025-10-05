@@ -71,7 +71,7 @@
                         android:id="@+id/character_display"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
-                        android:src="@drawable/character_happy"
+                        android:src="@drawable/character_female"
                         android:contentDescription="@string/character" />
 
                     <LinearLayout
