@@ -90,13 +90,13 @@ class AddTransactionFragment : Fragment() {
         }
 
         // Category selection (example: grid buttons)
-        binding.categoryFood.setOnClickListener {
-            selectedCategory = "Food"
-        }
-
-        binding.categoryTransport.setOnClickListener {
-            selectedCategory = "Transport"
-        }
+//        binding.categoryFood.setOnClickListener {
+//            selectedCategory = "Food"
+//        }
+//
+//        binding.categoryTransport.setOnClickListener {
+//            selectedCategory = "Transport"
+//        }
 
         // Save button logic
         binding.saveButton.setOnClickListener {
