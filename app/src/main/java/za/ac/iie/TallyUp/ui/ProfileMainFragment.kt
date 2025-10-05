@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import za.ac.iie.TallyUp.R
 import za.ac.iie.TallyUp.data.DatabaseProvider
 import za.ac.iie.TallyUp.databinding.FragmentProfileMainBinding
+import za.ac.iie.TallyUp.utils.CharacterManager
 
 class ProfileMainFragment : Fragment() {
 
@@ -30,6 +31,15 @@ class ProfileMainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Set character image dynamically using CharacterManager
+        val characterDrawable = CharacterManager.getCharacterDrawable(requireContext())
+        binding.characterDisplay.setImageResource(characterDrawable)
+
+        // Set coins dynamically using CharacterManager
+        val coins = CharacterManager.getCoins(requireContext())
+        binding.coinsCount.text = coins.toString()
+
         loadUserData()
 
         binding.saveProfileButton.setOnClickListener {
@@ -50,6 +60,9 @@ class ProfileMainFragment : Fragment() {
                     binding.userName.text = fullName
                     binding.firstNameInput.setText(user.firstName)
                     binding.lastNameInput.setText(user.lastName)
+
+                    // Save first name for welcome messages in other fragments
+                    prefs.edit().putString("userFirstName", user.firstName).apply()
                 } else {
                     binding.userName.text = getString(R.string.user_not_found)
                 }
@@ -78,6 +91,9 @@ class ProfileMainFragment : Fragment() {
                         @SuppressLint("SetTextI18n")
                         binding.userName.text = "$firstName $lastName"
 
+                        // Update the stored first name
+                        prefs.edit().putString("userFirstName", firstName).apply()
+
                         Toast.makeText(
                             requireContext(),
                             getString(R.string.profile_updated_successfully),
@@ -85,7 +101,19 @@ class ProfileMainFragment : Fragment() {
                         ).show()
                     }
                 }
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    "Please enter both first and last name",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
+        } else {
+            Toast.makeText(
+                requireContext(),
+                "No user logged in",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 

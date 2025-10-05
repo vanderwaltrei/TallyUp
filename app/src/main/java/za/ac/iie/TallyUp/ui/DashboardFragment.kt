@@ -8,11 +8,10 @@ import androidx.fragment.app.Fragment
 import za.ac.iie.TallyUp.R
 import za.ac.iie.TallyUp.databinding.FragmentDashboardBinding
 import za.ac.iie.TallyUp.models.AppState
-import za.ac.iie.TallyUp.models.CharacterType
-import za.ac.iie.TallyUp.models.Mood
 import za.ac.iie.TallyUp.data.AppRepository
 import za.ac.iie.TallyUp.ui.budget.BudgetDashboardFragment
 import za.ac.iie.TallyUp.ui.insights.InsightsFragment
+import za.ac.iie.TallyUp.utils.CharacterManager
 
 class DashboardFragment : Fragment() {
 
@@ -60,8 +59,10 @@ class DashboardFragment : Fragment() {
     }
 
     private fun setupUI() {
-        // Welcome message
-        binding.welcomeText.text = "Hey ${appState.user?.firstName ?: "there"}!"
+        // Welcome message with character name
+        val characterName = CharacterManager.getCharacterName(requireContext())
+        val firstName = appState.user?.firstName ?: "there"
+        binding.welcomeText.text = "Hey $firstName! Say hi to $characterName!"
 
         // Available to spend
         val totalBudget = appState.budgetCategories.sumOf { it.budgeted }
@@ -92,20 +93,17 @@ class DashboardFragment : Fragment() {
         val goals = appState.goals.take(2)
         binding.goalsSection.visibility = if (goals.isEmpty()) View.GONE else View.VISIBLE
 
-        // Character display
-        appState.user?.character?.let { character ->
-            val characterRes = if (character.type == CharacterType.FEMALE) {
-                R.drawable.character_female
-            } else {
-                R.drawable.character_male
-            }
-            binding.characterImage.setImageResource(characterRes)
+        // Character display using CharacterManager
+        val characterDrawable = CharacterManager.getCharacterDrawable(requireContext())
+        binding.characterImage.setImageResource(characterDrawable)
 
-            binding.moodIndicator.visibility =
-                if (character.mood == Mood.SAD) View.VISIBLE else View.GONE
+        // Mood indicator
+        val mood = CharacterManager.getCurrentMood(requireContext())
+        binding.moodIndicator.visibility = if (mood == za.ac.iie.TallyUp.models.Mood.SAD) View.VISIBLE else View.GONE
 
-            binding.coinsText.text = "${appState.user?.coins ?: 0}"
-        }
+        // Coins display
+        val coins = CharacterManager.getCoins(requireContext())
+        binding.coinsText.text = coins.toString()
     }
 
     override fun onDestroyView() {

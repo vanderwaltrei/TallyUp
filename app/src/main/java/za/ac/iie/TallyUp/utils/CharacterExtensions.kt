@@ -65,7 +65,7 @@ fun TextView.showUserCoins(context: Context) {
 fun getMoodDrawable(mood: Mood): Int {
     return when (mood) {
         Mood.HAPPY -> R.drawable.character_happy
-        Mood.SAD -> R.drawable.character_happy
+        Mood.SAD -> R.drawable.character_happy // You might want to create a sad version
         else -> R.drawable.character_female
     }
 }
