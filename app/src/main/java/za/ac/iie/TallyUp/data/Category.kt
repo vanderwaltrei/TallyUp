@@ -7,6 +7,6 @@ import androidx.room.PrimaryKey
 data class Category(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val name: String,
-    val isCustom: Boolean = false // true if added by user
+    val type: String // "Income" or "Expense"
 )
 
