@@ -75,7 +75,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:backgroundTint="@color/accent"
+                    android:backgroundTint="@color/card_background"
                     android:text="Expense (-)"
                     android:textColor="@color/foreground"
                     app:cornerRadius="24dp" />

@@ -5,6 +5,7 @@ plugins {
     id("org.jetbrains.kotlin.kapt") // KAPT must be applied for Room
 }
 
+
 android {
     namespace = "za.ac.iie.TallyUp"
     compileSdk = 36 // Targeting the latest stable SDK
