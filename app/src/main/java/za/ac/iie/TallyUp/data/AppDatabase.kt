@@ -35,7 +35,7 @@ abstract class AppDatabase : RoomDatabase() {
                 ).build()
 
                 INSTANCE = instance
-                prepopulateCategories(instance) // ✅ Add this line
+                prepopulateCategories(instance)
                 instance
             }
         }
