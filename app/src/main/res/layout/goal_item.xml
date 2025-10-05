@@ -1,0 +1,111 @@
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="2dp"
+    app:cardUseCompatPadding="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:padding="12dp">
+
+        <!-- Goal Icon -->
+        <ImageView
+            android:id="@+id/goalIcon"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/character_happy" />
+
+        <!-- Goal Name -->
+        <TextView
+            android:id="@+id/goalName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="Goal Name"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:translationX="10dp"
+            app:layout_constraintEnd_toStartOf="@id/goalPercentage"
+            app:layout_constraintStart_toEndOf="@id/goalIcon"
+            app:layout_constraintTop_toTopOf="@id/goalIcon" />
+
+        <!-- Goal Amount -->
+
+        <!-- Goal Deadline -->
+
+        <!-- Goal Percentage -->
+        <TextView
+            android:id="@+id/goalDeadline"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Deadline: --"
+            android:textSize="14sp"
+            android:translationX="10dp"
+            app:layout_constraintEnd_toStartOf="@id/goalPercentage"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@id/goalName"
+            app:layout_constraintTop_toBottomOf="@id/goalAmount" />
+
+        <TextView
+            android:id="@+id/goalPercentage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="%"
+            android:textSize="14sp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Progress Bar -->
+
+        <!-- Action Button -->
+
+        <ProgressBar
+            android:id="@+id/goalProgress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="12dp"
+            android:layout_marginTop="16dp"
+            android:max="100"
+            android:progress="0"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/goalDeadline" />
+
+        <TextView
+            android:id="@+id/goalAmount"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="R0 / R0"
+            android:textSize="14sp"
+            android:translationX="-40dp"
+            android:translationY="90dp"
+            app:layout_constraintEnd_toStartOf="@id/goalPercentage"
+            app:layout_constraintHorizontal_bias="0.58"
+            app:layout_constraintStart_toStartOf="@id/goalName"
+            app:layout_constraintTop_toBottomOf="@id/goalName" />
+
+        <Button
+            android:id="@+id/goalButton"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="#FF9800"
+            android:text="Add Money"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/goalProgress"
+            app:layout_constraintVertical_bias="1.0" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

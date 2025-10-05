@@ -188,7 +188,7 @@
 
                 <!-- ✅ RecyclerView grid -->
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/categoryGrid"
+                    android:id="@+id/goalsGrid"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:clipToPadding="false"
