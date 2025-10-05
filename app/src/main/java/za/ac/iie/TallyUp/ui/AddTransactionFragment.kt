@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import za.ac.iie.TallyUp.R
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Environment
@@ -245,11 +246,17 @@ class AddTransactionFragment : Fragment() {
 
     private fun loadCategories() {
         val db = DatabaseProvider.getDatabase(requireContext())
+        val currentUserId = getCurrentUserId() // ⬅️ Add this line
 
         lifecycleScope.launch {
             val categories = db.categoryDao().getCategoriesByType(selectedType)
 
-            val allItems = categories + Category(name = "Add New", type = selectedType, color = "#A3D5FF")
+            val allItems = categories + Category(
+                name = "Add New",
+                type = selectedType,
+                color = "#A3D5FF",
+                userId = currentUserId // ⬅️ Include userId here
+            )
 
             binding.categoryGrid.layoutManager = GridLayoutManager(requireContext(), 3)
             binding.categoryGrid.adapter = CategoryAdapter(
@@ -258,10 +265,15 @@ class AddTransactionFragment : Fragment() {
                     selectedCategory = category.name
                 },
                 onAddNewClicked = {
-                    showAddCategoryDialog() // this opens your dialog
+                    showAddCategoryDialog()
                 }
             )
         }
+    }
+
+    private fun getCurrentUserId(): String {
+        val prefs = requireContext().getSharedPreferences("user_session", Context.MODE_PRIVATE)
+        return prefs.getString("user_id", "") ?: ""
     }
 
     private fun showAddCategoryDialog() {
