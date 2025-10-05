@@ -2,10 +2,19 @@
     android:width="24dp"
     android:height="24dp"
     android:viewportWidth="24"
-    android:viewportHeight="24"
-    android:tint="#FFFFFF">
-    <!-- Represents a simple back arrow for navigation. -->
-    <path
-        android:fillColor="@android:color/white"
-        android:pathData="M15.41,16.59L10.83,12l4.58,-4.59L14,6l-6,6 6,6 1.41,-1.41z" />
+    android:viewportHeight="24">
+  <path
+      android:pathData="m12 19-7-7 7-7"
+      android:strokeWidth="2"
+      android:strokeColor="@android:color/black"
+      android:fillColor="@android:color/transparent"
+      android:strokeLineCap="round"
+      android:strokeLineJoin="round"/>
+  <path
+      android:pathData="M19 12H5"
+      android:strokeWidth="2"
+      android:strokeColor="@android:color/black"
+      android:fillColor="@android:color/transparent"
+      android:strokeLineCap="round"
+      android:strokeLineJoin="round"/>
 </vector>
