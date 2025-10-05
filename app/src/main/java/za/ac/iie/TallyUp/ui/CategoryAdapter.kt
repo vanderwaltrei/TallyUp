@@ -10,6 +10,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import za.ac.iie.TallyUp.R
 import za.ac.iie.TallyUp.data.Category
+import za.ac.iie.TallyUp.utils.CharacterManager
+import android.os.Bundle
 
 class CategoryAdapter(
     private val categories: List<Category>,
@@ -51,18 +53,28 @@ class CategoryAdapter(
 
     inner class CategoryViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val icon: ImageView = view.findViewById(R.id.categoryIcon)
-        private val label: TextView = view.findViewById(R.id.categoryLabel)
+        private val label: TextView = view.findViewById(R.id.categoryName) // Changed from categoryLabel to categoryName
 
         fun bind(category: Category) {
             label.text = category.name
+
+            // Set dynamic background color instead of using the static circle_background
             val circle = GradientDrawable().apply {
                 shape = GradientDrawable.OVAL
                 setColor(Color.parseColor(category.color))
             }
             icon.background = circle
-            icon.setImageResource(R.drawable.character_happy) // or dynamic icon later
+
+            // Use the selected character instead of hardcoded character_happy
+            val characterDrawable = CharacterManager.getCharacterDrawable(itemView.context)
+            icon.setImageResource(characterDrawable)
         }
     }
 
-    inner class AddNewViewHolder(view: View) : RecyclerView.ViewHolder(view)
+    inner class AddNewViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+
+        // You can add references to the addIcon and addLabel if needed
+        // private val addIcon: ImageView = view.findViewById(R.id.addIcon)
+        // private val addLabel: TextView = view.findViewById(R.id.addLabel)
+    }
 }
