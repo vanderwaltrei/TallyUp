@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="48dp"
+    android:background="@color/background">
+
+    <!-- App Logo/Icon -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginBottom="32dp"
+        app:cardCornerRadius="60dp"
+        app:cardBackgroundColor="@color/accent_light"
+        app:cardElevation="8dp">
+
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:src="@drawable/character_happy"
+            android:contentDescription="@string/character"
+            app:tint="@color/white" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Main Title -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Budgeting made easy"
+        android:textColor="@color/foreground"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Subtitle -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Take the stress out of your money"
+        android:textColor="@color/muted_foreground"
+        android:textSize="18sp"
+        android:gravity="center"
+        android:layout_marginBottom="48dp" />
+
+    <!-- Get Started Button -->
+    <Button
+        android:id="@+id/get_started_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Get Started"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:paddingVertical="16dp"
+        android:backgroundTint="@color/accent"
+        android:textColor="@color/accent_foreground" />
+
+</LinearLayout>
