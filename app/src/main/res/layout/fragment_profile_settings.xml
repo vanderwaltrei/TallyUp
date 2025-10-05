@@ -61,7 +61,7 @@
                     </LinearLayout>
 
                     <androidx.appcompat.widget.SwitchCompat
-                        android:id="@+id/notifications_switch"
+                        android:id="@+id/notificationsSwitch"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:checked="true" />
@@ -90,16 +90,16 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Manage your data"
+                            android:text="Enable enhanced privacy"
                             android:textColor="@color/muted_foreground" />
 
                     </LinearLayout>
 
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_outfit"
-                        android:contentDescription="Next" />
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/privacySecuritySwitch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true" />
 
                 </LinearLayout>
 
@@ -120,7 +120,7 @@
                 android:padding="16dp">
 
                 <Button
-                    android:id="@+id/logout_button"
+                    android:id="@+id/logoutButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Log Out"
