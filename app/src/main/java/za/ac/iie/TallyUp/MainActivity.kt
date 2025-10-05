@@ -30,10 +30,10 @@ class MainActivity : AppCompatActivity() {
         // Load default fragment
         if (savedInstanceState == null) {
             if (userIsLoggedIn()) {
-                // If logged in, show login screen first
-                loadFragment(LoginFragment())
+                // If logged in, show dashboard
+                loadFragment(DashboardFragment())
             } else {
-                // If not logged in, show login screen anyway
+                // If not logged in, show login screen
                 loadFragment(LoginFragment())
             }
         }

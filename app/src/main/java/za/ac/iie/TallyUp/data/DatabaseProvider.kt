@@ -1,7 +1,7 @@
 package za.ac.iie.TallyUp.data
+
 import android.content.Context
 import androidx.room.Room
-import za.ac.iie.TallyUp.data.AppDatabase // adjust if needed
 
 object DatabaseProvider {
     private var dbInstance: AppDatabase? = null
@@ -12,7 +12,9 @@ object DatabaseProvider {
                 context.applicationContext,
                 AppDatabase::class.java,
                 "tallyup_database"
-            ).build()
+            )
+                .fallbackToDestructiveMigration() // This fixes the migration issue
+                .build()
         }
         return dbInstance!!
     }
