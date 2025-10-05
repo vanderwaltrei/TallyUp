@@ -27,7 +27,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "tallyup_database"
                 )
-                    .fallbackToDestructiveMigration() // This will clear old database and create new one
+                    .fallbackToDestructiveMigration(true) // true = drop all tables if needed
                     .build()
 
                 INSTANCE = instance
@@ -42,16 +42,16 @@ abstract class AppDatabase : RoomDatabase() {
                     val existing = db.categoryDao().getAllCategories()
                     if (existing.isEmpty()) {
                         val defaultCategories = listOf(
-                            Category(name = "Food", type = "Expense"),
-                            Category(name = "Transport", type = "Expense"),
-                            Category(name = "Books", type = "Expense"),
-                            Category(name = "Fun", type = "Expense"),
-                            Category(name = "Shopping", type = "Expense"),
-                            Category(name = "Other", type = "Expense"),
-                            Category(name = "Salary", type = "Income"),
-                            Category(name = "Gift", type = "Income"),
-                            Category(name = "Freelance", type = "Income"),
-                            Category(name = "Allowance", type = "Income")
+                            Category(name = "Food", type = "Expense", color = "#FFB085"),       // orange
+                            Category(name = "Transport", type = "Expense", color = "#A3D5FF"),  // blue
+                            Category(name = "Books", type = "Expense", color = "#B2E2B2"),      // green
+                            Category(name = "Fun", type = "Expense", color = "#FFF4A3"),        // yellow
+                            Category(name = "Shopping", type = "Expense", color = "#FFB6C1"),   // pink
+                            Category(name = "Other", type = "Expense", color = "#E0E0E0"),      // gray
+                            Category(name = "Salary", type = "Income", color = "#D1B3FF"),      // purple
+                            Category(name = "Gift", type = "Income", color = "#D1B3FF"),        // purple
+                            Category(name = "Freelance", type = "Income", color = "#D1B3FF"),   // purple
+                            Category(name = "Allowance", type = "Income", color = "#D1B3FF")    // purple
                         )
                         db.categoryDao().insertCategories(defaultCategories)
                         Log.d("AppDatabase", "Default categories populated")
