@@ -1,11 +1,7 @@
 package za.ac.iie.TallyUp.ui
 
 import android.os.Bundle
-import android.os.Parcel
-import android.os.Parcelable
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -25,6 +21,10 @@ import android.provider.MediaStore
 import androidx.core.content.FileProvider
 import java.io.File
 import androidx.appcompat.app.AlertDialog
+import android.widget.EditText
+import androidx.recyclerview.widget.RecyclerView
+import za.ac.iie.TallyUp.data.Category
+import androidx.recyclerview.widget.GridLayoutManager
 
 class AddTransactionFragment : Fragment() {
 
@@ -258,14 +258,14 @@ class AddTransactionFragment : Fragment() {
                     selectedCategory = category.name
                 },
                 onAddNewClicked = {
-                    showAddCategoryDialog() // 💫 this opens your dialog
+                    showAddCategoryDialog() // this opens your dialog
                 }
             )
         }
     }
 
     private fun showAddCategoryDialog() {
-        val dialogView = layoutInflater.inflate(R.layout.dialog_add_category, null)
+        val dialogView = layoutInflater.inflate(R.layout.dialogue_add_category, null)
         val nameInput = dialogView.findViewById<EditText>(R.id.categoryNameInput)
         val swatchGrid = dialogView.findViewById<RecyclerView>(R.id.colorSwatchGrid)
 
