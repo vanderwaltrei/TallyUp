@@ -2,17 +2,14 @@ package za.ac.iie.TallyUp.ui
 
 import android.content.Context
 import android.os.Bundle
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.TextWatcher
 import android.text.Editable
-import android.text.style.ForegroundColorSpan
-import android.text.style.UnderlineSpan
+import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.textfield.TextInputEditText
@@ -20,8 +17,6 @@ import kotlinx.coroutines.launch
 import za.ac.iie.TallyUp.R
 import za.ac.iie.TallyUp.data.DatabaseProvider
 import za.ac.iie.TallyUp.data.User
-import androidx.core.content.edit
-
 
 class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
 
@@ -49,6 +44,13 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
 
                 val passwordsMatch = passwordInput.text.toString() == confirmInput.text.toString()
                 createButton.isEnabled = allFilled && passwordsMatch
+
+                // Visual feedback for password match
+                if (confirmInput.text?.isNotEmpty() == true && !passwordsMatch) {
+                    confirmInput.error = "Passwords do not match"
+                } else {
+                    confirmInput.error = null
+                }
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -67,70 +69,94 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
             val password = passwordInput.text.toString().trim()
             val firstName = firstNameInput.text.toString().trim()
             val lastName = lastNameInput.text.toString().trim()
+            val confirmPassword = confirmInput.text.toString().trim()
+
+            // Validate inputs
+            if (email.isEmpty() || password.isEmpty() || firstName.isEmpty() || lastName.isEmpty()) {
+                Toast.makeText(requireContext(), "Please fill all fields", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (!isValidEmail(email)) {
+                Toast.makeText(requireContext(), "Please enter a valid email address", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (password != confirmPassword) {
+                Toast.makeText(requireContext(), "Passwords do not match", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (password.length < 6) {
+                Toast.makeText(requireContext(), "Password must be at least 6 characters", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // Disable button during processing
+            createButton.isEnabled = false
+            createButton.text = "Creating Account..."
 
             val db = DatabaseProvider.getDatabase(requireContext())
 
             lifecycleScope.launch {
-                val existingUser = db.userDao().getUserByEmail(email)
+                try {
+                    Log.d("SignUpFragment", "Checking if email exists: $email")
+                    val existingUser = db.userDao().getUserByEmail(email)
 
-                if (existingUser != null) {
-                    // Toast for duplicate email
-                    Toast.makeText(requireContext(), "Email already exists", Toast.LENGTH_SHORT).show()
-                } else {
-                    val newUser = User(
-                        email = email,
-                        password = password,
-                        firstName = firstName,
-                        lastName = lastName
-                    )
+                    if (existingUser != null) {
+                        Log.d("SignUpFragment", "Email already exists: $email")
+                        Toast.makeText(requireContext(), "Email already exists. Please use a different email.", Toast.LENGTH_LONG).show()
+                    } else {
+                        Log.d("SignUpFragment", "Creating new user: $email")
+                        val newUser = User(
+                            email = email,
+                            password = password,
+                            firstName = firstName,
+                            lastName = lastName
+                        )
 
-                    db.userDao().insertUser(newUser)
-                    // Save email for profile access
-                    val prefs = requireContext().getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
-                    prefs.edit { putString("loggedInEmail", email) }
+                        db.userDao().insertUser(newUser)
+                        Log.d("SignUpFragment", "User inserted successfully")
 
-                    Toast.makeText(requireContext(), "Account created!", Toast.LENGTH_SHORT).show()
+                        // Save email for profile access
+                        val prefs = requireContext().getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
+                        prefs.edit {
+                            putString("loggedInEmail", email)
+                        }
+                        Log.d("SignUpFragment", "Preferences saved for email: $email")
 
-                    requireActivity().supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container, DashboardFragment())
-                        .addToBackStack(null)
-                        .commit()
+                        Toast.makeText(requireContext(), "Account created successfully! Welcome, $firstName!", Toast.LENGTH_SHORT).show()
 
-
-
-                    // Toast for success
-                    Toast.makeText(requireContext(), "Account created!", Toast.LENGTH_SHORT).show()
-
-                    requireActivity().supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container, DashboardFragment())
-                        .addToBackStack(null)
-                        .commit()
+                        // Navigate to dashboard
+                        requireActivity().supportFragmentManager.beginTransaction()
+                            .replace(R.id.fragment_container, DashboardFragment())
+                            .addToBackStack(null)
+                            .commit()
+                    }
+                } catch (e: Exception) {
+                    Log.e("SignUpFragment", "Sign up error: ${e.message}", e)
+                    Toast.makeText(requireContext(), "Error creating account: ${e.message}", Toast.LENGTH_LONG).show()
+                } finally {
+                    // Re-enable button
+                    requireActivity().runOnUiThread {
+                        createButton.isEnabled = true
+                        createButton.text = "Create Account"
+                    }
                 }
             }
         }
 
-        // Style "Log in" in orange
-        val fullText = getString(R.string.already_have_an_account_log_in) // e.g. "Already have an account? Log in"
-        val spannable = SpannableString(fullText)
-        val start = fullText.indexOf("Log in")
-        val end = start + "Log in".length
-
-        spannable.setSpan(
-            ForegroundColorSpan(ContextCompat.getColor(requireContext(), R.color.accent)),
-            start,
-            end,
-            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
-        spannable.setSpan(UnderlineSpan(), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-
-        loginLink.text = spannable
-
-        // Link to login screen
+        // Setup login link
         loginLink.setOnClickListener {
+            Log.d("SignUpFragment", "Login link clicked - navigating to LoginFragment")
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, LoginFragment())
-                .addToBackStack(null)
+                .addToBackStack("signup_to_login")
                 .commit()
         }
+    }
+
+    private fun isValidEmail(email: String): Boolean {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
 }
