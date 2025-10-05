@@ -377,17 +377,63 @@
             android:textSize="16sp"
             android:textStyle="bold" />
 
-        <Button
-            android:id="@+id/photo_upload_button"
-            style="@style/Widget.Material3.Button.OutlinedButton"
+        <LinearLayout
+            android:id="@+id/photo_section"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:backgroundTint="@color/card_background"
-            android:drawableTop="@drawable/ic_camera"
-            android:gravity="center"
-            android:text="Add Receipt Photo"
-            android:textColor="@color/muted_foreground" />
+            android:orientation="vertical"
+            android:layout_marginBottom="16dp">
+
+            <!-- Horizontal photo preview strip -->
+            <LinearLayout
+                android:id="@+id/photo_preview"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:clickable="true"
+                android:foreground="?attr/selectableItemBackground"
+                android:padding="8dp"
+                android:background="@color/card_background"
+                android:visibility="gone"> <!-- Hide by default -->
+
+                <ImageView
+                    android:id="@+id/photo1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/photo2"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/photo3"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <!-- Add photo button -->
+            <Button
+                android:id="@+id/photo_upload_button"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Add Receipt Photo"
+                android:textColor="@color/muted_foreground"
+                android:drawableTop="@drawable/ic_camera"
+                android:backgroundTint="@color/card_background" />
+        </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"

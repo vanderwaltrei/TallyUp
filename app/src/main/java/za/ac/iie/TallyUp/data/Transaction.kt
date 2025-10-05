@@ -13,6 +13,6 @@ data class Transaction(
     val type: String,
     val category: String,
     val description: String?,
-    val photoUri: String?,
+    val photoUris: List<String>, // List of photo URIs
     val date: Long
 ) : Parcelable
