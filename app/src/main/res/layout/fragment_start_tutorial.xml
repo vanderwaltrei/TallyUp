@@ -18,12 +18,11 @@
         app:cardElevation="8dp">
 
         <ImageView
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="134dp"
+            android:layout_height="134dp"
             android:layout_gravity="center"
             android:src="@drawable/character_happy"
-            android:contentDescription="@string/character"
-            app:tint="@color/white" />
+            android:contentDescription="@string/character" />
 
     </com.google.android.material.card.MaterialCardView>
 
