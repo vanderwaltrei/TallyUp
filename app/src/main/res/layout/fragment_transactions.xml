@@ -41,18 +41,21 @@
                 android:textStyle="bold"
                 android:layout_marginStart="16dp" />
 
-            <ImageButton
-                android:id="@+id/filter_button"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_filter"
-                android:contentDescription="@string/filter"
-                app:tint="@color/foreground" />
-
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
+
+    <!-- Time Period Filter Combobox -->
+    <Spinner
+        android:id="@+id/time_period_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/spinner_background"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="8dp" />
 
     <!-- Transaction List -->
 
