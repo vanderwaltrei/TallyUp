@@ -74,7 +74,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupFAB() {
         binding.fabAddTransaction.setOnClickListener {
-            android.widget.Toast.makeText(this, "Add Transaction clicked", android.widget.Toast.LENGTH_SHORT).show()
+            // Load TransactionsFragment when FAB is clicked
+            loadFragment(TransactionsFragment())
+
+            // Optional: Also update the bottom navigation to show Transactions as selected
+            binding.bottomNavigation.selectedItemId = R.id.navigation_transactions
+
+            // Optional: Update toolbar title
+            supportActionBar?.title = "Transactions"
         }
     }
 
