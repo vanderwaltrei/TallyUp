@@ -55,7 +55,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="CuteWallet User"
+                        android:text="Tally Up User"
                         android:textColor="@color/muted_foreground"
                         android:textSize="14sp" />
 
@@ -89,8 +89,7 @@
                             android:layout_width="16dp"
                             android:layout_height="16dp"
                             android:src="@drawable/ic_coin"
-                            android:contentDescription="@string/coins"
-                            app:tint="@color/accent" />
+                            android:contentDescription="@string/coins"/>
 
                         <TextView
                             android:id="@+id/coins_count"

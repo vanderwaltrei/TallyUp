@@ -36,8 +36,7 @@
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/ic_coin"
-                    app:tint="@color/accent" />
+                    android:src="@drawable/ic_coin" />
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -75,7 +74,7 @@
                     <ImageView
                         android:layout_width="48dp"
                         android:layout_height="48dp"
-                        android:src="@drawable/ic_outfit"
+                        android:src="@drawable/ic_shirt"
                         android:background="@color/accent_light"
                         app:cornerRadius="8dp" />
 
@@ -119,7 +118,7 @@
                     <ImageView
                         android:layout_width="48dp"
                         android:layout_height="48dp"
-                        android:src="@drawable/ic_outfit"
+                        android:src="@drawable/ic_shopping_bag"
                         android:background="@color/accent_light"
                         app:cornerRadius="8dp" />
 
