@@ -38,13 +38,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_weight="1"
-                android:text="Add Transaction"
+                android:text="@string/add_transaction"
                 android:textColor="@color/foreground"
                 android:textSize="20sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
         <!-- Transaction type card -->
+
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -152,7 +153,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/categoryGrid"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:minHeight="200dp"
             android:maxHeight="400dp"
             android:padding="8dp"

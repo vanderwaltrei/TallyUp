@@ -16,14 +16,6 @@ class Converters {
     }
 
     @TypeConverter
-    fun fromList(list: List<String>): String = list.joinToString(",")
-
-    @TypeConverter
-    fun toList(data: String): List<String> =
-        if (data.isEmpty()) emptyList() else data.split(",")
-
-    // Add Date converters (even though you're using Long now, good to have)
-    @TypeConverter
     fun fromDate(date: Date): Long {
         return date.time
     }
