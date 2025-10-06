@@ -26,18 +26,19 @@ class TransactionsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 1️⃣ Button to open AddTransactionFragment
+        // Button to open AddTransactionFragment
         binding.addFirstTransactionButton.setOnClickListener {
-            parentFragmentManager.beginTransaction()
+            // Use childFragmentManager instead of parentFragmentManager for better fragment management
+            requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, AddTransactionFragment())
-                .addToBackStack(null) // allows back navigation
+                .addToBackStack("transactions_to_add") // Add to back stack for back navigation
                 .commit()
         }
 
-        // 2️⃣ Back button "<" to go to Home tab safely
+        // Back button to go to Home tab safely
         binding.backButton.setOnClickListener {
             val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.bottom_navigation)
-            bottomNav?.selectedItemId = R.id.navigation_home  // use the Home tab ID from your menu XML
+            bottomNav?.selectedItemId = R.id.navigation_home
         }
     }
 
