@@ -2,12 +2,15 @@ package za.ac.iie.TallyUp.ui
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -19,6 +22,7 @@ import za.ac.iie.TallyUp.data.Category
 import za.ac.iie.TallyUp.databinding.FragmentAddTransactionBinding
 import za.ac.iie.TallyUp.models.TransactionViewModel
 import za.ac.iie.TallyUp.models.TransactionViewModelFactory
+import java.io.File
 
 class AddTransactionFragment : Fragment() {
 
@@ -30,24 +34,38 @@ class AddTransactionFragment : Fragment() {
     private var selectedType: String = "Expense"
     private val selectedPhotoUris = mutableListOf<String>()
     private lateinit var adapter: CategoryAdapter
+    private var cameraPhotoUri: Uri? = null
 
     private val photoPickerLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
-        if (result.resultCode == android.app.Activity.RESULT_OK) {
-            selectedPhotoUris.clear()
-            val data = result.data
+        when (result.resultCode) {
+            android.app.Activity.RESULT_OK -> {
+                val data = result.data
+                val newUris = mutableListOf<String>()
 
-            data?.clipData?.let { clipData ->
-                for (i in 0 until clipData.itemCount) {
-                    val uri = clipData.getItemAt(i).uri.toString()
-                    selectedPhotoUris.add(uri)
+                data?.clipData?.let { clipData ->
+                    for (i in 0 until clipData.itemCount) {
+                        val uri = clipData.getItemAt(i).uri.toString()
+                        newUris.add(uri)
+                    }
+                } ?: data?.data?.let { uri ->
+                    newUris.add(uri.toString())
+                } ?: cameraPhotoUri?.let { uri ->
+                    newUris.add(uri.toString())
+                    cameraPhotoUri = null // Clear after use
                 }
-            } ?: data?.data?.let { uri ->
-                selectedPhotoUris.add(uri.toString())
+
+                val remainingSlots = 3 - selectedPhotoUris.size
+                selectedPhotoUris.addAll(newUris.take(remainingSlots))
+
+                Toast.makeText(requireContext(), "${selectedPhotoUris.size} photo(s) attached", Toast.LENGTH_SHORT).show()
+
             }
 
-            Toast.makeText(requireContext(), "${selectedPhotoUris.size} photo(s) selected", Toast.LENGTH_SHORT).show()
+            android.app.Activity.RESULT_CANCELED -> {
+                Toast.makeText(requireContext(), "No photos selected", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -92,12 +110,42 @@ class AddTransactionFragment : Fragment() {
         }
 
         binding.photoUploadButton.setOnClickListener {
-            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            // Step 1: Create a file to store the camera photo
+            val photoFile = File(
+                requireContext().getExternalFilesDir("Pictures"),
+                "photo_${System.currentTimeMillis()}.jpg"
+            )
+
+            // Create a URI for the file using FileProvider
+            cameraPhotoUri = FileProvider.getUriForFile(
+                requireContext(),
+                "za.ac.iie.TallyUp.fileprovider", // must match your manifest
+                photoFile
+            )
+
+            // Create the camera intent and pass the URI
+            val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
+                putExtra(MediaStore.EXTRA_OUTPUT, cameraPhotoUri)
+                addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION) // ✅ Added for safety
+            }
+
+            // Create the gallery intent
+            val galleryIntent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
                 addCategory(Intent.CATEGORY_OPENABLE)
                 type = "image/*"
                 putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+                putExtra(Intent.EXTRA_LOCAL_ONLY, true)
+                addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
-            photoPickerLauncher.launch(intent)
+
+            // Combine both intents into a chooser
+            val chooser = Intent.createChooser(galleryIntent, "Select or capture photo")
+            chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, arrayOf(cameraIntent))
+
+            // Launch the chooser
+            photoPickerLauncher.launch(chooser)
         }
 
         binding.saveButton.setOnClickListener {
