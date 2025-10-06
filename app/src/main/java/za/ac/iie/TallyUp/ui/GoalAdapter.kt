@@ -37,7 +37,7 @@ class GoalAdapter(
 
         holder.name.text = goal.name
         holder.amount.text = "R${goal.current.toInt()} / R${goal.target.toInt()}"
-        holder.deadline.text = "Deadline: ${goal.deadline}"
+        holder.deadline.text = "Deadline: ${normalizeDeadline(goal.deadline)}"
         holder.percentage.text = "${goal.progressPercent()}%"
         holder.progress.progress = goal.progressPercent()
 
@@ -55,4 +55,17 @@ class GoalAdapter(
     }
 
     override fun getItemCount(): Int = goals.size
+
+    /**
+     * Normalizes deadline input so "1" becomes "1 Month", "2" becomes "2 Months", etc.
+     */
+    private fun normalizeDeadline(input: String?): String {
+        if (input.isNullOrBlank()) return ""
+
+        val parts = input.trim().split("\\s+".toRegex())
+        val number = parts.getOrNull(0)?.toIntOrNull() ?: return input
+
+        val suffix = if (number == 1) "Month" else "Months"
+        return "$number $suffix"
+    }
 }
