@@ -24,6 +24,10 @@ import za.ac.iie.TallyUp.databinding.FragmentAddTransactionBinding
 import za.ac.iie.TallyUp.models.TransactionViewModel
 import za.ac.iie.TallyUp.models.TransactionViewModelFactory
 import java.io.File
+import android.app.DatePickerDialog
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 class AddTransactionFragment : Fragment() {
 
@@ -36,6 +40,7 @@ class AddTransactionFragment : Fragment() {
     private val selectedPhotoUris = mutableListOf<String>()
     private lateinit var adapter: CategoryAdapter
     private var cameraPhotoUri: Uri? = null
+    private var selectedDate: Long? = null
 
     private val photoPickerLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -92,14 +97,11 @@ class AddTransactionFragment : Fragment() {
         transactionViewModel = ViewModelProvider(this, factory)[TransactionViewModel::class.java]
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentAddTransactionBinding.inflate(inflater, container, false)
         return binding.root
     }
+
 
     private fun getCurrentUserId(): String {
         val prefs = requireContext().getSharedPreferences("user_session", Context.MODE_PRIVATE)
@@ -131,6 +133,23 @@ class AddTransactionFragment : Fragment() {
         }
         binding.transactionTypeGroup.check(R.id.expense_button)
 
+        binding.dateDisplay.setOnClickListener {
+            val calendar = Calendar.getInstance()
+            val datePicker = DatePickerDialog(
+                requireContext(),
+                { _, year, month, dayOfMonth ->
+                    calendar.set(year, month, dayOfMonth)
+                    selectedDate = calendar.timeInMillis
+                    val formatted = SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(calendar.time)
+                    binding.dateDisplay.text = formatted
+                },
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)
+            )
+            datePicker.show()
+        }
+
 
         binding.photoUploadButton.setOnClickListener {
             // Step 1: Create a file to store the camera photo
@@ -150,7 +169,7 @@ class AddTransactionFragment : Fragment() {
             val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
                 putExtra(MediaStore.EXTRA_OUTPUT, cameraPhotoUri)
                 addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION) // ✅ Added for safety
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION) // ✅Added for safety
             }
 
             // Create the gallery intent
@@ -179,10 +198,29 @@ class AddTransactionFragment : Fragment() {
             val type = selectedType
             val selectedCategory = selectedCategoryName ?: ""
             val photoUris = selectedPhotoUris.toList()
-            val selectedDate = System.currentTimeMillis()
 
-            if (amount == null || selectedCategory.isEmpty()) {
-                Toast.makeText(requireContext(), "Please enter a valid amount and category", Toast.LENGTH_SHORT).show()
+            if (selectedDate == null) {
+                Toast.makeText(requireContext(), "Please select a date", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (amount == null || amount <= 0) {
+                Toast.makeText(requireContext(), "Please enter a valid amount", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (selectedCategory.isBlank()) {
+                Toast.makeText(requireContext(), "Please select a category", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (descriptionText.isBlank()) {
+                Toast.makeText(requireContext(), "Please enter a description", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (selectedDate == null) {
+                Toast.makeText(requireContext(), "Please select a date", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -192,7 +230,7 @@ class AddTransactionFragment : Fragment() {
                 category = selectedCategory,
                 description = description,
                 photoUris = photoUris,
-                date = selectedDate,
+                date = selectedDate!!,
                 userId = currentUserId
             )
 

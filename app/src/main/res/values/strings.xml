@@ -58,5 +58,16 @@
     <string name="category_name">Category name</string>
     <string name="pick_a_icon_colour">Pick an icon colour</string>
     <string name="create_category">Create Category</string>
-
+    <string name="select_date">Select Date</string>
+    <string-array name="type_filter_options">
+        <item>All</item>
+        <item>Income</item>
+        <item>Expense</item>
+    </string-array>
+    <string-array name="time_filter_options">
+        <item>All</item>
+        <item>Today</item>
+        <item>This Week</item>
+        <item>This Month</item>
+    </string-array>
 </resources>
