@@ -98,7 +98,7 @@
 
 <!--        &lt;!&ndash; 🔽 CHANGED: Added hint text above edit section &ndash;&gt;-->
 <!--        <TextView-->
-<!--            android:id="@+id/editHint"-->
+<!--            android:id="@+id/Hint"-->
 <!--            android:layout_width="match_parent"-->
 <!--            android:layout_height="wrap_content"-->
 <!--            android:text="💡 Tap 'Edit Budget' above to set your monthly budget"-->
