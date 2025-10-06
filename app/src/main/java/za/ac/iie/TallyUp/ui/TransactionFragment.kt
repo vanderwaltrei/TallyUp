@@ -182,7 +182,7 @@ class TransactionsFragment : Fragment() {
                 }
                 Log.d(TAG, "============================================")
 
-                // Also check current user ID
+                // check current user ID
                 val currentUserId = getCurrentUserId()
                 Log.d(TAG, "Current user ID from prefs: $currentUserId")
 

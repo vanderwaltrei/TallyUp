@@ -27,11 +27,12 @@
             <ImageButton
                 android:id="@+id/back_button"
                 android:layout_width="47dp"
-                android:layout_height="48dp"
+                android:layout_height="50dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/back"
                 android:src="@drawable/ic_arrow_left"
-                app:tint="@color/foreground" />
+                app:tint="@color/foreground"
+                tools:ignore="TouchTargetSizeCheck" />
 
             <TextView
                 android:layout_width="0dp"
@@ -71,7 +72,8 @@
                     android:text="Expense (-)"
                     android:textColor="@color/foreground"
                     app:cornerRadius="24dp"
-                    app:backgroundTint="@color/transaction_toggle_bg" />
+                    app:backgroundTint="@color/transaction_toggle_bg"
+                    tools:ignore="HardcodedText,VisualLintButtonSize" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/income_button"
@@ -82,7 +84,8 @@
                     android:text="Income (+)"
                     android:textColor="@color/foreground"
                     app:cornerRadius="24dp"
-                    app:backgroundTint="@color/transaction_toggle_bg" />
+                    app:backgroundTint="@color/transaction_toggle_bg"
+                    tools:ignore="HardcodedText,VisualLintButtonSize" />
             </com.google.android.material.button.MaterialButtonToggleGroup>
         </com.google.android.material.card.MaterialCardView>
 
@@ -106,9 +109,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
-                    android:text="Amount"
+                    android:text="@string/amount"
                     android:textColor="@color/muted_foreground"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    tools:ignore="TextContrastCheck" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -120,23 +124,23 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="8dp"
-                        android:text="R"
+                        android:text="@string/r"
                         android:textColor="@color/muted_foreground"
                         android:textSize="32sp" />
 
                     <EditText
                         android:id="@+id/amount_input"
-                        android:layout_width="120dp"
+                        android:layout_width="130dp"
                         android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
                         android:inputType="numberDecimal"
                         android:maxLines="1"
-                        android:text="0"
+                        android:text="@string/_0"
                         android:textAlignment="center"
                         android:textColor="@color/foreground"
                         android:textSize="32sp"
                         android:textStyle="bold"
-                        tools:ignore="TouchTargetSizeCheck" />
+                        tools:ignore="Autofill,LabelFor,TouchTargetSizeCheck" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -146,7 +150,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:text="Category"
+            android:text="@string/category"
             android:textColor="@color/foreground"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -191,7 +195,8 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/e_g_coffee_with_sam"
                 android:inputType="text"
-                android:padding="16dp" />
+                android:padding="16dp"
+                tools:ignore="VisualLintTextFieldSize" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Photo section -->
@@ -222,7 +227,8 @@
                 android:foreground="?attr/selectableItemBackground"
                 android:padding="8dp"
                 android:background="@color/card_background"
-                android:visibility="gone">
+                android:visibility="gone"
+                tools:ignore="KeyboardInaccessibleWidget">
 
                 <ImageView
                     android:id="@+id/photo1"
@@ -230,7 +236,8 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:scaleType="centerCrop"
-                    android:visibility="gone" />
+                    android:visibility="gone"
+                    tools:ignore="ContentDescription" />
 
                 <ImageView
                     android:id="@+id/photo2"
@@ -238,7 +245,8 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:scaleType="centerCrop"
-                    android:visibility="gone" />
+                    android:visibility="gone"
+                    tools:ignore="ContentDescription" />
 
                 <ImageView
                     android:id="@+id/photo3"
@@ -246,7 +254,8 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:scaleType="centerCrop"
-                    android:visibility="gone" />
+                    android:visibility="gone"
+                    tools:ignore="ContentDescription" />
             </LinearLayout>
 
             <Button
@@ -258,7 +267,8 @@
                 android:text="@string/add_receipt_photo"
                 android:textColor="@color/muted_foreground"
                 android:drawableTop="@drawable/ic_camera"
-                android:backgroundTint="@color/card_background" />
+                android:backgroundTint="@color/card_background"
+                tools:ignore="VisualLintButtonSize" />
         </LinearLayout>
 
         <!-- Date -->
@@ -296,7 +306,8 @@
             android:textColor="@color/accent_foreground"
             android:textSize="16sp"
             android:textStyle="bold"
-            app:cornerRadius="12dp" />
+            app:cornerRadius="12dp"
+            tools:ignore="VisualLintButtonSize" />
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

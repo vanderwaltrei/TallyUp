@@ -2,6 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -42,7 +43,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_weight="1"
-                    android:text="Budget Overview"
+                    android:text="@string/budget_overview"
                     android:textColor="@color/foreground"
                     android:textSize="20sp"
                     android:textStyle="bold" />
@@ -59,7 +60,8 @@
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical"
-            android:padding="32dp">
+            android:padding="32dp"
+            tools:ignore="InefficientWeight">
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
@@ -67,13 +69,14 @@
                 app:cardBackgroundColor="#FFFFFF"
                 app:cardCornerRadius="30dp"
                 app:cardElevation="3dp"
-                app:cardUseCompatPadding="true">
+                app:cardUseCompatPadding="true"
+                tools:ignore="TextSizeCheck">
 
                 <TextView
                     android:id="@+id/textView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Total Monthly Budget"
+                    android:text="@string/total_monthly_budget"
                     android:textAllCaps="false"
                     android:textSize="16sp"
                     android:textStyle="bold"
@@ -84,21 +87,21 @@
                     android:id="@+id/tvBudgetAmount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="R"
+                    android:layout_gravity="center"
+                    android:text="@string/r"
                     android:textAlignment="center"
                     android:textAllCaps="false"
                     android:textColor="#00BCD4"
                     android:textSize="34sp"
                     android:textStyle="bold"
-                    android:layout_gravity="center"
-                    />
+                    tools:ignore="TextContrastCheck" />
 
                 <!-- UNCOMMENT this TextView -->
                 <TextView
                     android:id="@+id/tvMonthSpent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="R Spent This Month"
+                    android:text="@string/r_spent_this_month"
                     android:textAllCaps="false"
                     android:textSize="14sp"
                     android:textStyle="bold"
@@ -114,12 +117,13 @@
         android:id="@+id/textView5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Categories"
+        android:text="@string/categories"
         android:textSize="20sp"
         android:textStyle="bold"
         android:paddingStart="20dp"
         android:paddingTop="16dp"
-        android:paddingBottom="8dp" />
+        android:paddingBottom="8dp"
+        tools:ignore="RtlSymmetry" />
 
     <!-- REPLACED: Hardcoded categories with RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView

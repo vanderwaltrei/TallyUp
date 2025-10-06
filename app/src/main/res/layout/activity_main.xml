@@ -2,6 +2,7 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background">
@@ -24,6 +25,7 @@
 
     <!-- Fragment container (stays full screen) -->
     <androidx.fragment.app.FragmentContainerView
+        android:layout_marginBottom="72dp"
         android:id="@+id/fragment_container"
         android:name="androidx.fragment.app.Fragment"
         android:layout_width="match_parent"
@@ -39,7 +41,8 @@
         android:background="@color/card"
         app:menu="@menu/bottom_navigation_menu"
         app:itemIconTint="@drawable/bottom_nav_colors"
-        app:itemTextColor="@drawable/bottom_nav_colors" />
+        app:itemTextColor="@drawable/bottom_nav_colors"
+        tools:ignore="VisualLintBottomNav" />
 
     <!-- Floating action button floats above container -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -47,12 +50,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginBottom="100dp"
         android:layout_marginEnd="14dp"
+        android:layout_marginBottom="100dp"
         android:contentDescription="@string/add_transaction"
         android:src="@drawable/ic_add"
         app:backgroundTint="@color/accent"
         app:elevation="12dp"
-        app:tint="@color/accent_foreground" />
+        app:tint="@color/accent_foreground"
+        tools:ignore="ImageContrastCheck" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

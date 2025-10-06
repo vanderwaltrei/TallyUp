@@ -22,7 +22,7 @@ class Question1TutorialFragment : Fragment(R.layout.fragment_question1_tutorial)
         val optionMonthly = view.findViewById<MaterialCardView>(R.id.option_monthly)
         val nextButton = view.findViewById<Button>(R.id.next_button)
 
-        // Option click listeners
+
         optionWeekly.setOnClickListener {
             selectOption("weekly", optionWeekly, optionBiweekly, optionMonthly)
             nextButton.isEnabled = true
@@ -88,7 +88,6 @@ class Question1TutorialFragment : Fragment(R.layout.fragment_question1_tutorial)
 
     @SuppressLint("UseKtx")
     private fun saveSelectedOption() {
-        // Save to SharedPreferences or ViewModel for later use
         val prefs = requireContext().getSharedPreferences("TallyUpPrefs", android.content.Context.MODE_PRIVATE)
         val editor = prefs.edit()
         editor.putString("income_frequency", selectedOption)

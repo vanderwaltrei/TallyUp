@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
@@ -17,7 +18,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Choose Your Character"
+            android:text="@string/choose_your_character"
             android:textColor="@color/foreground"
             android:textSize="24sp"
             android:textStyle="bold"
@@ -28,11 +29,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Pick a character to accompany you on\nyour budgeting journey!"
+            android:layout_marginBottom="48dp"
+            android:gravity="center"
+            android:text="@string/pick_a_character_to_accompany_you_on_nyour_budgeting_journey"
             android:textColor="@color/muted_foreground"
             android:textSize="16sp"
-            android:gravity="center"
-            android:layout_marginBottom="48dp" />
+            tools:ignore="TextContrastCheck" />
 
         <!-- Characters Container -->
         <LinearLayout
@@ -66,14 +68,14 @@
                         android:layout_width="120dp"
                         android:layout_height="120dp"
                         android:src="@drawable/character_female"
-                        android:contentDescription="Luna"
+                        android:contentDescription="@string/luna"
                         android:layout_marginBottom="16dp" />
 
                     <!-- Character Name -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Luna"
+                        android:text="@string/luna"
                         android:textColor="@color/foreground"
                         android:textSize="18sp"
                         android:textStyle="bold"
@@ -83,10 +85,11 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Organized\n and Cheerful"
+                        android:gravity="center"
+                        android:text="@string/organized_n_and_cheerful"
                         android:textColor="@color/muted_foreground"
                         android:textSize="14sp"
-                        android:gravity="center" />
+                        tools:ignore="TextContrastCheck" />
 
                     <!-- Selection Check -->
                     <ImageView
@@ -96,7 +99,8 @@
                         android:src="@drawable/ic_check_circle"
                         android:visibility="invisible"
                         app:tint="@color/accent"
-                        android:layout_marginTop="12dp" />
+                        android:layout_marginTop="12dp"
+                        tools:ignore="ContentDescription" />
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -125,14 +129,14 @@
                         android:layout_width="120dp"
                         android:layout_height="120dp"
                         android:src="@drawable/character_happy"
-                        android:contentDescription="Max"
+                        android:contentDescription="@string/max"
                         android:layout_marginBottom="16dp" />
 
                     <!-- Character Name -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Max"
+                        android:text="@string/max"
                         android:textColor="@color/foreground"
                         android:textSize="18sp"
                         android:textStyle="bold"
@@ -142,20 +146,22 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Smart and\nFriendly"
+                        android:gravity="center"
+                        android:text="@string/smart_and_nfriendly"
                         android:textColor="@color/muted_foreground"
                         android:textSize="14sp"
-                        android:gravity="center" />
+                        tools:ignore="TextContrastCheck" />
 
                     <!-- Selection Check -->
                     <ImageView
                         android:id="@+id/check_max"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
+                        android:layout_marginTop="12dp"
                         android:src="@drawable/ic_check_circle"
                         android:visibility="visible"
                         app:tint="@color/accent"
-                        android:layout_marginTop="12dp" />
+                        tools:ignore="ContentDescription,ImageContrastCheck" />
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -167,12 +173,13 @@
             android:id="@+id/continue_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Continue with Max"
+            android:backgroundTint="@color/accent"
+            android:paddingVertical="16dp"
+            android:text="@string/continue_with_max"
+            android:textColor="@color/accent_foreground"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:paddingVertical="16dp"
-            android:backgroundTint="@color/accent"
-            android:textColor="@color/accent_foreground" />
+            tools:ignore="TextContrastCheck,VisualLintButtonSize" />
 
     </LinearLayout>
 </ScrollView>

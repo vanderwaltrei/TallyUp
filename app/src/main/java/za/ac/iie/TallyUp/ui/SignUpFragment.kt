@@ -131,7 +131,7 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
 
                         Toast.makeText(requireContext(), "Account created successfully! Welcome, $firstName!", Toast.LENGTH_SHORT).show()
 
-                        // FIXED: Navigate to Start Tutorial page instead of Dashboard
+                        //Navigate to Start Tutorial page instead of Dashboard
                         requireActivity().supportFragmentManager.beginTransaction()
                             .replace(R.id.fragment_container, StartTutorialFragment())
                             .addToBackStack(null)

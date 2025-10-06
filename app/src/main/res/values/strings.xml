@@ -69,6 +69,32 @@
     <string name="on_track">On Track!</string>
     <string name="no_transactions_yet">No transactions yet</string>
     <string name="no_goals_yet">No goals yet</string>
+    <string name="amount">Amount</string>
+    <string name="r">R</string>
+    <string name="budget_overview">Budget Overview</string>
+    <string name="total_monthly_budget">Total Monthly Budget</string>
+    <string name="r_spent_this_month">R Spent This Month</string>
+    <string name="categories">Categories</string>
+    <string name="great_job_you_re_managing_most_categories_well">• Great job! You\'re managing most categories well</string>
+    <string name="smart_recommendations">Smart Recommendations</string>
+    <string name="category_breakdown">Category Breakdown</string>
+    <string name="_0_nover">0\nOver</string>
+    <string name="_0_ncritical">0\nCritical</string>
+    <string name="_0_nwatch">0\nWatch</string>
+    <string name="_6_non_track">6\nOn Track</string>
+    <string name="performance_summary">Performance Summary</string>
+    <string name="r600_00_remaining">R600.00 Remaining</string>
+    <string name="r0_00_r600_00">R0.00 / R600.00</string>
+    <string name="_0_used">0% Used</string>
+    <string name="budget_health_dashboard">Budget Health Dashboard</string>
+    <string name="complete_budget_analysis">Complete budget analysis</string>
+    <string name="choose_your_character">Choose Your Character</string>
+    <string name="pick_a_character_to_accompany_you_on_nyour_budgeting_journey">Pick a character to accompany you on\nyour budgeting journey!</string>
+    <string name="luna">Luna</string>
+    <string name="organized_n_and_cheerful">Organized\n and Cheerful</string>
+    <string name="max">Max</string>
+    <string name="smart_and_nfriendly">Smart and\nFriendly</string>
+    <string name="continue_with_max">Continue with Max</string>
     <string-array name="type_filter_options">
         <item>All</item>
         <item>Income</item>
