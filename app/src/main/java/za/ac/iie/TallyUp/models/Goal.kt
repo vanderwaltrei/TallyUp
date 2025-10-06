@@ -1,6 +1,5 @@
 package za.ac.iie.TallyUp.model
 
-
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.util.UUID
@@ -14,7 +13,8 @@ data class Goal(
     val target: Double,
     var current: Double = 0.0,
     val deadline: String,
-    val createdAt: String = ""
+    val createdAt: String = "",
+    val userId: String // Add this field to associate with user
 ) {
     fun progressPercent(): Int {
         if (target <= 0.0) return 0
