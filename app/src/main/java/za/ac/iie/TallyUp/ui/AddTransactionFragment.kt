@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -61,6 +62,21 @@ class AddTransactionFragment : Fragment() {
 
                 Toast.makeText(requireContext(), "${selectedPhotoUris.size} photo(s) attached", Toast.LENGTH_SHORT).show()
 
+                // Update preview strip
+                val previewStrip = binding.photoPreview
+                val photoViews = listOf(binding.photo1, binding.photo2, binding.photo3)
+
+                photoViews.forEachIndexed { index, imageView ->
+                    if (index < selectedPhotoUris.size) {
+                        // Safe: URIs come from system picker or camera
+                        imageView.setImageURI(selectedPhotoUris[index].toUri())
+                        imageView.visibility = View.VISIBLE
+                    } else {
+                        imageView.visibility = View.GONE
+                    }
+                }
+
+                previewStrip.visibility = if (selectedPhotoUris.isNotEmpty()) View.VISIBLE else View.GONE
             }
 
             android.app.Activity.RESULT_CANCELED -> {
