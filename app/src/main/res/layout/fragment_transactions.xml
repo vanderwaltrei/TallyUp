@@ -36,7 +36,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Transactions"
+                android:text="@string/transactions"
                 android:textColor="@color/foreground"
                 android:textSize="20sp"
                 android:textStyle="bold"
@@ -158,7 +158,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:text="No transactions yet"
+            android:text="@string/no_transactions_yet"
             android:textColor="@color/foreground"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -168,7 +168,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
             android:gravity="center"
-            android:text="Start tracking your expenses and income to see them here"
+            android:text="@string/start_tracking_your_expenses_and_income_to_see_them_here"
             android:textColor="@color/muted_foreground"
             android:textSize="14sp" />
 

@@ -107,7 +107,7 @@
                     android:imeOptions="actionNext"
                     android:inputType="textPersonName"
                     android:textColor="@color/foreground"
-                    tools:ignore="DuplicateSpeakableTextCheck,TextContrastCheck" />
+                    tools:ignore="DuplicateSpeakableTextCheck,TextContrastCheck,VisualLintTextFieldSize" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -126,7 +126,7 @@
                     android:imeOptions="actionNext"
                     android:inputType="textPersonName"
                     android:textColor="@color/foreground"
-                    tools:ignore="DuplicateSpeakableTextCheck,TextContrastCheck" />
+                    tools:ignore="DuplicateSpeakableTextCheck,TextContrastCheck,VisualLintTextFieldSize" />
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
 
@@ -155,7 +155,7 @@
                 android:imeOptions="actionNext"
                 android:inputType="textEmailAddress"
                 android:textColor="@color/foreground"
-                tools:ignore="DuplicateSpeakableTextCheck,TextContrastCheck" />
+                tools:ignore="DuplicateSpeakableTextCheck,TextContrastCheck,VisualLintTextFieldSize" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Password label -->
@@ -184,7 +184,7 @@
                 android:imeOptions="actionNext"
                 android:inputType="textPassword"
                 android:textColor="@color/foreground"
-                tools:ignore="DuplicateSpeakableTextCheck,TextContrastCheck" />
+                tools:ignore="DuplicateSpeakableTextCheck,TextContrastCheck,VisualLintTextFieldSize" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Confirm Password label -->
@@ -213,7 +213,7 @@
                 android:imeOptions="actionDone"
                 android:inputType="textPassword"
                 android:textColor="@color/foreground"
-                tools:ignore="DuplicateSpeakableTextCheck,TextContrastCheck" />
+                tools:ignore="DuplicateSpeakableTextCheck,TextContrastCheck,VisualLintTextFieldSize" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Create Account Button -->
@@ -226,7 +226,8 @@
             android:enabled="false"
             android:text="@string/create_account"
             android:textColor="@color/accent_foreground"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            tools:ignore="VisualLintButtonSize" />
 
         <!-- Login Link -->
         <TextView

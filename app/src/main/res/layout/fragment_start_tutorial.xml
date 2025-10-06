@@ -23,7 +23,8 @@
             android:layout_height="134dp"
             android:layout_gravity="center"
             android:src="@drawable/character_happy"
-            android:contentDescription="@string/character" />
+            android:contentDescription="@string/character"
+            tools:ignore="VisualLintBounds" />
 
     </com.google.android.material.card.MaterialCardView>
 
@@ -31,7 +32,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Budgeting made easy"
+        android:text="@string/budgeting_made_easy"
         android:textColor="@color/foreground"
         android:textSize="28sp"
         android:textStyle="bold"
@@ -44,7 +45,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="48dp"
         android:gravity="center"
-        android:text="Take the stress out of your money"
+        android:text="@string/take_the_stress_out_of_your_money"
         android:textColor="@color/muted_foreground"
         android:textSize="18sp"
         tools:ignore="TextContrastCheck" />
@@ -56,10 +57,10 @@
         android:layout_height="wrap_content"
         android:backgroundTint="@color/accent"
         android:paddingVertical="16dp"
-        android:text="Get Started"
+        android:text="@string/get_started"
         android:textColor="@color/accent_foreground"
         android:textSize="16sp"
         android:textStyle="bold"
-        tools:ignore="TextContrastCheck" />
+        tools:ignore="TextContrastCheck,VisualLintButtonSize" />
 
 </LinearLayout>

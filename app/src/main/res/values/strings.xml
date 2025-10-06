@@ -169,6 +169,27 @@
     <string name="e_g_new_headphones">e.g., New headphones</string>
     <string name="enter_your_saving_goal">Enter your saving goal</string>
     <string name="start_saving">Start Saving!</string>
+    <string name="budgeting_made_easy">Budgeting made easy</string>
+    <string name="take_the_stress_out_of_your_money">Take the stress out of your money</string>
+    <string name="get_started">Get Started</string>
+    <string name="start_tracking_your_expenses_and_income_to_see_them_here">Start tracking your expenses and income to see them here</string>
+    <string name="percent">%</string>
+    <string name="r0_r0">R0 / R0</string>
+    <string name="add_money">Add Money</string>
+    <string name="categoryicon">CategoryIcon</string>
+    <string name="food">Food</string>
+    <string name="edit_budget">Edit Budget</string>
+    <string name="imageview">ImageView</string>
+    <string name="r0_00_r20">R0.00 / R20</string>
+    <string name="r20_00_left">R20.00 left</string>
+    <string name="set_monthly_budget">Set Monthly Budget</string>
+    <string name="enter_amount">Enter amount</string>
+    <string name="cancel">Cancel</string>
+    <string name="save_budget">Save Budget</string>
+    <string name="groceries_expense">Groceries - Expense</string>
+    <string name="_06_oct_2025">06 Oct 2025</string>
+    <string name="photos_attached">Photos attached</string>
+    <string name="r_250_00">R 250.00</string>
     <string-array name="type_filter_options">
         <item>All</item>
         <item>Income</item>
