@@ -28,6 +28,6 @@ interface CategoryDao {
     @Query("SELECT EXISTS(SELECT 1 FROM categories WHERE name = :name AND type = :type)")
     suspend fun categoryExists(name: String, type: String): Boolean
 
-    @Query("SELECT * FROM categories WHERE userId = :userId")
+    @Query("SELECT * FROM categories WHERE userId = :userId OR userId = 'default' ORDER BY name ASC")
     suspend fun getCategoriesForUser(userId: String): List<Category>
 }
