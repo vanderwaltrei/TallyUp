@@ -15,6 +15,7 @@ import za.ac.iie.TallyUp.R
 import za.ac.iie.TallyUp.databinding.FragmentDashboardBinding
 import za.ac.iie.TallyUp.models.AppState
 import za.ac.iie.TallyUp.data.AppRepository
+import za.ac.iie.TallyUp.data.AppDatabase
 import za.ac.iie.TallyUp.ui.BudgetDashboardFragment
 import za.ac.iie.TallyUp.ui.insights.InsightsFragment
 import za.ac.iie.TallyUp.utils.CharacterManager
@@ -28,6 +29,7 @@ class DashboardFragment : Fragment() {
     private lateinit var repository: AppRepository
     private lateinit var appState: AppState
     private lateinit var goalDatabase: GoalDatabase
+    private lateinit var appDatabase: AppDatabase
     private var goalsList = mutableListOf<Goal>()
     private lateinit var goalAdapter: GoalAdapter
 
@@ -39,6 +41,7 @@ class DashboardFragment : Fragment() {
         _binding = FragmentDashboardBinding.inflate(inflater, container, false)
         repository = AppRepository(requireContext())
         goalDatabase = GoalDatabase.getDatabase(requireContext())
+        appDatabase = AppDatabase.getDatabase(requireContext())
         appState = repository.loadAppState()
 
         return binding.root
@@ -51,17 +54,34 @@ class DashboardFragment : Fragment() {
         setupUI()
         setupQuickActions()
         loadGoalsFromDatabase()
+        loadTransactionsAndUpdateBudget()
+        debugCheckTransactions() // ← ADD THIS LINE HERE
+    }
+
+    // ADD THIS DEBUG METHOD RIGHT AFTER onViewCreated method:
+    private fun debugCheckTransactions() {
+        val userId = getCurrentUserId()
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val transactions = appDatabase.transactionDao().getTransactionsForUser(userId)
+                println("=== DEBUG: Found ${transactions.size} transactions ===")
+                transactions.forEach { transaction ->
+                    println("Transaction: ${transaction.type} - R${transaction.amount} - ${transaction.category} - User: ${transaction.userId}")
+                }
+                println("=================================")
+            } catch (e: Exception) {
+                println("DEBUG Error: ${e.message}")
+            }
+        }
     }
 
     private fun setupGoalRecyclerView() {
         goalAdapter = GoalAdapter(
             goalsList,
             onAddMoneyClicked = { goal ->
-                // Navigate to GoalsFragment to add money
                 navigateToGoalsFragment()
             },
             onCompleteGoalClicked = { goal ->
-                // Navigate to GoalsFragment to complete goal
                 navigateToGoalsFragment()
             }
         )
@@ -82,6 +102,100 @@ class DashboardFragment : Fragment() {
                 updateGoalsVisibility()
             }
         }
+    }
+
+    private fun loadTransactionsAndUpdateBudget() {
+        val userId = getCurrentUserId()
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                // Get all transactions for current user
+                val transactions = appDatabase.transactionDao().getTransactionsForUser(userId)
+
+                // Calculate total income and expenses
+                val totalIncome = transactions
+                    .filter { it.type == "Income" }
+                    .sumOf { it.amount }
+
+                val totalExpenses = transactions
+                    .filter { it.type == "Expense" }
+                    .sumOf { it.amount }
+
+                // Get monthly budget from app state (total of budget categories)
+                val monthlyBudget = appState.budgetCategories.sumOf { it.budgeted }
+
+                // Calculate available to spend based on budget
+                val availableToSpend = monthlyBudget - totalExpenses
+
+                // Calculate progress percentage (how much of budget is spent)
+                val progressPercentage = if (monthlyBudget > 0) {
+                    ((totalExpenses / monthlyBudget) * 100).toInt().coerceIn(0, 100)
+                } else {
+                    0
+                }
+
+                withContext(Dispatchers.Main) {
+                    updateBudgetUI(availableToSpend, totalExpenses, monthlyBudget, progressPercentage, totalIncome)
+                }
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+                withContext(Dispatchers.Main) {
+                    // Show error state
+                    binding.availableAmount.text = "R0.00"
+                    binding.progressText.text = "0%"
+                    binding.statusText.text = "Error loading data"
+                }
+            }
+        }
+    }
+
+    private fun updateBudgetUI(
+        availableToSpend: Double,
+        totalSpent: Double,
+        totalBudget: Double,
+        progressPercentage: Int,
+        totalIncome: Double
+    ) {
+        // Update available amount - show the actual calculated amount
+        binding.availableAmount.text = "R${"%.2f".format(availableToSpend)}"
+        binding.availableSubtitle.text = "Available to Spend"
+
+        // Update progress text
+        binding.progressText.text = "${progressPercentage}%"
+
+        // Update status indicator based on spending
+        val statusText = when {
+            progressPercentage < 60 -> "On Track!"
+            progressPercentage < 80 -> "Watch It!"
+            else -> "Almost There!"
+        }
+        binding.statusText.text = statusText
+
+        // Update status color based on spending level
+        val context = requireContext()
+        when {
+            progressPercentage < 60 -> {
+                binding.statusText.setBackgroundColor(context.getColor(R.color.success_light))
+                binding.statusText.setTextColor(context.getColor(R.color.success))
+            }
+            progressPercentage < 80 -> {
+                binding.statusText.setBackgroundColor(context.getColor(R.color.warning_light))
+                binding.statusText.setTextColor(context.getColor(R.color.warning))
+            }
+            else -> {
+                binding.statusText.setBackgroundColor(context.getColor(R.color.error))
+                binding.statusText.setTextColor(context.getColor(R.color.error))
+            }
+        }
+
+        // Debug logging
+        println("=== BUDGET CALCULATION ===")
+        println("Total Budget: R$totalBudget")
+        println("Total Spent: R$totalSpent")
+        println("Total Income: R$totalIncome")
+        println("Available: R$availableToSpend")
+        println("Progress: $progressPercentage%")
+        println("==========================")
     }
 
     // Add this method to DashboardFragment
@@ -109,7 +223,6 @@ class DashboardFragment : Fragment() {
             navigateToInsights()
         }
 
-        // Add click listener to goals section to navigate to full goals page
         binding.goalsSection.setOnClickListener {
             navigateToGoalsFragment()
         }
@@ -142,30 +255,8 @@ class DashboardFragment : Fragment() {
         val firstName = appState.user?.firstName ?: "there"
         binding.welcomeText.text = "Hey $firstName! Say hi to $characterName!"
 
-        // Available to spend
-        val totalBudget = appState.budgetCategories.sumOf { it.budgeted }
-        val totalSpent = appState.budgetCategories.sumOf { it.spent }
-        val availableToSpend = totalBudget - totalSpent
-
-        binding.availableAmount.text = "R${"%.2f".format(availableToSpend)}"
-        binding.availableSubtitle.text = "Available to Spend"
-
-        // Progress circle (simplified)
-        val spentPercentage =
-            if (totalBudget > 0.0) ((totalSpent / totalBudget) * 100.0).toInt() else 0
-        binding.progressText.text = "${spentPercentage}%"
-
-        // Status indicator
-        val statusText = when {
-            spentPercentage < 60 -> "On Track!"
-            spentPercentage < 80 -> "Watch It!"
-            else -> "Almost There!"
-        }
-        binding.statusText.text = statusText
-
-        // Recent transactions
-        val recentTransactions = appState.transactions.take(3)
-        binding.recentSection.visibility = if (recentTransactions.isEmpty()) View.GONE else View.VISIBLE
+        // Recent transactions section visibility
+        binding.recentSection.visibility = View.GONE
 
         // Character display using CharacterManager
         val characterDrawable = CharacterManager.getCharacterDrawable(requireContext())
@@ -182,8 +273,10 @@ class DashboardFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        // Refresh goals when returning to dashboard
+        // Refresh goals and transactions when returning to dashboard
         loadGoalsFromDatabase()
+        loadTransactionsAndUpdateBudget()
+        debugCheckTransactions() // ← You can also add it here to see updates
     }
 
     override fun onDestroyView() {
