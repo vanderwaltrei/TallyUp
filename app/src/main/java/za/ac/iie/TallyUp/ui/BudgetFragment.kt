@@ -1,6 +1,7 @@
 package za.ac.iie.TallyUp.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +17,11 @@ class BudgetFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var repository: AppRepository
+    private lateinit var adapter: CategoryBreakdownAdapter
+
+    companion object {
+        private const val TAG = "BudgetFragment"
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,33 +38,26 @@ class BudgetFragment : Fragment() {
 
         val state = repository.loadAppState()
 
-        // Calculate total budget from all categories
-        val totalBudget = calculateTotalBudget(state)
-
         // Setup RecyclerView with CategoryBreakdownAdapter
         binding.categoryRecycler.layoutManager = LinearLayoutManager(requireContext())
-        val adapter = CategoryBreakdownAdapter(state.budgetCategories, state.transactions)
+        adapter = CategoryBreakdownAdapter(state.budgetCategories, state.transactions)
 
         // Set callback for budget updates
         adapter.onBudgetUpdated = { categoryName, newAmount ->
-            // Update the category budget and refresh the total
             updateCategoryBudget(state, categoryName, newAmount)
-            refreshBudgetDisplay()
         }
 
         binding.categoryRecycler.adapter = adapter
 
         // Update budget summary with calculated total
-        updateBudgetSummary(totalBudget)
+        updateBudgetSummary()
     }
 
-    private fun calculateTotalBudget(state: za.ac.iie.TallyUp.models.AppState): Double {
-        // Sum all category budget amounts
-        return state.budgetCategories.sumOf { it.budgeted }
-    }
-
-    private fun updateBudgetSummary(totalBudget: Double) {
+    private fun updateBudgetSummary() {
         val state = repository.loadAppState()
+
+        // Calculate total budget from all categories
+        val totalBudget = calculateTotalBudget(state)
 
         // Calculate total spent from transactions
         val spent = state.transactions
@@ -68,6 +67,13 @@ class BudgetFragment : Fragment() {
         // Update the budget amount text view
         binding.tvBudgetAmount.text = "R${"%.2f".format(totalBudget)}"
         binding.tvMonthSpent.text = "R${"%.2f".format(spent)} Spent This Month"
+
+        Log.d(TAG, "Budget Summary Updated - Total: R$totalBudget, Spent: R$spent")
+    }
+
+    private fun calculateTotalBudget(state: za.ac.iie.TallyUp.models.AppState): Double {
+        // Sum all category budget amounts
+        return state.budgetCategories.sumOf { it.budgeted }
     }
 
     private fun updateCategoryBudget(
@@ -75,6 +81,8 @@ class BudgetFragment : Fragment() {
         categoryName: String,
         newAmount: Double
     ) {
+        Log.d(TAG, "Updating budget for category: $categoryName to R$newAmount")
+
         // Find and update the category
         val updatedCategories = state.budgetCategories.map { category ->
             if (category.name == categoryName) {
@@ -87,23 +95,34 @@ class BudgetFragment : Fragment() {
         // Update the app state
         val updatedState = state.copy(budgetCategories = updatedCategories)
         repository.saveAppState(updatedState)
+
+        Log.d(TAG, "Budget updated and saved to repository")
+
+        // Refresh both the summary and the adapter
+        refreshBudgetDisplay(updatedCategories)
     }
 
-    private fun refreshBudgetDisplay() {
-        val state = repository.loadAppState()
-        val totalBudget = calculateTotalBudget(state)
-        updateBudgetSummary(totalBudget)
+    private fun refreshBudgetDisplay(updatedCategories: List<za.ac.iie.TallyUp.models.BudgetCategory>) {
+        // Update the summary
+        updateBudgetSummary()
 
-        // Refresh the RecyclerView adapter
-        binding.categoryRecycler.adapter?.notifyDataSetChanged()
+        // Update the adapter with new categories
+        adapter.updateCategories(updatedCategories)
+
+        Log.d(TAG, "Budget display refreshed with ${updatedCategories.size} categories")
+
+        // Debug: Print all category budgets
+        updatedCategories.forEach { category ->
+            Log.d(TAG, "Category: ${category.name}, Budget: R${category.budgeted}")
+        }
     }
 
     override fun onResume() {
         super.onResume()
         // Refresh data when returning to fragment
         val state = repository.loadAppState()
-        val totalBudget = calculateTotalBudget(state)
-        updateBudgetSummary(totalBudget)
+        updateBudgetSummary()
+        adapter.updateCategories(state.budgetCategories)
     }
 
     override fun onDestroyView() {

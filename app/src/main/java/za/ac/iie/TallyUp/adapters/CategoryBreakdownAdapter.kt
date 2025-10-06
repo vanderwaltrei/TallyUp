@@ -11,7 +11,7 @@ import za.ac.iie.TallyUp.models.BudgetCategory
 import za.ac.iie.TallyUp.data.Transaction
 
 class CategoryBreakdownAdapter(
-    private val categories: List<BudgetCategory>,
+    private var categories: List<BudgetCategory>,
     private val transactions: List<Transaction>
 ) : RecyclerView.Adapter<CategoryBreakdownAdapter.ViewHolder>() {
 
@@ -61,6 +61,9 @@ class CategoryBreakdownAdapter(
                 binding.btnExpandArrow.animate().rotation(90f).setDuration(200).start()
                 binding.editAmount.addTextChangedListener(textWatcher)
                 binding.editAmount.requestFocus()
+                // Set current budget as hint when opening
+                val category = categories[adapterPosition]
+                binding.editAmount.hint = "%.2f".format(category.budgeted)
             } else {
                 binding.editSection.visibility = View.GONE
                 binding.btnExpandText.text = "Edit Budget"
@@ -89,11 +92,11 @@ class CategoryBreakdownAdapter(
         private fun updateCategoryTexts() {
             val category = categories[adapterPosition]
             val spent = getSpentAmount(category.name)
-            val remaining = category.amount - spent
-            val percent = if (category.amount > 0) ((spent / category.amount) * 100).toInt() else 0
+            val remaining = category.budgeted - spent
+            val percent = if (category.budgeted > 0) ((spent / category.budgeted) * 100).toInt() else 0
 
             binding.categorySpent.text =
-                "R${"%.2f".format(spent)} / R${"%.2f".format(category.amount)}"
+                "R${"%.2f".format(spent)} / R${"%.2f".format(category.budgeted)}"
             binding.categoryRemaining.text = "R${"%.2f".format(remaining)} left"
             binding.progressBar.progress = percent
         }
@@ -113,26 +116,32 @@ class CategoryBreakdownAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val category = categories[position]
         val spent = transactions.filter { it.category == category.name }.sumOf { it.amount }
-        val remaining = category.amount - spent
-        val percent = if (category.amount > 0.0) ((spent / category.amount) * 100).toInt() else 0
+        val remaining = category.budgeted - spent
+        val percent = if (category.budgeted > 0.0) ((spent / category.budgeted) * 100).toInt() else 0
 
         with(holder.binding) {
             categoryName.text = category.name
-            categorySpent.text = "R${"%.2f".format(spent)} / R${"%.2f".format(category.amount)}"
+            categorySpent.text = "R${"%.2f".format(spent)} / R${"%.2f".format(category.budgeted)}"
             categoryRemaining.text = "R${"%.2f".format(remaining)} left"
             progressBar.progress = percent
             categoryIcon.setImageResource(getCategoryIcon(category.name))
-            editAmount.hint = "%.2f".format(category.amount)
 
             // Reset states
             editSection.visibility = View.GONE
             btnExpandText.text = "Edit Budget"
             btnExpandArrow.rotation = 0f
             editAmount.text?.clear()
+            editAmount.hint = "%.2f".format(category.budgeted)
         }
     }
 
     override fun getItemCount() = categories.size
+
+    // Add this method to update categories and refresh the adapter
+    fun updateCategories(newCategories: List<BudgetCategory>) {
+        categories = newCategories
+        notifyDataSetChanged()
+    }
 
     private fun getCategoryIcon(categoryName: String): Int {
         return when (categoryName.lowercase()) {
