@@ -15,6 +15,7 @@ import android.content.Context
 import android.view.View
 import za.ac.iie.TallyUp.R
 
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
