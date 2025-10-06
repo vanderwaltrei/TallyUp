@@ -8,10 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import za.ac.iie.TallyUp.R
 import za.ac.iie.TallyUp.adapters.CategoryBreakdownAdapter
 import za.ac.iie.TallyUp.data.AppDatabase
 import za.ac.iie.TallyUp.data.AppRepository
@@ -45,7 +47,18 @@ class BudgetFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Setup back button
+        setupBackButton()
+
         loadBudgetData()
+    }
+
+    private fun setupBackButton() {
+        binding.backButton.setOnClickListener {
+            // Navigate to home using bottom navigation (same as GoalsFragment)
+            val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.bottom_navigation)
+            bottomNav?.selectedItemId = R.id.navigation_home
+        }
     }
 
     private fun loadBudgetData() {
