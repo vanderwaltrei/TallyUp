@@ -1,12 +1,15 @@
 package za.ac.iie.TallyUp.ui
 
+import TransactionViewModel
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -15,6 +18,7 @@ import za.ac.iie.TallyUp.R
 import za.ac.iie.TallyUp.adapters.TransactionAdapter
 import za.ac.iie.TallyUp.data.AppDatabase
 import za.ac.iie.TallyUp.databinding.FragmentTransactionsBinding
+import za.ac.iie.TallyUp.models.TransactionViewModelFactory
 
 class TransactionsFragment : Fragment() {
 
@@ -22,6 +26,7 @@ class TransactionsFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var transactionAdapter: TransactionAdapter
     private lateinit var appDatabase: AppDatabase
+    private lateinit var transactionViewModel: TransactionViewModel
 
     companion object {
         private const val TAG = "TransactionsFragment"
@@ -40,11 +45,15 @@ class TransactionsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val transactionDao = appDatabase.transactionDao()
+        val factory = TransactionViewModelFactory(transactionDao)
+        transactionViewModel = ViewModelProvider(this, factory)[TransactionViewModel::class.java]
+
         setupRecyclerView()
         setupClickListeners()
         setupSpinners()
         loadTransactions()
-        debugCheckAllTransactions() // Debug method to check all transactions in database
+        debugCheckAllTransactions()
     }
 
     private fun setupRecyclerView() {
@@ -56,11 +65,28 @@ class TransactionsFragment : Fragment() {
     }
 
     private fun setupSpinners() {
-        // TODO: Implement spinner functionality for filtering
-        // For now, just hide them since they're not implemented
-        binding.timePeriodSpinner.visibility = View.GONE
-        binding.typeFilterSpinner.visibility = View.GONE
+        binding.timePeriodSpinner.visibility = View.VISIBLE
+        binding.typeFilterSpinner.visibility = View.VISIBLE
+
+        binding.typeFilterSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                val selectedType = parent.getItemAtPosition(position).toString()
+                transactionViewModel.setTypeFilter(selectedType)
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+        }
+
+        binding.timePeriodSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                val selectedTime = parent.getItemAtPosition(position).toString()
+                transactionViewModel.setTimeFilter(selectedTime)
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+        }
     }
+
 
     private fun setupClickListeners() {
         // Button to open AddTransactionFragment
@@ -78,48 +104,26 @@ class TransactionsFragment : Fragment() {
         }
     }
 
+
+
     private fun loadTransactions() {
         val userId = getCurrentUserId()
         Log.d(TAG, "Loading transactions for user: $userId")
 
-        lifecycleScope.launch {
-            try {
-                val transactions = appDatabase.transactionDao().getTransactionsForUser(userId)
-                Log.d(TAG, "Database query completed. Found ${transactions.size} transactions for user $userId")
+        transactionViewModel.loadTransactionsForUser(userId)
 
-                // Debug: Print all transactions for this user
-                transactions.forEachIndexed { index, transaction ->
-                    Log.d(TAG, "User Transaction $index: " +
-                            "ID=${transaction.id}, " +
-                            "Type=${transaction.type}, " +
-                            "Amount=${transaction.amount}, " +
-                            "Category=${transaction.category}, " +
-                            "Date=${transaction.date}, " +
-                            "Description=${transaction.description}")
-                }
+        transactionViewModel.filteredTransactions.observe(viewLifecycleOwner) { transactions ->
+            Log.d(TAG, "Filtered transactions received: ${transactions.size}")
 
-                requireActivity().runOnUiThread {
-                    if (transactions.isNotEmpty()) {
-                        // Show transactions and hide empty state
-                        binding.transactionsRecyclerView.visibility = View.VISIBLE
-                        binding.emptyState.visibility = View.GONE
-                        transactionAdapter.submitList(transactions)
-
-                        Log.d(TAG, "UI Updated: Showing ${transactions.size} transactions")
-                    } else {
-                        // Show empty state
-                        binding.transactionsRecyclerView.visibility = View.GONE
-                        binding.emptyState.visibility = View.VISIBLE
-                        Log.d(TAG, "UI Updated: Showing empty state (no transactions found for user $userId)")
-                    }
-                }
-            } catch (e: Exception) {
-                Log.e(TAG, "Error loading transactions: ${e.message}", e)
-                requireActivity().runOnUiThread {
-                    binding.transactionsRecyclerView.visibility = View.GONE
-                    binding.emptyState.visibility = View.VISIBLE
-                    Log.e(TAG, "Error UI: Showing empty state due to error")
-                }
+            if (transactions.isNotEmpty()) {
+                binding.transactionsRecyclerView.visibility = View.VISIBLE
+                binding.emptyState.visibility = View.GONE
+                transactionAdapter.submitList(transactions)
+                Log.d(TAG, "UI Updated: Showing ${transactions.size} filtered transactions")
+            } else {
+                binding.transactionsRecyclerView.visibility = View.GONE
+                binding.emptyState.visibility = View.VISIBLE
+                Log.d(TAG, "UI Updated: Showing empty state (no filtered transactions)")
             }
         }
     }
