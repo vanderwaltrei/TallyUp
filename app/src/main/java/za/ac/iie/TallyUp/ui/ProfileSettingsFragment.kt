@@ -1,5 +1,8 @@
+@file:Suppress("PackageName")
+
 package za.ac.iie.TallyUp.ui
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -32,6 +35,7 @@ class ProfileSettingsFragment : Fragment() {
         }
     }
 
+    @SuppressLint("UseKtx")
     private fun logoutUser() {
         val prefs = requireContext().getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
         prefs.edit().remove("loggedInEmail").apply()

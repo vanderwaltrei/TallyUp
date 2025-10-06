@@ -1,3 +1,5 @@
+@file:Suppress("PackageName")
+
 package za.ac.iie.TallyUp
 
 import android.os.Bundle
@@ -6,14 +8,12 @@ import androidx.fragment.app.Fragment
 import za.ac.iie.TallyUp.databinding.ActivityMainBinding
 import za.ac.iie.TallyUp.ui.DashboardFragment
 import za.ac.iie.TallyUp.ui.TransactionsFragment
-import za.ac.iie.TallyUp.ui.BudgetDashboardFragment
 import za.ac.iie.TallyUp.ui.BudgetFragment
 import za.ac.iie.TallyUp.ui.GoalsFragment
 import za.ac.iie.TallyUp.ui.ProfileFragment
 import za.ac.iie.TallyUp.ui.LoginFragment
 import android.content.Context
 import android.view.View
-import za.ac.iie.TallyUp.R
 
 
 class MainActivity : AppCompatActivity() {
@@ -122,12 +122,12 @@ class MainActivity : AppCompatActivity() {
         return fragmentsToHideNav.contains(fragmentClassName)
     }
 
-    fun hideNavigation() {
+    private fun hideNavigation() {
         binding.bottomNavigation.visibility = View.GONE
         binding.fabAddTransaction.visibility = View.GONE
     }
 
-    fun showNavigation() {
+    private fun showNavigation() {
         binding.bottomNavigation.visibility = View.VISIBLE
         binding.fabAddTransaction.visibility = View.VISIBLE
     }

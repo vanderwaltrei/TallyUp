@@ -1,5 +1,8 @@
+@file:Suppress("PackageName")
+
 package za.ac.iie.TallyUp.ui
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.text.Editable
@@ -56,6 +59,7 @@ class Question2TutorialFragment : Fragment(R.layout.fragment_question2_tutorial)
         }
     }
 
+    @SuppressLint("UseKtx")
     private fun saveSavingGoal(goal: String) {
         // Save to SharedPreferences for later use
         val prefs = requireContext().getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)

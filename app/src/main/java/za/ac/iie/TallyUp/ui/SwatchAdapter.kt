@@ -1,5 +1,8 @@
+@file:Suppress("PackageName")
+
 package za.ac.iie.TallyUp.ui
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
@@ -8,6 +11,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import za.ac.iie.TallyUp.R
 
+@Suppress("DEPRECATION")
 class SwatchAdapter(
     private val colors: List<String>,
     private val onColorSelected: (String) -> Unit
@@ -25,6 +29,7 @@ class SwatchAdapter(
         return ViewHolder(view)
     }
 
+    @SuppressLint("UseKtx")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val color = colors[position]
         val isSelected = position == selectedPosition
