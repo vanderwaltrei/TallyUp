@@ -1,15 +1,17 @@
 package za.ac.iie.TallyUp.ui
 
-
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import za.ac.iie.TallyUp.R
 import za.ac.iie.TallyUp.model.Goal
+import za.ac.iie.TallyUp.utils.CharacterManager
 import kotlin.math.roundToInt
 
 class GoalAdapter(
@@ -18,6 +20,8 @@ class GoalAdapter(
     private val onCompleteGoalClicked: (Goal) -> Unit
 ) : RecyclerView.Adapter<GoalAdapter.GoalViewHolder>() {
 
+    private lateinit var context: Context
+
     inner class GoalViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val name: TextView = itemView.findViewById(R.id.goalName)
         val amount: TextView = itemView.findViewById(R.id.goalAmount)
@@ -25,9 +29,11 @@ class GoalAdapter(
         val percentage: TextView = itemView.findViewById(R.id.goalPercentage)
         val progress: ProgressBar = itemView.findViewById(R.id.goalProgress)
         val button: Button = itemView.findViewById(R.id.goalButton)
+        val icon: ImageView = itemView.findViewById(R.id.goalIcon)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GoalViewHolder {
+        context = parent.context
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.goal_item, parent, false)
         return GoalViewHolder(view)
@@ -35,6 +41,10 @@ class GoalAdapter(
 
     override fun onBindViewHolder(holder: GoalViewHolder, position: Int) {
         val goal = goals[position]
+
+        // Set character icon based on user's selection
+        val characterDrawable = CharacterManager.getCharacterDrawable(context)
+        holder.icon.setImageResource(characterDrawable)
 
         holder.name.text = goal.name
         holder.amount.text = "R${goal.current.toInt()} / R${goal.target.toInt()}"
