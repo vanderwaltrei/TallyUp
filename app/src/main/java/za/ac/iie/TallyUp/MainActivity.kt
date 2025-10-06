@@ -74,20 +74,18 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupFAB() {
         binding.fabAddTransaction.setOnClickListener {
-            // Load TransactionsFragment when FAB is clicked
-            loadFragment(TransactionsFragment())
+            // Load AddTransactionFragment when FAB is clicked
+            loadFragment(za.ac.iie.TallyUp.ui.AddTransactionFragment())
 
-            // Optional: Also update the bottom navigation to show Transactions as selected
-            binding.bottomNavigation.selectedItemId = R.id.navigation_transactions
-
-            // Optional: Update toolbar title
-            supportActionBar?.title = "Transactions"
+            // Update toolbar title
+            supportActionBar?.title = "Add Transaction"
         }
     }
 
     private fun loadFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
+            .addToBackStack(null)
             .commit()
     }
 
