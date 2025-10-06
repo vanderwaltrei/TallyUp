@@ -130,6 +130,9 @@ class CategoryBreakdownAdapter(
         holder.binding.categoryRemaining.text = "R${"%.2f".format(remaining)} left"
         holder.binding.progressBar.progress = percent
 
+        // Category icon based on category name
+        holder.binding.categoryIcon.setImageResource(getCategoryIcon(category.name))
+
         // Set current budget amount in edit text as hint
         holder.binding.editAmount.hint = "%.2f".format(category.amount)
 
@@ -143,4 +146,26 @@ class CategoryBreakdownAdapter(
     }
 
     override fun getItemCount() = categories.size
+
+    private fun getSpentAmount(categoryName: String): Double {
+        return transactions
+            .filter { it.category == categoryName }
+            .sumOf { it.amount }
+    }
+
+    // Category names = appropriate icons
+    private fun getCategoryIcon(categoryName: String): Int {
+        return when (categoryName.lowercase()) {
+            "food" -> za.ac.iie.TallyUp.R.drawable.ic_coffee
+            "transport" -> za.ac.iie.TallyUp.R.drawable.ic_car
+            "books" -> za.ac.iie.TallyUp.R.drawable.ic_book_open
+            "fun" -> za.ac.iie.TallyUp.R.drawable.ic_heart
+            "shopping" -> za.ac.iie.TallyUp.R.drawable.ic_shopping_bag
+            "salary" -> za.ac.iie.TallyUp.R.drawable.ic_coin
+            "gift" -> za.ac.iie.TallyUp.R.drawable.ic_star
+            "freelance" -> za.ac.iie.TallyUp.R.drawable.ic_trending_up
+            "allowance" -> za.ac.iie.TallyUp.R.drawable.ic_piggy_bank
+            else -> za.ac.iie.TallyUp.R.drawable.ic_circle // Default icon
+        }
+    }
 }

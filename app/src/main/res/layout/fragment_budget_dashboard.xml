@@ -140,14 +140,14 @@ android:paddingBottom="16dp"> <!-- Added bottom padding to content -->
                 android:textSize="16sp"
                 android:textStyle="bold"/>
 
-            <TextView
-                android:id="@+id/days_left_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="5 days left"
-                android:textColor="@color/warning"
-                android:textSize="16sp"
-                android:textStyle="bold"/>
+<!--            <TextView-->
+<!--                android:id="@+id/days_left_text"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="5 days left"-->
+<!--                android:textColor="@color/warning"-->
+<!--                android:textSize="16sp"-->
+<!--                android:textStyle="bold"/>-->
         </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

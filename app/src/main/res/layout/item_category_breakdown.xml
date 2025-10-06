@@ -27,7 +27,7 @@
                 android:id="@+id/categoryIcon"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:src="@drawable/character_happy"
+                android:src="@drawable/ic_shopping_bag"
                 android:background="@drawable/circle_background"
                 android:contentDescription="CategoryIcon" />
 
@@ -42,7 +42,7 @@
                 android:textStyle="bold"
                 android:textSize="16sp"/>
 
-            <!-- 🔽 CHANGED: More descriptive button with text -->
+            <!-- Edit Budget Button -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnExpand"
                 android:layout_width="wrap_content"
@@ -96,21 +96,6 @@
             android:progressTint="@color/primary"
             android:layout_marginVertical="6dp"/>
 
-<!--        &lt;!&ndash; 🔽 CHANGED: Added hint text above edit section &ndash;&gt;-->
-<!--        <TextView-->
-<!--            android:id="@+id/Hint"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="💡 Tap 'Edit Budget' above to set your monthly budget"-->
-<!--            android:textSize="12sp"-->
-<!--            android:textColor="@color/muted_foreground"-->
-<!--            android:background="@color/primary_soft"-->
-<!--            android:padding="8dp"-->
-<!--            android:paddingHorizontal="12dp"-->
-<!--            app:cornerRadius="8dp"-->
-<!--            android:layout_marginTop="4dp"-->
-<!--            android:visibility="visible"/>-->
-
         <!-- 🔹 Expandable Edit Section -->
         <LinearLayout
             android:id="@+id/editSection"
@@ -123,7 +108,7 @@
             android:padding="12dp"
             app:cornerRadius="8dp">
 
-            <!-- 🔽 CHANGED: Added section title -->
+            <!-- Section Title -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -163,7 +148,7 @@
 
             </LinearLayout>
 
-            <!-- 🔽 CHANGED: Better button layout -->
+            <!-- Button Layout -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

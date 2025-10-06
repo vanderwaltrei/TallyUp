@@ -41,7 +41,7 @@ class BudgetDashboardFragment : Fragment() {
         binding.totalBudgetText.text = "R${"%.2f".format(spent)} / R${"%.2f".format(totalBudget)}"
         binding.budgetProgressBar.progress = progress
         binding.remainingBudgetText.text = "R${"%.2f".format(remaining)} Remaining"
-        binding.daysLeftText.text = "5 days left" // TODO: calculate from cycle
+        //binding.daysLeftText.text = "5 days left" // TODO: calculate from cycle
 
         // Setup category breakdown recycler - Use CategoryBreakdownAdapter
         binding.categoryRecycler.layoutManager = LinearLayoutManager(requireContext())
