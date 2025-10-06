@@ -42,13 +42,23 @@
                 android:textStyle="bold"
                 android:textSize="16sp"/>
 
-            <ImageButton
+            <!-- 🔽 CHANGED: More descriptive button with text -->
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnExpand"
-                android:layout_width="36dp"
+                android:layout_width="wrap_content"
                 android:layout_height="36dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_arrow_right"
-                app:tint="@color/muted_foreground"/>
+                android:text="Edit Budget"
+                android:textColor="@color/primary"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:drawableEnd="@drawable/ic_arrow_right"
+                android:drawablePadding="4dp"
+                android:paddingHorizontal="12dp"
+                app:strokeColor="@color/primary"
+                app:strokeWidth="1dp"
+                app:cornerRadius="18dp"
+                style="@style/Widget.Material3.Button.OutlinedButton"/>
         </LinearLayout>
 
         <!-- 🔹 Budget Info -->
@@ -86,51 +96,103 @@
             android:progressTint="@color/primary"
             android:layout_marginVertical="6dp"/>
 
+<!--        &lt;!&ndash; 🔽 CHANGED: Added hint text above edit section &ndash;&gt;-->
+<!--        <TextView-->
+<!--            android:id="@+id/editHint"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="💡 Tap 'Edit Budget' above to set your monthly budget"-->
+<!--            android:textSize="12sp"-->
+<!--            android:textColor="@color/muted_foreground"-->
+<!--            android:background="@color/primary_soft"-->
+<!--            android:padding="8dp"-->
+<!--            android:paddingHorizontal="12dp"-->
+<!--            app:cornerRadius="8dp"-->
+<!--            android:layout_marginTop="4dp"-->
+<!--            android:visibility="visible"/>-->
+
         <!-- 🔹 Expandable Edit Section -->
         <LinearLayout
             android:id="@+id/editSection"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
+            android:orientation="vertical"
             android:visibility="gone"
-            android:layout_marginTop="8dp">
+            android:layout_marginTop="12dp"
+            android:background="@color/primary_soft"
+            android:padding="12dp"
+            app:cornerRadius="8dp">
 
-            <EditText
-                android:id="@+id/editAmount"
-                android:layout_width="0dp"
+            <!-- 🔽 CHANGED: Added section title -->
+            <TextView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="R"
-                android:inputType="numberDecimal"
-                android:padding="8dp"
-                android:backgroundTint="@color/input"
-                android:textColor="@color/foreground"
-                android:textColorHint="@color/muted_foreground" />
+                android:text="Set Monthly Budget"
+                android:textColor="@color/primary"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"/>
 
-            <!-- ✅ Fixed Save Button -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnSave"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Save"
-                android:textColor="@color/primary_foreground"
-                android:layout_marginStart="8dp"
-                app:backgroundTint="@color/primary"
-                app:rippleColor="@color/primary_light"
-                android:paddingHorizontal="16dp"
-                android:paddingVertical="8dp"
-                android:fontFamily="sans-serif-medium"
-                android:textAllCaps="false" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
 
-            <ImageButton
-                android:id="@+id/btnCancel"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:layout_marginStart="4dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_x"
-                app:tint="@color/muted_foreground"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="R"
+                    android:textColor="@color/foreground"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginEnd="8dp"/>
+
+                <EditText
+                    android:id="@+id/editAmount"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Enter amount"
+                    android:inputType="numberDecimal"
+                    android:padding="12dp"
+                    android:background="@color/white"
+                    android:textColor="@color/foreground"
+                    android:textColorHint="@color/muted_foreground"
+                    app:cornerRadius="4dp"/>
+
+            </LinearLayout>
+
+            <!-- 🔽 CHANGED: Better button layout -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="end"
+                android:layout_marginTop="8dp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cancel"
+                    android:textColor="@color/muted_foreground"
+                    android:layout_marginEnd="8dp"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:textAllCaps="false" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSave"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Save Budget"
+                    android:textColor="@color/primary_foreground"
+                    app:backgroundTint="@color/primary"
+                    app:rippleColor="@color/primary_light"
+                    android:paddingHorizontal="16dp"
+                    android:textAllCaps="false" />
+
+            </LinearLayout>
         </LinearLayout>
 
     </LinearLayout>
