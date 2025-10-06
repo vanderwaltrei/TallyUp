@@ -1,5 +1,6 @@
+@file:Suppress("PackageName")
+
 package za.ac.iie.TallyUp.models
-import za.ac.iie.TallyUp.models.TransactionViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import za.ac.iie.TallyUp.data.TransactionDao

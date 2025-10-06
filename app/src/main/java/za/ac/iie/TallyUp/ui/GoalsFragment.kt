@@ -14,8 +14,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import za.ac.iie.TallyUp.R
 import za.ac.iie.TallyUp.databinding.FragmentGoalsBinding
-import za.ac.iie.TallyUp.model.Goal
-import za.ac.iie.TallyUp.model.GoalDatabase
+import za.ac.iie.TallyUp.models.Goal
+import za.ac.iie.TallyUp.models.GoalDatabase
 
 class GoalsFragment : Fragment() {
 

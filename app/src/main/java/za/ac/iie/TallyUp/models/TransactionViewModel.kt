@@ -1,3 +1,5 @@
+@file:Suppress("PackageName")
+
 package za.ac.iie.TallyUp.models
 
 import androidx.lifecycle.MutableLiveData

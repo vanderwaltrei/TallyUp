@@ -13,8 +13,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import za.ac.iie.TallyUp.R
-import za.ac.iie.TallyUp.model.Goal
-import za.ac.iie.TallyUp.model.GoalDatabase
+import za.ac.iie.TallyUp.models.Goal
+import za.ac.iie.TallyUp.models.GoalDatabase
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

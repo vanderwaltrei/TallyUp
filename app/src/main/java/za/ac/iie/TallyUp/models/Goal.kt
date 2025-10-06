@@ -1,4 +1,6 @@
-package za.ac.iie.TallyUp.model
+@file:Suppress("PackageName")
+
+package za.ac.iie.TallyUp.models
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

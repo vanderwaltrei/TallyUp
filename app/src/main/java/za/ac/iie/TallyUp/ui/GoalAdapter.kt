@@ -10,9 +10,8 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import za.ac.iie.TallyUp.R
-import za.ac.iie.TallyUp.model.Goal
+import za.ac.iie.TallyUp.models.Goal
 import za.ac.iie.TallyUp.utils.CharacterManager
-import kotlin.math.roundToInt
 
 class GoalAdapter(
     private val goals: List<Goal>,

@@ -1,10 +1,13 @@
-package za.ac.iie.TallyUp.model
+@file:Suppress("PackageName")
+
+package za.ac.iie.TallyUp.data
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
+import za.ac.iie.TallyUp.models.Goal
 
 @Dao
 interface GoalDao {

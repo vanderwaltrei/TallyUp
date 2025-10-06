@@ -1,3 +1,5 @@
+@file:Suppress("PackageName")
+
 package za.ac.iie.TallyUp.data
 
 import android.content.Context
@@ -8,6 +10,7 @@ object DatabaseProvider {
 
     fun getDatabase(context: Context): AppDatabase {
         if (dbInstance == null) {
+            @Suppress("SpellCheckingInspection")
             dbInstance = Room.databaseBuilder(
                 context.applicationContext,
                 AppDatabase::class.java,

@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -21,11 +20,9 @@ import za.ac.iie.TallyUp.databinding.FragmentDashboardBinding
 import za.ac.iie.TallyUp.models.AppState
 import za.ac.iie.TallyUp.data.AppRepository
 import za.ac.iie.TallyUp.data.AppDatabase
-import za.ac.iie.TallyUp.ui.BudgetDashboardFragment
-import za.ac.iie.TallyUp.ui.insights.InsightsFragment
 import za.ac.iie.TallyUp.utils.CharacterManager
-import za.ac.iie.TallyUp.model.Goal
-import za.ac.iie.TallyUp.model.GoalDatabase
+import za.ac.iie.TallyUp.models.Goal
+import za.ac.iie.TallyUp.models.GoalDatabase
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
