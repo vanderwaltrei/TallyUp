@@ -21,18 +21,41 @@ class CategoryBreakdownAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         init {
-            // Setup expand/collapse functionality
-            binding.btnExpand.setOnClickListener {
+            val expandContainer = binding.btnExpandContainer
+            val expandText = binding.btnExpandText
+            val expandArrow = binding.btnExpandArrow
+
+            // 🔹 Expand/Collapse functionality
+            expandContainer.setOnClickListener {
                 val isExpanded = binding.editSection.visibility == View.VISIBLE
                 binding.editSection.visibility = if (isExpanded) View.GONE else View.VISIBLE
-                // Rotate arrow icon
-                binding.btnExpand.rotation = if (isExpanded) 0f else 90f
+
+                // Update button text and arrow rotation
+                expandText.text = if (isExpanded) "Edit Budget" else "Close"
+                expandArrow.animate()
+                    .rotation(if (isExpanded) 0f else 90f)
+                    .setDuration(200)
+                    .start()
             }
 
+            // 🔹 Cancel button
             binding.btnCancel.setOnClickListener {
                 binding.editSection.visibility = View.GONE
-                binding.btnExpand.rotation = 0f
+                expandText.text = "Edit Budget"
+                expandArrow.animate().rotation(0f).setDuration(200).start()
                 binding.editAmount.text.clear()
+            }
+
+            // 🔹 Save button
+            binding.btnSave.setOnClickListener {
+                val newAmount = binding.editAmount.text.toString().toDoubleOrNull()
+                if (newAmount != null) {
+                    // TODO: Implement saving logic via ViewModel or callback
+                    binding.editSection.visibility = View.GONE
+                    expandText.text = "Edit Budget"
+                    expandArrow.animate().rotation(0f).setDuration(200).start()
+                    binding.editAmount.text.clear()
+                }
             }
         }
     }
@@ -46,32 +69,25 @@ class CategoryBreakdownAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val category = categories[position]
-        // Filter expense transactions for this category and sum amounts
+
+        // 🔹 Calculate spent and remaining amounts
         val spent = transactions
             .filter { it.type == "Expense" && it.category == category.name }
             .sumOf { it.amount }
+
         val remaining = category.budgeted - spent
         val percent = if (category.budgeted > 0.0) ((spent / category.budgeted) * 100.0).toInt() else 0
 
+        // 🔹 Bind data
         holder.binding.categoryName.text = category.name
         holder.binding.categorySpent.text = "R${"%.2f".format(spent)} / R${"%.2f".format(category.budgeted)}"
         holder.binding.categoryRemaining.text = "R${"%.2f".format(remaining)} left"
         holder.binding.progressBar.progress = percent
 
-        // Reset edit section visibility
+        // Reset UI each time (to prevent recycled state issues)
         holder.binding.editSection.visibility = View.GONE
-        holder.binding.btnExpand.rotation = 0f
-
-        // Handle save button
-        holder.binding.btnSave.setOnClickListener {
-            val newAmount = holder.binding.editAmount.text.toString().toDoubleOrNull()
-            if (newAmount != null) {
-                // TODO: Implement saving the updated budget amount
-                // You'll need to add a callback or use a ViewModel for this
-                holder.binding.editSection.visibility = View.GONE
-                holder.binding.btnExpand.rotation = 0f
-            }
-        }
+        holder.binding.btnExpandText.text = "Edit Budget"
+        holder.binding.btnExpandArrow.rotation = 0f
     }
 
     override fun getItemCount() = categories.size

@@ -15,7 +15,7 @@ class CategoryBreakdownAdapter(
     private val transactions: List<Transaction>
 ) : RecyclerView.Adapter<CategoryBreakdownAdapter.ViewHolder>() {
 
-    // Callback interface for saving budget changes
+    // Callback for budget update events
     var onBudgetUpdated: ((categoryName: String, newAmount: Double) -> Unit)? = null
 
     inner class ViewHolder(val binding: ItemCategoryBreakdownBinding) :
@@ -23,92 +23,83 @@ class CategoryBreakdownAdapter(
 
         private val textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-
             override fun afterTextChanged(s: Editable?) {
-                updateBudgetText(s.toString())
+                updateBudgetPreview(s.toString())
             }
         }
 
         init {
-            // Setup expand/collapse functionality
-            binding.btnExpand.setOnClickListener {
+            // Expand or collapse when container is clicked
+            binding.btnExpandContainer.setOnClickListener {
                 val isExpanded = binding.editSection.visibility == View.VISIBLE
-                binding.editSection.visibility = if (isExpanded) View.GONE else View.VISIBLE
-
-                // Update button text based on state
-                binding.btnExpand.text = if (isExpanded) "Edit Budget" else "Close"
-
-                // Rotate arrow icon
-                binding.btnExpand.rotation = if (isExpanded) 0f else 180f
-
-                // Add/remove TextWatcher when section expands/collapses
-                if (!isExpanded) {
-                    binding.editAmount.addTextChangedListener(textWatcher)
-                    binding.editAmount.requestFocus()
-                } else {
-                    binding.editAmount.removeTextChangedListener(textWatcher)
-                    binding.editAmount.text?.clear()
-                }
+                toggleEditSection(!isExpanded)
             }
 
+            // Cancel editing
             binding.btnCancel.setOnClickListener {
-                binding.editSection.visibility = View.GONE
-                binding.btnExpand.text = "Edit Budget"
-                binding.btnExpand.rotation = 0f
-                binding.editAmount.removeTextChangedListener(textWatcher)
-                binding.editAmount.text?.clear()
-                // Reset to original values
+                toggleEditSection(false)
                 updateCategoryTexts()
             }
 
+            // Save new budget
             binding.btnSave.setOnClickListener {
                 val newAmount = binding.editAmount.text.toString().toDoubleOrNull()
                 if (newAmount != null && newAmount > 0) {
-                    // Use the callback to save the budget
                     val category = categories[adapterPosition]
                     onBudgetUpdated?.invoke(category.name, newAmount)
-
-                    binding.editSection.visibility = View.GONE
-                    binding.btnExpand.text = "Edit Budget"
-                    binding.btnExpand.rotation = 0f
-                    binding.editAmount.removeTextChangedListener(textWatcher)
-
-                    // Show success message or update UI accordingly
+                    toggleEditSection(false)
                 }
             }
         }
 
-        private fun updateBudgetText(enteredAmount: String) {
-            val amount = enteredAmount.toDoubleOrNull() ?: 0.0
+        /** Opens or closes the edit section with animation and arrow rotation */
+        private fun toggleEditSection(expand: Boolean) {
+            if (expand) {
+                binding.editSection.visibility = View.VISIBLE
+                binding.btnExpandText.text = "Close"
+                binding.btnExpandArrow.animate().rotation(90f).setDuration(200).start()
+                binding.editAmount.addTextChangedListener(textWatcher)
+                binding.editAmount.requestFocus()
+            } else {
+                binding.editSection.visibility = View.GONE
+                binding.btnExpandText.text = "Edit Budget"
+                binding.btnExpandArrow.animate().rotation(0f).setDuration(200).start()
+                binding.editAmount.removeTextChangedListener(textWatcher)
+                binding.editAmount.text?.clear()
+            }
+        }
+
+        /** Update preview text and progress as user types */
+        private fun updateBudgetPreview(entered: String) {
+            val newAmount = entered.toDoubleOrNull() ?: 0.0
             val category = categories[adapterPosition]
             val spent = getSpentAmount(category.name)
 
-            // Update the preview text in real-time
-            binding.categorySpent.text = "R${"%.2f".format(spent)} / R${"%.2f".format(amount)}"
-            binding.categoryRemaining.text = "R${"%.2f".format(amount - spent)} left"
+            binding.categorySpent.text =
+                "R${"%.2f".format(spent)} / R${"%.2f".format(newAmount)}"
+            binding.categoryRemaining.text =
+                "R${"%.2f".format(newAmount - spent)} left"
 
-            // Update progress bar in real-time
-            val percent = if (amount > 0.0) ((spent / amount) * 100.0).toInt() else 0
+            val percent = if (newAmount > 0) ((spent / newAmount) * 100).toInt() else 0
             binding.progressBar.progress = percent
         }
 
+        /** Refresh category labels and progress after closing editor */
         private fun updateCategoryTexts() {
             val category = categories[adapterPosition]
             val spent = getSpentAmount(category.name)
             val remaining = category.amount - spent
-            val percent = if (category.amount > 0.0) ((spent / category.amount) * 100).toInt() else 0
+            val percent = if (category.amount > 0) ((spent / category.amount) * 100).toInt() else 0
 
-            binding.categorySpent.text = "R${"%.2f".format(spent)} / R${"%.2f".format(category.amount)}"
+            binding.categorySpent.text =
+                "R${"%.2f".format(spent)} / R${"%.2f".format(category.amount)}"
             binding.categoryRemaining.text = "R${"%.2f".format(remaining)} left"
             binding.progressBar.progress = percent
         }
 
         private fun getSpentAmount(categoryName: String): Double {
-            return transactions
-                .filter { it.category == categoryName }
-                .sumOf { it.amount }
+            return transactions.filter { it.category == categoryName }.sumOf { it.amount }
         }
     }
 
@@ -125,35 +116,24 @@ class CategoryBreakdownAdapter(
         val remaining = category.amount - spent
         val percent = if (category.amount > 0.0) ((spent / category.amount) * 100).toInt() else 0
 
-        holder.binding.categoryName.text = category.name
-        holder.binding.categorySpent.text = "R${"%.2f".format(spent)} / R${"%.2f".format(category.amount)}"
-        holder.binding.categoryRemaining.text = "R${"%.2f".format(remaining)} left"
-        holder.binding.progressBar.progress = percent
+        with(holder.binding) {
+            categoryName.text = category.name
+            categorySpent.text = "R${"%.2f".format(spent)} / R${"%.2f".format(category.amount)}"
+            categoryRemaining.text = "R${"%.2f".format(remaining)} left"
+            progressBar.progress = percent
+            categoryIcon.setImageResource(getCategoryIcon(category.name))
+            editAmount.hint = "%.2f".format(category.amount)
 
-        // Category icon based on category name
-        holder.binding.categoryIcon.setImageResource(getCategoryIcon(category.name))
-
-        // Set current budget amount in edit text as hint
-        holder.binding.editAmount.hint = "%.2f".format(category.amount)
-
-        // Reset edit section visibility
-        holder.binding.editSection.visibility = View.GONE
-        holder.binding.btnExpand.text = "Edit Budget"
-        holder.binding.btnExpand.rotation = 0f
-
-        // Clear any existing text
-        holder.binding.editAmount.text?.clear()
+            // Reset states
+            editSection.visibility = View.GONE
+            btnExpandText.text = "Edit Budget"
+            btnExpandArrow.rotation = 0f
+            editAmount.text?.clear()
+        }
     }
 
     override fun getItemCount() = categories.size
 
-    private fun getSpentAmount(categoryName: String): Double {
-        return transactions
-            .filter { it.category == categoryName }
-            .sumOf { it.amount }
-    }
-
-    // Category names = appropriate icons
     private fun getCategoryIcon(categoryName: String): Int {
         return when (categoryName.lowercase()) {
             "food" -> za.ac.iie.TallyUp.R.drawable.ic_coffee
@@ -165,7 +145,7 @@ class CategoryBreakdownAdapter(
             "gift" -> za.ac.iie.TallyUp.R.drawable.ic_star
             "freelance" -> za.ac.iie.TallyUp.R.drawable.ic_trending_up
             "allowance" -> za.ac.iie.TallyUp.R.drawable.ic_piggy_bank
-            else -> za.ac.iie.TallyUp.R.drawable.ic_circle // Default icon
+            else -> za.ac.iie.TallyUp.R.drawable.ic_circle
         }
     }
 }
