@@ -18,6 +18,7 @@ import za.ac.iie.TallyUp.adapters.CategoryBreakdownAdapter
 import za.ac.iie.TallyUp.data.AppDatabase
 import za.ac.iie.TallyUp.data.AppRepository
 import za.ac.iie.TallyUp.databinding.FragmentBudgetDashboardBinding
+import za.ac.iie.TallyUp.models.BudgetCategory
 import java.util.Calendar
 import java.util.Date
 
@@ -91,16 +92,60 @@ class BudgetDashboardFragment : Fragment() {
                 // Get filtered transactions based on selected time period
                 val filteredTransactions = getFilteredTransactions(userId, selectedTimePeriod)
 
+                // Get ALL categories from database (not just hardcoded ones)
+                val allCategories = appDatabase.categoryDao().getCategoriesForUser(userId)
+
+                // Convert database categories to BudgetCategory objects
+                val dynamicBudgetCategories = convertToBudgetCategories(allCategories, state, filteredTransactions)
+
                 withContext(Dispatchers.Main) {
-                    updateBudgetHealthCard(state, filteredTransactions)
-                    updatePerformanceSummary(state, filteredTransactions)
-                    setupCategoryBreakdown(state, filteredTransactions)
-                    updateSmartRecommendations(state, filteredTransactions)
+                    updateBudgetHealthCard(dynamicBudgetCategories, filteredTransactions)
+                    updatePerformanceSummary(dynamicBudgetCategories, filteredTransactions)
+                    setupCategoryBreakdown(dynamicBudgetCategories, filteredTransactions)
+                    updateSmartRecommendations(dynamicBudgetCategories, filteredTransactions)
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Error loading budget dashboard data: ${e.message}", e)
             }
         }
+    }
+
+    /**
+     * Convert database categories to BudgetCategory objects
+     * Uses existing budget amounts from AppState if available, otherwise sets default budget
+     */
+    private fun convertToBudgetCategories(
+        dbCategories: List<za.ac.iie.TallyUp.data.Category>,
+        state: za.ac.iie.TallyUp.models.AppState,
+        transactions: List<za.ac.iie.TallyUp.data.Transaction>
+    ): List<BudgetCategory> {
+        return dbCategories.map { dbCategory ->
+            // Check if this category exists in the AppState budget categories
+            val existingBudgetCategory = state.budgetCategories.find { it.name == dbCategory.name }
+
+            if (existingBudgetCategory != null) {
+                // Use the existing budget amount
+                existingBudgetCategory
+            } else {
+                // Create new BudgetCategory with default budget
+                // Calculate spent amount from transactions
+                val spent = transactions
+                    .filter { it.type == "Expense" && it.category == dbCategory.name }
+                    .sumOf { it.amount }
+
+                // Set default budget based on category type or use a sensible default
+                val defaultBudget = when (dbCategory.type) {
+                    "Income" -> 0.0 // Income categories don't need budgets
+                    else -> 100.0 // Default budget for new expense categories
+                }
+
+                BudgetCategory(
+                    name = dbCategory.name,
+                    budgeted = defaultBudget,
+                    spent = spent
+                )
+            }
+        }.filter { it.budgeted > 0 } // Only show categories that have a budget
     }
 
     private suspend fun getFilteredTransactions(userId: String, timePeriod: String): List<za.ac.iie.TallyUp.data.Transaction> {
@@ -150,9 +195,9 @@ class BudgetDashboardFragment : Fragment() {
         }
     }
 
-    private fun updateBudgetHealthCard(state: za.ac.iie.TallyUp.models.AppState, transactions: List<za.ac.iie.TallyUp.data.Transaction>) {
+    private fun updateBudgetHealthCard(categories: List<BudgetCategory>, transactions: List<za.ac.iie.TallyUp.data.Transaction>) {
         // Calculate total budget from all categories
-        val totalBudget = state.budgetCategories.sumOf { it.budgeted }
+        val totalBudget = categories.sumOf { it.budgeted }
 
         // Calculate total spent from filtered transactions
         val totalSpent = transactions
@@ -178,8 +223,8 @@ class BudgetDashboardFragment : Fragment() {
         Log.d(TAG, "Budget Health Updated - Period: $selectedTimePeriod, Spent: R$totalSpent, Budget: R$totalBudget, Progress: $progressPercentage%")
     }
 
-    private fun updatePerformanceSummary(state: za.ac.iie.TallyUp.models.AppState, transactions: List<za.ac.iie.TallyUp.data.Transaction>) {
-        val categoryPerformance = calculateCategoryPerformance(state, transactions)
+    private fun updatePerformanceSummary(categories: List<BudgetCategory>, transactions: List<za.ac.iie.TallyUp.data.Transaction>) {
+        val categoryPerformance = calculateCategoryPerformance(categories, transactions)
 
         var onTrackCount = 0
         var watchCount = 0
@@ -207,11 +252,8 @@ class BudgetDashboardFragment : Fragment() {
         Log.d(TAG, "Performance Summary - On Track: $onTrackCount, Watch: $watchCount, Critical: $criticalCount, Over: $overCount")
     }
 
-    private fun calculateCategoryPerformance(state: za.ac.iie.TallyUp.models.AppState, transactions: List<za.ac.iie.TallyUp.data.Transaction>): List<Triple<String, Double, Double>> {
-        // Get categories that have transactions in the filtered period
-        val categoriesWithTransactions = getCategoriesWithTransactions(state.budgetCategories, transactions)
-
-        return categoriesWithTransactions.map { category ->
+    private fun calculateCategoryPerformance(categories: List<BudgetCategory>, transactions: List<za.ac.iie.TallyUp.data.Transaction>): List<Triple<String, Double, Double>> {
+        return categories.map { category ->
             val spent = transactions
                 .filter { it.type == "Expense" && it.category == category.name }
                 .sumOf { it.amount }
@@ -219,7 +261,7 @@ class BudgetDashboardFragment : Fragment() {
         }
     }
 
-    private fun getCategoriesWithTransactions(allCategories: List<za.ac.iie.TallyUp.models.BudgetCategory>, transactions: List<za.ac.iie.TallyUp.data.Transaction>): List<za.ac.iie.TallyUp.models.BudgetCategory> {
+    private fun getCategoriesWithTransactions(allCategories: List<BudgetCategory>, transactions: List<za.ac.iie.TallyUp.data.Transaction>): List<BudgetCategory> {
         // Get unique category names from transactions
         val categoryNamesWithTransactions = transactions
             .filter { it.type == "Expense" }
@@ -232,11 +274,11 @@ class BudgetDashboardFragment : Fragment() {
         }
     }
 
-    private fun setupCategoryBreakdown(state: za.ac.iie.TallyUp.models.AppState, transactions: List<za.ac.iie.TallyUp.data.Transaction>) {
+    private fun setupCategoryBreakdown(categories: List<BudgetCategory>, transactions: List<za.ac.iie.TallyUp.data.Transaction>) {
         binding.categoryRecycler.layoutManager = LinearLayoutManager(requireContext())
 
         // Only show categories that have transactions in the filtered period
-        val categoriesWithTransactions = getCategoriesWithTransactions(state.budgetCategories, transactions)
+        val categoriesWithTransactions = getCategoriesWithTransactions(categories, transactions)
 
         if (categoriesWithTransactions.isEmpty()) {
             // Show empty state message
@@ -248,7 +290,7 @@ class BudgetDashboardFragment : Fragment() {
 
             // Set callback for budget updates
             adapter.onBudgetUpdated = { categoryName, newAmount ->
-                updateCategoryBudget(state, categoryName, newAmount, transactions)
+                updateCategoryBudget(categoryName, newAmount, transactions)
             }
 
             binding.categoryRecycler.adapter = adapter
@@ -256,20 +298,29 @@ class BudgetDashboardFragment : Fragment() {
     }
 
     private fun updateCategoryBudget(
-        state: za.ac.iie.TallyUp.models.AppState,
         categoryName: String,
         newAmount: Double,
         transactions: List<za.ac.iie.TallyUp.data.Transaction>
     ) {
         Log.d(TAG, "Updating budget for category: $categoryName to R$newAmount")
 
-        // Find and update the category
-        val updatedCategories = state.budgetCategories.map { category ->
-            if (category.name == categoryName) {
-                category.copy(budgeted = newAmount)
-            } else {
-                category
-            }
+        // Update the app state
+        val state = repository.loadAppState()
+        val updatedCategories = state.budgetCategories.toMutableList()
+
+        // Find if category already exists in budget categories
+        val existingIndex = updatedCategories.indexOfFirst { it.name == categoryName }
+
+        if (existingIndex != -1) {
+            // Update existing category
+            updatedCategories[existingIndex] = updatedCategories[existingIndex].copy(budgeted = newAmount)
+        } else {
+            // Add new category to budget categories
+            val spent = transactions
+                .filter { it.type == "Expense" && it.category == categoryName }
+                .sumOf { it.amount }
+
+            updatedCategories.add(BudgetCategory(categoryName, newAmount, spent))
         }
 
         // Update the app state
@@ -282,8 +333,8 @@ class BudgetDashboardFragment : Fragment() {
         loadBudgetDashboardData()
     }
 
-    private fun updateSmartRecommendations(state: za.ac.iie.TallyUp.models.AppState, transactions: List<za.ac.iie.TallyUp.data.Transaction>) {
-        val totalBudget = state.budgetCategories.sumOf { it.budgeted }
+    private fun updateSmartRecommendations(categories: List<BudgetCategory>, transactions: List<za.ac.iie.TallyUp.data.Transaction>) {
+        val totalBudget = categories.sumOf { it.budgeted }
         val totalSpent = transactions.filter { it.type == "Expense" }.sumOf { it.amount }
         val progressPercentage = if (totalBudget > 0) ((totalSpent / totalBudget) * 100).toInt() else 0
 
