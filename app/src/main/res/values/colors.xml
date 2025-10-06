@@ -2,60 +2,60 @@
 <resources>
 
     <!-- Light Theme Colors -->
-    <color name="background">#F7FBFE</color> <!-- hsl(200, 100%, 98%) -->
-    <color name="foreground">#334155</color> <!-- hsl(210, 15%, 25%) -->
+    <color name="background">#F7FBFE</color>
+    <color name="foreground">#334155</color>
 
-    <color name="card_background">#FFFFFF</color> <!-- hsl(0, 0%, 100%) -->
-    <color name="card_foreground">#334155</color> <!-- hsl(210, 15%, 25%) -->
+    <color name="card_background">#FFFFFF</color>
+    <color name="card_foreground">#334155</color>
 
     <!-- Primary Brand Blue -->
-    <color name="primary">#4DB8FF</color> <!-- hsl(200, 80%, 60%) -->
-    <color name="primary_foreground">#FFFFFF</color> <!-- hsl(0, 0%, 100%) -->
-    <color name="primary_light">#CCE9FF</color> <!-- hsl(200, 100%, 85%) -->
-    <color name="primary_soft">#E9F4FB</color> <!-- hsl(200, 60%, 92%) -->
+    <color name="primary">#4DB8FF</color>
+    <color name="primary_foreground">#FFFFFF</color>
+    <color name="primary_light">#CCE9FF</color>
+    <color name="primary_soft">#E9F4FB</color>
 
     <!-- Secondary Colors -->
-    <color name="secondary">#F3F7FA</color> <!-- hsl(200, 20%, 95%) -->
-    <color name="secondary_foreground">#475569</color> <!-- hsl(210, 15%, 35%) -->
+    <color name="secondary">#F3F7FA</color>
+    <color name="secondary_foreground">#475569</color>
 
     <!-- Muted Colors -->
-    <color name="muted">#F5F8FB</color> <!-- hsl(200, 20%, 96%) -->
-    <color name="muted_foreground">#7C8A94</color> <!-- hsl(210, 10%, 50%) -->
+    <color name="muted">#F5F8FB</color>
+    <color name="muted_foreground">#7C8A94</color>
 
     <!-- Accent (Orange) -->
-    <color name="accent">#FFA347</color> <!-- hsl(25, 100%, 65%) -->
-    <color name="accent_foreground">#FFFFFF</color> <!-- hsl(0, 0%, 100%) -->
-    <color name="accent_light">#FFD7A3</color> <!-- hsl(25, 100%, 85%) -->
-    <color name="accent_soft">#FFF4EB</color> <!-- hsl(25, 60%, 95%) -->
+    <color name="accent">#FFA347</color>
+    <color name="accent_foreground">#FFFFFF</color>
+    <color name="accent_light">#FFD7A3</color>
+    <color name="accent_soft">#FFF4EB</color>
 
     <!-- Success (Green) -->
-    <color name="success">#66CC88</color> <!-- hsl(140, 60%, 65%) -->
+    <color name="success">#66CC88</color>
     <color name="success_foreground">#FFFFFF</color>
-    <color name="success_light">#D1F0DA</color> <!-- hsl(140, 50%, 85%) -->
+    <color name="success_light">#D1F0DA</color>
 
     <!-- Warning (Yellow) -->
-    <color name="warning">#FFE380</color> <!-- hsl(45, 100%, 70%) -->
+    <color name="warning">#FFE380</color>
     <color name="warning_foreground">#FFFFFF</color>
-    <color name="warning_light">#FFF8CC</color> <!-- hsl(45, 80%, 90%) -->
+    <color name="warning_light">#FFF8CC</color>
 
     <!-- Destructive (Red) -->
-    <color name="destructive">#E88A8A</color> <!-- hsl(0, 75%, 70%) -->
+    <color name="destructive">#E88A8A</color>
     <color name="destructive_foreground">#FFFFFF</color>
 
     <!-- Input & Border -->
-    <color name="border">#D8E3EB</color> <!-- hsl(200, 30%, 88%) -->
-    <color name="input">#E4EDF3</color> <!-- hsl(200, 30%, 90%) -->
-    <color name="ring">#4DB8FF</color> <!-- hsl(200, 80%, 60%) -->
+    <color name="border">#D8E3EB</color>
+    <color name="input">#E4EDF3</color>
+    <color name="ring">#4DB8FF</color>
 
     <!-- Sidebar -->
-    <color name="sidebar_background">#FAFAFA</color> <!-- hsl(0, 0%, 98%) -->
-    <color name="sidebar_foreground">#423F47</color> <!-- hsl(240, 5.3%, 26.1%) -->
-    <color name="sidebar_primary">#19191B</color> <!-- hsl(240, 5.9%, 10%) -->
-    <color name="sidebar_primary_foreground">#FAFAFA</color> <!-- hsl(0, 0%, 98%) -->
-    <color name="sidebar_accent">#F4F4F6</color> <!-- hsl(240, 4.8%, 95.9%) -->
-    <color name="sidebar_accent_foreground">#19191B</color> <!-- hsl(240, 5.9%, 10%) -->
-    <color name="sidebar_border">#E6E9EC</color> <!-- hsl(220, 13%, 91%) -->
-    <color name="sidebar_ring">#3B82F6</color> <!-- hsl(217.2, 91.2%, 59.8%) -->
+    <color name="sidebar_background">#FAFAFA</color>
+    <color name="sidebar_foreground">#423F47</color>
+    <color name="sidebar_primary">#19191B</color>
+    <color name="sidebar_primary_foreground">#FAFAFA</color>
+    <color name="sidebar_accent">#F4F4F6</color>
+    <color name="sidebar_accent_foreground">#19191B</color>
+    <color name="sidebar_border">#E6E9EC</color>
+    <color name="sidebar_ring">#3B82F6</color>
 
     <!-- Category Colors -->
     <color name="color_food">#FFD7A3</color>        <!-- Accent Light Orange -->
