@@ -258,8 +258,20 @@ class AddTransactionFragment : Fragment() {
         val categoryDao = AppDatabase.getDatabase(requireContext()).categoryDao()
 
         lifecycleScope.launch {
-            val categories = categoryDao.getCategoriesForUser(currentUserId).toMutableList()
-            categories.add(Category(name = "Add New", type = "Expense", color = "#E0E0E0", userId = currentUserId))
+            // Get categories for current type (Income or Expense), including defaults
+            val categories = categoryDao.getCategoriesByType(selectedType, currentUserId)
+                .distinctBy { it.name } // Prevent duplicates
+                .toMutableList()
+
+            // Add "Add New" button at the end
+            categories.add(
+                Category(
+                    name = "Add New",
+                    type = selectedType,
+                    color = "#E0E0E0",
+                    userId = currentUserId
+                )
+            )
 
             adapter = CategoryAdapter(
                 categories,
@@ -269,7 +281,7 @@ class AddTransactionFragment : Fragment() {
                 onAddNewClicked = {
                     AddCategoryDialogFragment(
                         userId = currentUserId,
-                        defaultType = selectedType, // ← pass the current toggle value
+                        defaultType = selectedType,
                         onCategoryCreated = { newCategory ->
                             lifecycleScope.launch {
                                 categoryDao.insertCategory(newCategory)
