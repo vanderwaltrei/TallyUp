@@ -6,9 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import za.ac.iie.TallyUp.adapters.CategoryBreakdownAdapter
 import za.ac.iie.TallyUp.data.AppRepository
 import za.ac.iie.TallyUp.databinding.FragmentBudgetDashboardBinding
-import za.ac.iie.TallyUp.ui.CategoryBreakdownAdapter
 
 class BudgetDashboardFragment : Fragment() {
 
@@ -45,7 +45,16 @@ class BudgetDashboardFragment : Fragment() {
 
         // Setup category breakdown recycler - Use CategoryBreakdownAdapter
         binding.categoryRecycler.layoutManager = LinearLayoutManager(requireContext())
-        binding.categoryRecycler.adapter = CategoryBreakdownAdapter(state.budgetCategories, state.transactions)
+        val adapter = CategoryBreakdownAdapter(state.budgetCategories, state.transactions)
+
+        // Set the callback to handle budget updates
+        adapter.onBudgetUpdated = { categoryName, newAmount ->
+            // TODO: Implement budget update logic here
+            // For example, update your AppState or ViewModel
+            // repository.updateBudgetCategory(categoryName, newAmount)
+        }
+
+        binding.categoryRecycler.adapter = adapter
     }
 
     override fun onDestroyView() {
