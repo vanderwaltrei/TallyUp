@@ -95,6 +95,15 @@
     <string name="max">Max</string>
     <string name="smart_and_nfriendly">Smart and\nFriendly</string>
     <string name="continue_with_max">Continue with Max</string>
+    <string name="savings_goals">Savings Goals</string>
+    <string name="create_your_first_savings_goal_to_start_building_your_financial_future">Create your first savings goal to start building your financial future!</string>
+    <string name="x">X</string>
+    <string name="create_new_goal">Create New Goal</string>
+    <string name="goal_name">Goal Name</string>
+    <string name="target_amount">Target Amount</string>
+    <string name="deadline">Deadline</string>
+    <string name="amount_to_add">Amount To Add</string>
+    <string name="add_money_to_quot_quot">Add Money To \"_\"</string>
     <string-array name="type_filter_options">
         <item>All</item>
         <item>Income</item>
