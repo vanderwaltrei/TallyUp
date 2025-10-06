@@ -1,9 +1,9 @@
 package za.ac.iie.TallyUp.models
-
-import TransactionViewModel
+import za.ac.iie.TallyUp.models.TransactionViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import za.ac.iie.TallyUp.data.TransactionDao
+
 
 class TransactionViewModelFactory(private val transactionDao: TransactionDao) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

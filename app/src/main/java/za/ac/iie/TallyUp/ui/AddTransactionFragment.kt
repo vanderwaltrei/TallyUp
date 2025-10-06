@@ -1,6 +1,6 @@
 package za.ac.iie.TallyUp.ui
 
-import TransactionViewModel
+
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -22,10 +22,10 @@ import za.ac.iie.TallyUp.R
 import za.ac.iie.TallyUp.data.AppDatabase
 import za.ac.iie.TallyUp.data.Category
 import za.ac.iie.TallyUp.databinding.FragmentAddTransactionBinding
-import za.ac.iie.TallyUp.models.TransactionViewModel
 import za.ac.iie.TallyUp.models.TransactionViewModelFactory
 import java.io.File
 import android.app.DatePickerDialog
+import za.ac.iie.TallyUp.models.TransactionViewModel
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -112,6 +112,9 @@ class AddTransactionFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val currentUserId = getCurrentUserId()
+        val transactionDao = AppDatabase.getDatabase(requireContext()).transactionDao()
+        val factory = TransactionViewModelFactory(transactionDao)
+        transactionViewModel = ViewModelProvider(this, factory)[TransactionViewModel::class.java]
 
         // Debug log to verify user ID
         println("=== AddTransactionFragment ===")

@@ -1,3 +1,4 @@
+package za.ac.iie.TallyUp.models
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.MediatorLiveData
@@ -7,6 +8,8 @@ import kotlinx.coroutines.launch
 import za.ac.iie.TallyUp.data.Transaction
 import za.ac.iie.TallyUp.data.TransactionDao
 import java.util.*
+
+
 
 class TransactionViewModel(private val transactionDao: TransactionDao) : ViewModel() {
 
@@ -54,6 +57,29 @@ class TransactionViewModel(private val transactionDao: TransactionDao) : ViewMod
         viewModelScope.launch {
             val transactions = transactionDao.getTransactionsForUser(userId)
             allTransactions.postValue(transactions)
+        }
+    }
+
+    fun addTransaction(
+        type: String,
+        amount: Double,
+        category: String,
+        description: String?,
+        photoUris: List<String>,
+        date: Long,
+        userId: String
+    ) {
+        viewModelScope.launch {
+            val transaction = Transaction(
+                amount = amount,
+                type = type,
+                category = category,
+                description = description,
+                photoUris = photoUris,
+                date = date,
+                userId = userId
+            )
+            transactionDao.insertTransaction(transaction)
         }
     }
 

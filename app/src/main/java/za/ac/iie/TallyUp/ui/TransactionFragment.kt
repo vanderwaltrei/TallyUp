@@ -1,6 +1,5 @@
 package za.ac.iie.TallyUp.ui
 
-import TransactionViewModel
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -8,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -18,6 +18,7 @@ import za.ac.iie.TallyUp.R
 import za.ac.iie.TallyUp.adapters.TransactionAdapter
 import za.ac.iie.TallyUp.data.AppDatabase
 import za.ac.iie.TallyUp.databinding.FragmentTransactionsBinding
+import za.ac.iie.TallyUp.models.TransactionViewModel
 import za.ac.iie.TallyUp.models.TransactionViewModelFactory
 
 class TransactionsFragment : Fragment() {
@@ -65,9 +66,24 @@ class TransactionsFragment : Fragment() {
     }
 
     private fun setupSpinners() {
+        // Define filter options
+        val typeOptions = listOf("All", "Income", "Expense")
+        val timeOptions = listOf("All", "Today", "This Week", "This Month")
+
+        // Create adapters
+        val typeAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, typeOptions)
+        typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.typeFilterSpinner.adapter = typeAdapter
+
+        val timeAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, timeOptions)
+        timeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.timePeriodSpinner.adapter = timeAdapter
+
+        // Make spinners visible
         binding.timePeriodSpinner.visibility = View.VISIBLE
         binding.typeFilterSpinner.visibility = View.VISIBLE
 
+        // Set listeners
         binding.typeFilterSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 val selectedType = parent.getItemAtPosition(position).toString()
