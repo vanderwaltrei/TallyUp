@@ -50,6 +50,20 @@
     <color name="icon_default">#6C757D</color>
     <color name="icon_active">#1E90FF</color>
 
+    <color name="color_food">#FFB085</color>        <!-- orange -->
+    <color name="color_transport">#A3D5FF</color>   <!-- blue -->
+    <color name="color_books">#B2E2B2</color>       <!-- green -->
+    <color name="color_fun">#FFF4A3</color>         <!-- yellow -->
+    <color name="color_shopping">#FFB6C1</color>    <!-- pink -->
+    <color name="color_other">#E0E0E0</color>       <!-- gray -->
+
+    <!-- Income Colors -->
+    <color name="color_salary">#D1B3FF</color>      <!-- purple -->
+    <color name="color_gift">#D1B3FF</color>        <!-- purple -->
+    <color name="color_freelance">#D1B3FF</color>   <!-- purple -->
+    <color name="color_allowance">#D1B3FF</color>   <!-- purple -->
+
+
 
 
 

@@ -46,7 +46,7 @@ class DashboardFragment : Fragment() {
 
     private fun navigateToInsights() {
         parentFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, InsightsFragment())
+            .replace(R.id.fragment_container, InsightsComingSoonFragment())
             .addToBackStack(null)
             .commit()
     }
