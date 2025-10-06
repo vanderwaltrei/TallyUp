@@ -20,9 +20,9 @@ interface CategoryDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertCategories(categories: List<Category>)
 
-    // For filtering by type
-    @Query("SELECT * FROM categories WHERE type = :type ORDER BY name ASC")
-    suspend fun getCategoriesByType(type: String): List<Category>
+    // For filtering by type AND userId - UPDATED
+    @Query("SELECT * FROM categories WHERE type = :type AND (userId = :userId OR userId = 'default') ORDER BY name ASC")
+    suspend fun getCategoriesByType(type: String, userId: String): List<Category>
 
     // For checking duplicates before adding new category
     @Query("SELECT EXISTS(SELECT 1 FROM categories WHERE name = :name AND type = :type)")

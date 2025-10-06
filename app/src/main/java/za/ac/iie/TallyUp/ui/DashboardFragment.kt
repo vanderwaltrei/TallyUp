@@ -9,7 +9,7 @@ import za.ac.iie.TallyUp.R
 import za.ac.iie.TallyUp.databinding.FragmentDashboardBinding
 import za.ac.iie.TallyUp.models.AppState
 import za.ac.iie.TallyUp.data.AppRepository
-import za.ac.iie.TallyUp.ui.budget.BudgetDashboardFragment
+import za.ac.iie.TallyUp.ui.BudgetDashboardFragment
 import za.ac.iie.TallyUp.ui.insights.InsightsFragment
 import za.ac.iie.TallyUp.utils.CharacterManager
 

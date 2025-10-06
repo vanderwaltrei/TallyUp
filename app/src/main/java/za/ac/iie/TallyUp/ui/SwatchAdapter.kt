@@ -1,6 +1,5 @@
 package za.ac.iie.TallyUp.ui
 
-import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
@@ -11,42 +10,56 @@ import za.ac.iie.TallyUp.R
 
 class SwatchAdapter(
     private val colors: List<String>,
-    private val onSwatchSelected: (String) -> Unit
-) : RecyclerView.Adapter<SwatchAdapter.SwatchViewHolder>() {
+    private val onColorSelected: (String) -> Unit
+) : RecyclerView.Adapter<SwatchAdapter.ViewHolder>() {
 
-    private var selectedColor: String? = null
+    private var selectedPosition = 0
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SwatchViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_swatch, parent, false)
-        return SwatchViewHolder(view)
+    inner class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+        val swatchColor: View = view.findViewById(R.id.swatchColor)
     }
 
-    override fun getItemCount(): Int = colors.size
-
-    @SuppressLint("NotifyDataSetChanged")
-    override fun onBindViewHolder(holder: SwatchViewHolder, position: Int) {
-        val colorHex = colors[position]
-        holder.bind(colorHex, colorHex == selectedColor)
-        holder.itemView.setOnClickListener {
-            selectedColor = colorHex
-            onSwatchSelected(colorHex)
-            notifyDataSetChanged()
-        }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_swatch, parent, false)
+        return ViewHolder(view)
     }
 
-    inner class SwatchViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val swatchView: View = view.findViewById(R.id.swatchColor)
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val color = colors[position]
+        val isSelected = position == selectedPosition
 
-        @SuppressLint("UseKtx")
-        fun bind(colorHex: String, isSelected: Boolean) {
-            val drawable = swatchView.background as GradientDrawable
-            drawable.setColor(Color.parseColor(colorHex))
+        try {
+            val parsedColor = Color.parseColor(color)
+            holder.swatchColor.setBackgroundColor(parsedColor)
 
+            // Add border for selected item
             if (isSelected) {
-                drawable.setStroke(4, Color.BLACK) // highlight selected
+                val drawable = GradientDrawable()
+                drawable.setColor(parsedColor)
+                drawable.setStroke(8, Color.BLACK)
+                drawable.cornerRadius = 24f
+                holder.swatchColor.background = drawable
             } else {
-                drawable.setStroke(0, Color.TRANSPARENT)
+                val drawable = GradientDrawable()
+                drawable.setColor(parsedColor)
+                drawable.cornerRadius = 24f
+                holder.swatchColor.background = drawable
             }
+        } catch (e: Exception) {
+            holder.swatchColor.setBackgroundColor(Color.parseColor("#E0E0E0"))
+        }
+
+        holder.view.setOnClickListener {
+            val previousPosition = selectedPosition
+            selectedPosition = holder.adapterPosition
+
+            notifyItemChanged(previousPosition)
+            notifyItemChanged(selectedPosition)
+
+            onColorSelected(color)
         }
     }
+
+    override fun getItemCount() = colors.size
 }

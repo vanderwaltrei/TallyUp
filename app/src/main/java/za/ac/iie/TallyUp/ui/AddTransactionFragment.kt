@@ -35,8 +35,8 @@ class AddTransactionFragment : Fragment() {
 
     private var _binding: FragmentAddTransactionBinding? = null
     private val binding get() = _binding!!
+    private lateinit var transactionViewModel: TransactionViewModel
 
-    // Temporary default type  Income/Expense toggle
     private var selectedType: String = "Expense"
     private var selectedCategory: String? = null
     private var selectedDate: Long? = null
@@ -51,9 +51,10 @@ class AddTransactionFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val transactionDao = AppDatabase.getDatabase(requireContext()).transactionDao()
-        val factory = TransactionViewModelFactory(transactionDao)
-        val transactionViewModel = ViewModelProvider(this, factory)[TransactionViewModel::class.java]
+        // Initialize ViewModel with factory
+        val db = DatabaseProvider.getDatabase(requireContext())
+        val factory = TransactionViewModelFactory(db.transactionDao())
+        transactionViewModel = ViewModelProvider(this, factory)[TransactionViewModel::class.java]
 
         // Set default date to today
         selectedDate = System.currentTimeMillis()
@@ -91,13 +92,16 @@ class AddTransactionFragment : Fragment() {
         binding.incomeButton.setOnClickListener {
             selectedType = "Income"
             updateTypeUI()
+            loadCategories()
         }
 
         binding.expenseButton.setOnClickListener {
             selectedType = "Expense"
             updateTypeUI()
+            loadCategories()
         }
 
+        updateTypeUI()
         loadCategories()
 
         val currentUserId = getCurrentUserId()
@@ -120,7 +124,7 @@ class AddTransactionFragment : Fragment() {
                 category = selectedCategory!!,
                 description = finalDescription,
                 photoUris = selectedPhotoUris.map { it.toString() },
-                date = Date(date),
+                date = date,
                 userId = currentUserId
             )
 
@@ -158,19 +162,17 @@ class AddTransactionFragment : Fragment() {
     private fun updateTypeUI() {
         val activeBg = requireContext().getColor(R.color.success)
         val inactiveBg = requireContext().getColor(R.color.background)
-        val activeText = requireContext().getColor(R.color.background) // match background
-        val defaultText = requireContext().getColor(R.color.foreground) // default text color
+        val activeText = requireContext().getColor(R.color.background)
+        val defaultText = requireContext().getColor(R.color.foreground)
 
         if (selectedType == "Income") {
             binding.incomeButton.setBackgroundColor(activeBg)
             binding.incomeButton.setTextColor(activeText)
-
             binding.expenseButton.setBackgroundColor(inactiveBg)
             binding.expenseButton.setTextColor(defaultText)
         } else {
             binding.expenseButton.setBackgroundColor(activeBg)
             binding.expenseButton.setTextColor(activeText)
-
             binding.incomeButton.setBackgroundColor(inactiveBg)
             binding.incomeButton.setTextColor(defaultText)
         }
@@ -213,7 +215,6 @@ class AddTransactionFragment : Fragment() {
         return File.createTempFile("JPEG_${timestamp}_", ".jpg", storageDir)
     }
 
-
     private fun updatePhotoPreview() {
         val views = listOf(binding.photo1, binding.photo2, binding.photo3)
         val isFull = selectedPhotoUris.size >= 3
@@ -249,16 +250,16 @@ class AddTransactionFragment : Fragment() {
 
     private fun loadCategories() {
         val db = DatabaseProvider.getDatabase(requireContext())
-        val currentUserId = getCurrentUserId() // ⬅️ Add this line
+        val currentUserId = getCurrentUserId()
 
         lifecycleScope.launch {
-            val categories = db.categoryDao().getCategoriesByType(selectedType)
+            val categories = db.categoryDao().getCategoriesByType(selectedType, currentUserId)
 
             val allItems = categories + Category(
                 name = "Add New",
                 type = selectedType,
                 color = "#A3D5FF",
-                userId = currentUserId // ⬅️ Include userId here
+                userId = currentUserId
             )
 
             binding.categoryGrid.layoutManager = GridLayoutManager(requireContext(), 3)

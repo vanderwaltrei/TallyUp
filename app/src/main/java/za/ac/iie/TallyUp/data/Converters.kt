@@ -1,6 +1,7 @@
 package za.ac.iie.TallyUp.data
 
 import androidx.room.TypeConverter
+import java.util.Date
 
 class Converters {
 
@@ -14,11 +15,22 @@ class Converters {
         return if (value.isEmpty()) emptyList() else value.split(",")
     }
 
+    // Remove the duplicate fromList and toList methods
+    // @TypeConverter
+    // fun fromList(list: List<String>): String = list.joinToString(",")
+    //
+    // @TypeConverter
+    // fun toList(data: String): List<String> =
+    //     if (data.isEmpty()) emptyList() else data.split(",")
+
+    // Add Date converters (even though you're using Long now, good to have)
     @TypeConverter
-    fun fromList(list: List<String>): String = list.joinToString(",")
+    fun fromDate(date: Date): Long {
+        return date.time
+    }
 
     @TypeConverter
-    fun toList(data: String): List<String> =
-        if (data.isEmpty()) emptyList() else data.split(",")
-
+    fun toDate(timestamp: Long): Date {
+        return Date(timestamp)
+    }
 }

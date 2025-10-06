@@ -1,20 +1,14 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
-    // Android Gradle Plugin (AGP) - Locked to 8.11.1 to match the max supported version
-    // mentioned in the error message, ensuring stability with your current environment.
-    id("com.android.application") version "8.11.2" apply false
-    id("com.android.library") version "8.11.2" apply false
+    // Android Gradle Plugin (AGP) - Updated to 8.7.3 for better compatibility
+    id("com.android.application") version "8.7.3" apply false
+    id("com.android.library") version "8.7.3" apply false
 
-    // Kotlin Gradle Plugin (KGP) and KAPT - Updated to the latest stable version 2.2.20
-    id("org.jetbrains.kotlin.android") version "2.2.20" apply false
-    id("org.jetbrains.kotlin.kapt") version "2.2.20" apply false
+    // Kotlin Gradle Plugin (KGP) - Using 2.0.21 for stability with KSP
+    id("org.jetbrains.kotlin.android") version "2.0.21" apply false
+
+    // KSP - Modern replacement for KAPT
+    id("com.google.devtools.ksp") version "2.0.21-1.0.28" apply false
 }
 
-// Add configuration for dependency resolution if required (often found in settings.gradle.kts or older build files)
-// If you see issues resolving dependencies, you might need to add repository configuration here:
-// allprojects {
-//     repositories {
-//         google()
-//         mavenCentral()
-//     }
-// }
+// Removed KAPT - migrating to KSP for better Kotlin support

@@ -1,4 +1,4 @@
-package za.ac.iie.TallyUp.ui.budget
+package za.ac.iie.TallyUp.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import za.ac.iie.TallyUp.data.AppRepository
 import za.ac.iie.TallyUp.databinding.FragmentBudgetDashboardBinding
+import za.ac.iie.TallyUp.ui.CategoryBreakdownAdapter
 
 class BudgetDashboardFragment : Fragment() {
 
@@ -29,17 +30,20 @@ class BudgetDashboardFragment : Fragment() {
         val state = repository.loadAppState()
 
         val totalBudget = state.monthlyIncome
-        val spent = state.transactions.sumOf { it.amount }
+        // Filter only expense transactions and sum their amounts
+        val spent = state.transactions
+            .filter { it.type == "Expense" }
+            .sumOf { it.amount }
         val remaining = totalBudget - spent
-        val progress = if (totalBudget > 0) (spent / totalBudget * 100).toInt() else 0
+        val progress = if (totalBudget > 0.0) ((spent / totalBudget) * 100.0).toInt() else 0
 
         binding.progressText.text = "$progress% Used"
-        binding.totalBudgetText.text = "R${spent} / R${totalBudget}"
+        binding.totalBudgetText.text = "R${"%.2f".format(spent)} / R${"%.2f".format(totalBudget)}"
         binding.budgetProgressBar.progress = progress
-        binding.remainingBudgetText.text = "R${remaining} Remaining"
+        binding.remainingBudgetText.text = "R${"%.2f".format(remaining)} Remaining"
         binding.daysLeftText.text = "5 days left" // TODO: calculate from cycle
 
-        // Setup category breakdown recycler
+        // Setup category breakdown recycler - Use CategoryBreakdownAdapter
         binding.categoryRecycler.layoutManager = LinearLayoutManager(requireContext())
         binding.categoryRecycler.adapter = CategoryBreakdownAdapter(state.budgetCategories, state.transactions)
     }

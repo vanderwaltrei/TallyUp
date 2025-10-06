@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import za.ac.iie.TallyUp.databinding.ItemCategoryBreakdownBinding
 import za.ac.iie.TallyUp.models.BudgetCategory
-import za.ac.iie.TallyUp.models.Transaction
+import za.ac.iie.TallyUp.data.Transaction
 
 class CategoryBreakdownAdapter(
     private val categories: List<BudgetCategory>,
@@ -26,12 +26,12 @@ class CategoryBreakdownAdapter(
         val category = categories[position]
         val spent = transactions.filter { it.category == category.name }.sumOf { it.amount }
         val remaining = category.amount - spent
-        val percent = if (category.amount > 0) (spent / category.amount * 100).toInt() else 0
+        val percent = if (category.amount > 0.0) ((spent / category.amount) * 100).toInt() else 0
 
         holder.binding.categoryName.text = category.name
-        holder.binding.categoryProgress.text = "$percent%"
-        holder.binding.categorySpent.text = "R${spent} of R${category.amount}"
-        holder.binding.categoryRemaining.text = "R${remaining} left"
+        // Removed categoryProgress if it doesn't exist in your layout
+        holder.binding.categorySpent.text = "R${"%.2f".format(spent)} of R${"%.2f".format(category.amount)}"
+        holder.binding.categoryRemaining.text = "R${"%.2f".format(remaining)} left"
         holder.binding.progressBar.progress = percent
     }
 

@@ -4,11 +4,10 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import za.ac.iie.TallyUp.models.Transaction
 
 @Dao
 interface TransactionDao {
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTransaction(transaction: Transaction)
 
     @Query("SELECT * FROM transactions ORDER BY date DESC")
@@ -27,5 +26,4 @@ interface TransactionDao {
         startDate: Long,
         endDate: Long
     ): List<Transaction>
-
 }

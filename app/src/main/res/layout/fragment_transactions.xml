@@ -106,6 +106,7 @@
             android:text="Add Your First Transaction"
             android:textColor="@color/accent_foreground" />
 
+        <!-- List Of Transactions -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/transactions_recycler_view"
             android:layout_width="411dp"
