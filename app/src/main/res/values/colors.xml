@@ -1,70 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Light theme colors -->
-    <color name="background">#F8FBFE</color>
-    <color name="foreground">#2C3E50</color>
 
-    <color name="card_background">#FFFFFF</color>
-    <color name="card_foreground">#2C3E50</color>
+    <!-- Light Theme Colors -->
+    <color name="background">#F7FBFE</color> <!-- hsl(200, 100%, 98%) -->
+    <color name="foreground">#334155</color> <!-- hsl(210, 15%, 25%) -->
 
-    <color name="primary">#4FC3F7</color>
-    <color name="primary_foreground">#FFFFFF</color>
-    <color name="primary_light">#B3E5FC</color>
-    <color name="primary_soft">#E1F5FE</color>
+    <color name="card_background">#FFFFFF</color> <!-- hsl(0, 0%, 100%) -->
+    <color name="card_foreground">#334155</color> <!-- hsl(210, 15%, 25%) -->
 
-    <color name="error">#F44336</color>
+    <!-- Primary Brand Blue -->
+    <color name="primary">#4DB8FF</color> <!-- hsl(200, 80%, 60%) -->
+    <color name="primary_foreground">#FFFFFF</color> <!-- hsl(0, 0%, 100%) -->
+    <color name="primary_light">#CCE9FF</color> <!-- hsl(200, 100%, 85%) -->
+    <color name="primary_soft">#E9F4FB</color> <!-- hsl(200, 60%, 92%) -->
 
-    <color name="secondary">#F5F7FA</color>
-    <color name="secondary_foreground">#34495E</color>
+    <!-- Secondary Colors -->
+    <color name="secondary">#F3F7FA</color> <!-- hsl(200, 20%, 95%) -->
+    <color name="secondary_foreground">#475569</color> <!-- hsl(210, 15%, 35%) -->
 
-    <color name="muted">#F8F9FA</color>
-    <color name="muted_foreground">#7F8C8D</color>
+    <!-- Muted Colors -->
+    <color name="muted">#F5F8FB</color> <!-- hsl(200, 20%, 96%) -->
+    <color name="muted_foreground">#7C8A94</color> <!-- hsl(210, 10%, 50%) -->
 
-    <color name="accent">#FF9800</color>
-    <color name="accent_foreground">#FFFFFF</color>
-    <color name="accent_light">#FFE0B2</color>
-    <color name="accent_soft">#FFF3E0</color>
+    <!-- Accent (Orange) -->
+    <color name="accent">#FFA347</color> <!-- hsl(25, 100%, 65%) -->
+    <color name="accent_foreground">#FFFFFF</color> <!-- hsl(0, 0%, 100%) -->
+    <color name="accent_light">#FFD7A3</color> <!-- hsl(25, 100%, 85%) -->
+    <color name="accent_soft">#FFF4EB</color> <!-- hsl(25, 60%, 95%) -->
 
-    <color name="success">#66BB6A</color>
+    <!-- Success (Green) -->
+    <color name="success">#66CC88</color> <!-- hsl(140, 60%, 65%) -->
     <color name="success_foreground">#FFFFFF</color>
-    <color name="success_light">#C8E6C9</color>
+    <color name="success_light">#D1F0DA</color> <!-- hsl(140, 50%, 85%) -->
 
-    <color name="warning">#FFD54F</color>
+    <!-- Warning (Yellow) -->
+    <color name="warning">#FFE380</color> <!-- hsl(45, 100%, 70%) -->
     <color name="warning_foreground">#FFFFFF</color>
-    <color name="warning_light">#FFF9C4</color>
+    <color name="warning_light">#FFF8CC</color> <!-- hsl(45, 80%, 90%) -->
 
-    <color name="destructive">#EF5350</color>
+    <!-- Destructive (Red) -->
+    <color name="destructive">#E88A8A</color> <!-- hsl(0, 75%, 70%) -->
     <color name="destructive_foreground">#FFFFFF</color>
 
-    <color name="border">#E1E8ED</color>
-    <color name="input">#E8F4FD</color>
+    <!-- Input & Border -->
+    <color name="border">#D8E3EB</color> <!-- hsl(200, 30%, 88%) -->
+    <color name="input">#E4EDF3</color> <!-- hsl(200, 30%, 90%) -->
+    <color name="ring">#4DB8FF</color> <!-- hsl(200, 80%, 60%) -->
 
-    <!-- Additional colors that might be referenced -->
+    <!-- Sidebar -->
+    <color name="sidebar_background">#FAFAFA</color> <!-- hsl(0, 0%, 98%) -->
+    <color name="sidebar_foreground">#423F47</color> <!-- hsl(240, 5.3%, 26.1%) -->
+    <color name="sidebar_primary">#19191B</color> <!-- hsl(240, 5.9%, 10%) -->
+    <color name="sidebar_primary_foreground">#FAFAFA</color> <!-- hsl(0, 0%, 98%) -->
+    <color name="sidebar_accent">#F4F4F6</color> <!-- hsl(240, 4.8%, 95.9%) -->
+    <color name="sidebar_accent_foreground">#19191B</color> <!-- hsl(240, 5.9%, 10%) -->
+    <color name="sidebar_border">#E6E9EC</color> <!-- hsl(220, 13%, 91%) -->
+    <color name="sidebar_ring">#3B82F6</color> <!-- hsl(217.2, 91.2%, 59.8%) -->
+
+    <!-- Category Colors -->
+    <color name="color_food">#FFD7A3</color>        <!-- Accent Light Orange -->
+    <color name="color_transport">#CCE9FF</color>   <!-- Primary Light Blue -->
+    <color name="color_books">#D1F0DA</color>       <!-- Success Light Green -->
+    <color name="color_fun">#FFF8CC</color>         <!-- Warning Light Yellow -->
+    <color name="color_shopping">#FFD0D0</color>    <!-- Soft Red Pink -->
+    <color name="color_other">#E6E9EC</color>       <!-- Neutral Gray -->
+
+    <!-- Income Colors -->
+    <color name="color_salary">#D5C4FF</color>      <!-- Soft Lavender -->
+    <color name="color_gift">#D5C4FF</color>
+    <color name="color_freelance">#D5C4FF</color>
+    <color name="color_allowance">#D5C4FF</color>
+
+    <!-- Icons -->
+    <color name="icon_default">#7C8A94</color> <!-- muted-foreground -->
+    <color name="icon_active">#4DB8FF</color> <!-- primary -->
+
+    <!-- Aliases -->
+    <color name="card">@color/card_background</color>
+    <color name="error">@color/destructive</color>
+
+    <!-- Standard Colors -->
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
     <color name="transparent">#00000000</color>
-
-    <!-- Card color alias for compatibility -->
-    <color name="card">@color/card_background</color>
-
-    <color name="icon_default">#6C757D</color>
-    <color name="icon_active">#1E90FF</color>
-
-    <color name="color_food">#FFB085</color>        <!-- orange -->
-    <color name="color_transport">#A3D5FF</color>   <!-- blue -->
-    <color name="color_books">#B2E2B2</color>       <!-- green -->
-    <color name="color_fun">#FFF4A3</color>         <!-- yellow -->
-    <color name="color_shopping">#FFB6C1</color>    <!-- pink -->
-    <color name="color_other">#E0E0E0</color>       <!-- gray -->
-
-    <!-- Income Colors -->
-    <color name="color_salary">#D1B3FF</color>      <!-- purple -->
-    <color name="color_gift">#D1B3FF</color>        <!-- purple -->
-    <color name="color_freelance">#D1B3FF</color>   <!-- purple -->
-    <color name="color_allowance">#D1B3FF</color>   <!-- purple -->
-
-
-
-
 
 </resources>
