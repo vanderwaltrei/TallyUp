@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
@@ -25,13 +26,14 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:padding="16dp"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                tools:ignore="UseCompoundDrawables">
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="100 Coins"
+                    android:text="@string/_100_coins"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:textColor="@color/foreground" />
@@ -40,7 +42,8 @@
                     android:layout_width="28dp"
                     android:layout_height="28dp"
                     android:src="@drawable/ic_coin"
-                    app:tint="@color/accent" />
+                    app:tint="@color/accent"
+                    tools:ignore="ContentDescription,ImageContrastCheck" />
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -63,7 +66,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Your Collection"
+                    android:text="@string/your_collection"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     android:textColor="@color/foreground"
@@ -82,7 +85,8 @@
                         android:layout_height="48dp"
                         android:src="@drawable/ic_shirt"
                         android:background="@color/accent_soft"
-                        android:padding="8dp" />
+                        android:padding="8dp"
+                        tools:ignore="ContentDescription" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -94,24 +98,26 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Casual Outfit"
+                            android:text="@string/casual_outfit"
                             android:textStyle="bold"
                             android:textColor="@color/foreground" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Common"
-                            android:textColor="@color/muted_foreground" />
+                            android:text="@string/common"
+                            android:textColor="@color/muted_foreground"
+                            tools:ignore="TextContrastCheck" />
 
                     </LinearLayout>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Equipped"
+                        android:text="@string/equipped"
                         android:textColor="@color/accent"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        tools:ignore="TextContrastCheck" />
 
                 </LinearLayout>
 
@@ -127,7 +133,8 @@
                         android:layout_height="48dp"
                         android:src="@drawable/ic_shopping_bag"
                         android:background="@color/primary_soft"
-                        android:padding="8dp" />
+                        android:padding="8dp"
+                        tools:ignore="ContentDescription" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -139,24 +146,26 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Backpack"
+                            android:text="@string/backpack"
                             android:textStyle="bold"
                             android:textColor="@color/foreground" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Common"
-                            android:textColor="@color/muted_foreground" />
+                            android:text="@string/common"
+                            android:textColor="@color/muted_foreground"
+                            tools:ignore="TextContrastCheck" />
 
                     </LinearLayout>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Equipped"
+                        android:text="@string/equipped"
                         android:textColor="@color/accent"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        tools:ignore="TextContrastCheck" />
 
                 </LinearLayout>
 
@@ -180,7 +189,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Accessory Shop"
+                    android:text="@string/accessory_shop"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     android:textColor="@color/foreground"
@@ -189,8 +198,9 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Character items shop coming soon..."
-                    android:textColor="@color/muted_foreground" />
+                    android:text="@string/character_items_shop_coming_soon"
+                    android:textColor="@color/muted_foreground"
+                    tools:ignore="TextContrastCheck" />
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>

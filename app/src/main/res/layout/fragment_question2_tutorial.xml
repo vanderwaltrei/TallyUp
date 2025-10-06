@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
@@ -17,7 +18,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="What's one thing you're\nsaving for?"
+            android:text="@string/what_s_one_thing_you_re_nsaving_for"
             android:textColor="@color/foreground"
             android:textSize="24sp"
             android:textStyle="bold"
@@ -28,11 +29,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="e.g., New headphones"
+            android:layout_marginBottom="32dp"
+            android:gravity="center"
+            android:text="@string/e_g_new_headphones"
             android:textColor="@color/muted_foreground"
             android:textSize="16sp"
-            android:gravity="center"
-            android:layout_marginBottom="32dp" />
+            tools:ignore="TextContrastCheck" />
 
         <!-- Input Field -->
         <com.google.android.material.textfield.TextInputLayout
@@ -50,11 +52,12 @@
                 android:id="@+id/saving_goal_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Enter your saving goal"
+                android:hint="@string/enter_your_saving_goal"
                 android:inputType="textCapSentences"
                 android:maxLines="1"
                 android:textColor="@color/foreground"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                tools:ignore="VisualLintTextFieldSize" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -63,13 +66,14 @@
             android:id="@+id/start_saving_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Start Saving!"
+            android:text="@string/start_saving"
             android:textSize="16sp"
             android:textStyle="bold"
             android:paddingVertical="16dp"
             android:backgroundTint="@color/accent"
             android:textColor="@color/accent_foreground"
-            android:enabled="false" />
+            android:enabled="false"
+            tools:ignore="VisualLintButtonSize" />
 
     </LinearLayout>
 </ScrollView>

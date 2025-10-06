@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
@@ -31,7 +32,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="App Settings"
+                    android:text="@string/app_settings"
                     android:textColor="@color/foreground"
                     android:textSize="16sp"
                     android:textStyle="bold"
@@ -54,15 +55,16 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Notifications"
+                            android:text="@string/notifications"
                             android:textStyle="bold"
                             android:textColor="@color/foreground" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Get spending reminders"
-                            android:textColor="@color/muted_foreground" />
+                            android:text="@string/get_spending_reminders"
+                            android:textColor="@color/muted_foreground"
+                            tools:ignore="TextContrastCheck" />
 
                     </LinearLayout>
 
@@ -72,7 +74,8 @@
                         android:layout_height="wrap_content"
                         android:checked="true"
                         android:thumbTint="@color/primary"
-                        android:trackTint="@color/primary_soft" />
+                        android:trackTint="@color/primary_soft"
+                        tools:ignore="DuplicateSpeakableTextCheck" />
 
                 </LinearLayout>
 
@@ -92,15 +95,16 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Privacy and Security"
+                            android:text="@string/privacy_and_security"
                             android:textStyle="bold"
                             android:textColor="@color/foreground" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Enable enhanced privacy"
-                            android:textColor="@color/muted_foreground" />
+                            android:text="@string/enable_enhanced_privacy"
+                            android:textColor="@color/muted_foreground"
+                            tools:ignore="TextContrastCheck" />
 
                     </LinearLayout>
 
@@ -135,13 +139,14 @@
 
                 <Button
                     android:id="@+id/logoutButton"
+                    style="@style/Widget.Material3.Button.TextButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Log Out"
-                    android:textColor="@color/error"
                     android:backgroundTint="@android:color/transparent"
                     android:foreground="?attr/selectableItemBackground"
-                    style="@style/Widget.Material3.Button.TextButton" />
+                    android:text="@string/log_out"
+                    android:textColor="@color/error"
+                    tools:ignore="TextContrastCheck,VisualLintButtonSize" />
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>

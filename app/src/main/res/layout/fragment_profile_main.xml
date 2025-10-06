@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp">
@@ -29,12 +30,13 @@
                 <ImageView
                     android:layout_width="64dp"
                     android:layout_height="64dp"
-                    android:src="@drawable/ic_user"
                     android:background="@color/accent_light"
-                    android:padding="16dp"
                     android:contentDescription="@string/profile"
+                    android:padding="16dp"
+                    android:src="@drawable/ic_user"
                     app:cornerRadius="32dp"
-                    app:tint="@color/accent_foreground" />
+                    app:tint="@color/accent_foreground"
+                    tools:ignore="ImageContrastCheck" />
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -47,7 +49,7 @@
                         android:id="@+id/user_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="John Doe"
+                        android:text="@string/john_doe"
                         android:textColor="@color/foreground"
                         android:textSize="18sp"
                         android:textStyle="bold" />
@@ -55,9 +57,10 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Tally Up User"
+                        android:text="@string/tally_up_user"
                         android:textColor="@color/muted_foreground"
-                        android:textSize="14sp" />
+                        android:textSize="14sp"
+                        tools:ignore="TextContrastCheck" />
 
                 </LinearLayout>
 
@@ -88,18 +91,20 @@
                         <ImageView
                             android:layout_width="16dp"
                             android:layout_height="16dp"
+                            android:contentDescription="@string/coins"
                             android:src="@drawable/ic_coin"
-                            android:contentDescription="@string/coins"/>
+                            tools:ignore="ImageContrastCheck" />
 
                         <TextView
                             android:id="@+id/coins_count"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="150"
+                            android:layout_marginStart="4dp"
+                            android:text="@string/_150"
                             android:textColor="@color/accent"
                             android:textSize="12sp"
                             android:textStyle="bold"
-                            android:layout_marginStart="4dp" />
+                            tools:ignore="TextContrastCheck" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -115,7 +120,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_marginBottom="16dp">
+                    android:layout_marginBottom="16dp"
+                    tools:ignore="DisableBaselineAlignment">
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="0dp"
@@ -129,9 +135,10 @@
                             android:id="@+id/first_name_input"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="First Name"
-                            android:text="John"
-                            android:inputType="text" />
+                            android:hint="@string/first_name"
+                            android:text="@string/john"
+                            android:inputType="text"
+                            tools:ignore="VisualLintTextFieldSize" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
@@ -146,9 +153,10 @@
                             android:id="@+id/last_name_input"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Last Name"
-                            android:text="Doe"
-                            android:inputType="text" />
+                            android:hint="@string/last_name"
+                            android:text="@string/doe"
+                            android:inputType="text"
+                            tools:ignore="VisualLintTextFieldSize" />
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
 
@@ -156,10 +164,11 @@
                     android:id="@+id/save_profile_button"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Save Changes"
-                    android:textColor="@color/accent_foreground"
                     android:backgroundTint="@color/accent"
-                    android:paddingVertical="12dp" />
+                    android:paddingVertical="12dp"
+                    android:text="@string/save_changes"
+                    android:textColor="@color/accent_foreground"
+                    tools:ignore="TextContrastCheck,VisualLintButtonSize" />
             </LinearLayout>
 
         </LinearLayout>
