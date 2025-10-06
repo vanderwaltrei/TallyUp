@@ -26,6 +26,10 @@ import android.widget.EditText
 import androidx.recyclerview.widget.RecyclerView
 import za.ac.iie.TallyUp.data.Category
 import androidx.recyclerview.widget.GridLayoutManager
+import za.ac.iie.TallyUp.data.AppDatabase
+import za.ac.iie.TallyUp.models.TransactionViewModel
+import za.ac.iie.TallyUp.models.TransactionViewModelFactory
+import androidx.lifecycle.ViewModelProvider
 
 class AddTransactionFragment : Fragment() {
 
@@ -46,6 +50,10 @@ class AddTransactionFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val transactionDao = AppDatabase.getDatabase(requireContext()).transactionDao()
+        val factory = TransactionViewModelFactory(transactionDao)
+        val transactionViewModel = ViewModelProvider(this, factory)[TransactionViewModel::class.java]
 
         // Set default date to today
         selectedDate = System.currentTimeMillis()
@@ -92,11 +100,13 @@ class AddTransactionFragment : Fragment() {
 
         loadCategories()
 
+        val currentUserId = getCurrentUserId()
 
         // Save button logic
         binding.saveButton.setOnClickListener {
             val amount = binding.amountInput.text.toString().toDoubleOrNull()
-            val description = binding.descriptionInput.text.toString().trim()
+            val rawDescription = binding.descriptionInput.text?.toString()?.trim() ?: ""
+            val finalDescription = if (rawDescription.isBlank()) null else rawDescription
             val date = selectedDate ?: System.currentTimeMillis()
 
             if (amount == null || selectedCategory.isNullOrEmpty()) {
@@ -104,25 +114,18 @@ class AddTransactionFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            val transaction = Transaction(
-                amount = amount,
+            transactionViewModel.addTransaction(
                 type = selectedType,
+                amount = amount,
                 category = selectedCategory!!,
-                description = if (description.isEmpty()) null else description,
+                description = finalDescription,
                 photoUris = selectedPhotoUris.map { it.toString() },
-                date = selectedDate ?: System.currentTimeMillis()
+                date = Date(date),
+                userId = currentUserId
             )
 
-
-            val db = DatabaseProvider.getDatabase(requireContext())
-            lifecycleScope.launch {
-                db.transactionDao().insertTransaction(transaction)
-                Toast.makeText(requireContext(), "Transaction saved!", Toast.LENGTH_SHORT).show()
-                parentFragmentManager.popBackStack()
-            }
-
-
-
+            Toast.makeText(requireContext(), "Transaction saved!", Toast.LENGTH_SHORT).show()
+            parentFragmentManager.popBackStack()
         }
     }
 

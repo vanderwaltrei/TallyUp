@@ -10,7 +10,8 @@ data class Transaction(
     val type: String, // "income" or "expense"
     val amount: Double,
     val category: String,
-    val description: String,
+    val description: String?,
     val date: Date,
-    val photoUrl: String? = null
+    val photoUris: List<String> = emptyList()
+    val userId: String
 )

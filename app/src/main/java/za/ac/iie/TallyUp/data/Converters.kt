@@ -13,4 +13,12 @@ class Converters {
     fun toPhotoUris(value: String): List<String> {
         return if (value.isEmpty()) emptyList() else value.split(",")
     }
+
+    @TypeConverter
+    fun fromList(list: List<String>): String = list.joinToString(",")
+
+    @TypeConverter
+    fun toList(data: String): List<String> =
+        if (data.isEmpty()) emptyList() else data.split(",")
+
 }
