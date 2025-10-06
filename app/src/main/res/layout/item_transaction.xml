@@ -55,7 +55,8 @@
                 android:textSize="14sp"
                 android:layout_marginTop="4dp"
                 android:paddingStart="8dp"
-                android:paddingBottom="8dp" />
+                android:paddingBottom="8dp"
+                tools:ignore="RtlSymmetry" />
         </LinearLayout>
 
         <!-- Right Column: Amount fills height and centers vertically -->
