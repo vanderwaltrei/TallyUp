@@ -1,5 +1,9 @@
 package za.ac.iie.TallyUp.adapters
 
+import android.text.Editable
+import android.text.TextWatcher
+import za.ac.iie.TallyUp.databinding.ItemCategoryBreakdownBinding
+import za.ac.iie.TallyUp.models.BudgetCategory
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +14,8 @@ import androidx.recyclerview.widget.RecyclerView
 import za.ac.iie.TallyUp.R
 import za.ac.iie.TallyUp.data.Transaction
 import za.ac.iie.TallyUp.databinding.ItemTransactionBinding
-
+import java.text.SimpleDateFormat
+import java.util.*
 
 class TransactionAdapter : ListAdapter<Transaction, TransactionAdapter.TransactionViewHolder>(DiffCallback()) {
 
@@ -28,20 +33,24 @@ class TransactionAdapter : ListAdapter<Transaction, TransactionAdapter.Transacti
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(transaction: Transaction) {
-            // Description and type
-            binding.transactionDescription.text = "${transaction.description} - ${transaction.type}"
+            // Description and category
+            val descriptionText = if (!transaction.description.isNullOrEmpty()) {
+                "${transaction.description} - ${transaction.category}"
+            } else {
+                transaction.category
+            }
+            binding.transactionDescription.text = descriptionText
 
             // Amount with minus sign for expenses
             val formattedAmount = String.format("%.2f", transaction.amount)
             val amountText = if (transaction.type == "Expense") {
-                "-R $formattedAmount"
+                "-R$formattedAmount"
             } else {
-                "R $formattedAmount"
+                "+R$formattedAmount"
             }
             binding.transactionAmount.text = amountText
 
-
-            // Optional color tint
+            // Color coding for income (green) vs expense (red)
             val color = if (transaction.type == "Expense") {
                 ContextCompat.getColor(binding.root.context, R.color.destructive)
             } else {
@@ -49,11 +58,17 @@ class TransactionAdapter : ListAdapter<Transaction, TransactionAdapter.Transacti
             }
             binding.transactionAmount.setTextColor(color)
 
-            // Date
-            binding.transactionDate.text = transaction.dateFormatted
+            // Format date from timestamp
+            val date = Date(transaction.date)
+            val dateFormat = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
+            binding.transactionDate.text = dateFormat.format(date)
 
-            // Photo status
-            binding.photoStatus.text = if (transaction.photos?.isNotEmpty() == true) "Photos attached" else "No photos"
+            // Photo status based on photoUris
+            val hasPhotos = transaction.photoUris.isNotEmpty()
+            binding.photoStatus.text = if (hasPhotos) "📷 Photos attached" else "No photos"
+
+            // Optional: Show/hide photo indicator
+            binding.photoStatus.visibility = if (hasPhotos) View.VISIBLE else View.GONE
         }
     }
 

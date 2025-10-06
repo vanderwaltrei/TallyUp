@@ -102,15 +102,21 @@ class AddTransactionFragment : Fragment() {
         return binding.root
     }
 
-
+    // FIXED: Use the same user ID retrieval as TransactionsFragment
     private fun getCurrentUserId(): String {
-        val prefs = requireContext().getSharedPreferences("user_session", Context.MODE_PRIVATE)
-        return prefs.getString("user_id", "") ?: ""
+        val prefs = requireContext().getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
+        return prefs.getString("loggedInEmail", "") ?: "default"
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val currentUserId = getCurrentUserId()
+
+        // Debug log to verify user ID
+        println("=== AddTransactionFragment ===")
+        println("Current User ID: $currentUserId")
+        println("==============================")
+
         setupCategoryGrid(currentUserId)
 
         binding.backButton.setOnClickListener {
@@ -149,7 +155,6 @@ class AddTransactionFragment : Fragment() {
             )
             datePicker.show()
         }
-
 
         binding.photoUploadButton.setOnClickListener {
             // Step 1: Create a file to store the camera photo
@@ -219,10 +224,14 @@ class AddTransactionFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            if (selectedDate == null) {
-                Toast.makeText(requireContext(), "Please select a date", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
+            // Debug log before saving
+            println("=== SAVING TRANSACTION ===")
+            println("User ID: $currentUserId")
+            println("Type: $type")
+            println("Amount: $amount")
+            println("Category: $selectedCategory")
+            println("Description: $description")
+            println("==========================")
 
             transactionViewModel.addTransaction(
                 type = type,
@@ -231,12 +240,12 @@ class AddTransactionFragment : Fragment() {
                 description = description,
                 photoUris = photoUris,
                 date = selectedDate!!,
-                userId = currentUserId
+                userId = currentUserId // This should now be "nap@gmail.com" instead of empty
             )
 
             Toast.makeText(requireContext(), "Transaction saved!", Toast.LENGTH_SHORT).show()
 
-            //  Manual fragment back navigation
+            // Manual fragment back navigation
             requireActivity().supportFragmentManager.popBackStack()
         }
     }
