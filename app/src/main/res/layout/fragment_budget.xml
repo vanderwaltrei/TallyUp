@@ -90,9 +90,10 @@
                     android:textColor="#00BCD4"
                     android:textSize="34sp"
                     android:textStyle="bold"
-                    android:translationX="130dp"
-                    android:translationY="60dp" />
+                    android:layout_gravity="center"
+                    />
 
+                <!-- UNCOMMENT this TextView -->
                 <TextView
                     android:id="@+id/tvMonthSpent"
                     android:layout_width="wrap_content"
