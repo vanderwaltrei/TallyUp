@@ -29,7 +29,7 @@ class CategoryBreakdownAdapter(
             val expandText = binding.btnExpandText
             val expandArrow = binding.btnExpandArrow
 
-            // 🔹 Expand/Collapse functionality
+            // Expand/Collapse functionality
             expandContainer.setOnClickListener {
                 val isExpanded = binding.editSection.visibility == View.VISIBLE
                 binding.editSection.visibility = if (isExpanded) View.GONE else View.VISIBLE
@@ -42,7 +42,7 @@ class CategoryBreakdownAdapter(
                     .start()
             }
 
-            // 🔹 Cancel button
+            // Cancel button
             binding.btnCancel.setOnClickListener {
                 binding.editSection.visibility = View.GONE
                 expandText.text = "Edit Budget"
@@ -50,7 +50,7 @@ class CategoryBreakdownAdapter(
                 binding.editAmount.text.clear()
             }
 
-            // 🔹 Save button
+            // Save button
             binding.btnSave.setOnClickListener {
                 val newAmount = binding.editAmount.text.toString().toDoubleOrNull()
                 if (newAmount != null) {
@@ -74,7 +74,7 @@ class CategoryBreakdownAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val category = categories[position]
 
-        // 🔹 Calculate spent and remaining amounts
+        // Calculate spent and remaining amounts
         val spent = transactions
             .filter { it.type == "Expense" && it.category == category.name }
             .sumOf { it.amount }
@@ -82,7 +82,7 @@ class CategoryBreakdownAdapter(
         val remaining = category.budgeted - spent
         val percent = if (category.budgeted > 0.0) ((spent / category.budgeted) * 100.0).toInt() else 0
 
-        // 🔹 Bind data
+        // Bind data
         holder.binding.categoryName.text = category.name
         holder.binding.categorySpent.text = "R${"%.2f".format(spent)} / R${"%.2f".format(category.budgeted)}"
         holder.binding.categoryRemaining.text = "R${"%.2f".format(remaining)} left"
