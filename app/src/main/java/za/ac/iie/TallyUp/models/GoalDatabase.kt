@@ -1,12 +1,11 @@
 package za.ac.iie.TallyUp.model
 
-
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [Goal::class], version = 1, exportSchema = false)
+@Database(entities = [Goal::class], version = 2, exportSchema = false)
 abstract class GoalDatabase : RoomDatabase() {
 
     abstract fun goalDao(): GoalDao
@@ -21,7 +20,9 @@ abstract class GoalDatabase : RoomDatabase() {
                     context.applicationContext,
                     GoalDatabase::class.java,
                     "goal_database"
-                ).build()
+                )
+                    .fallbackToDestructiveMigration() // This will clear old data
+                    .build()
                 INSTANCE = instance
                 instance
             }

@@ -1,5 +1,6 @@
 package za.ac.iie.TallyUp.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,7 +8,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -16,7 +16,6 @@ import za.ac.iie.TallyUp.R
 import za.ac.iie.TallyUp.databinding.FragmentGoalsBinding
 import za.ac.iie.TallyUp.model.Goal
 import za.ac.iie.TallyUp.model.GoalDatabase
-
 
 class GoalsFragment : Fragment() {
 
@@ -27,6 +26,12 @@ class GoalsFragment : Fragment() {
     private lateinit var database: GoalDatabase
     private var goalsList = mutableListOf<Goal>()
     private var currentGoalForAddingMoney: Goal? = null
+
+    // Add method to get current user ID
+    private fun getCurrentUserId(): String {
+        val prefs = requireContext().getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
+        return prefs.getString("loggedInEmail", "") ?: "default"
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,7 +52,7 @@ class GoalsFragment : Fragment() {
         binding.goalsGrid.adapter = goalAdapter
         binding.goalsGrid.layoutManager = LinearLayoutManager(requireContext())
 
-        // Load goals from database
+        // Load goals from database FOR CURRENT USER
         loadGoalsFromDatabase()
 
         // Initial visibility
@@ -64,6 +69,50 @@ class GoalsFragment : Fragment() {
         return binding.root
     }
 
+    private fun loadGoalsFromDatabase() {
+        val userId = getCurrentUserId()
+        CoroutineScope(Dispatchers.IO).launch {
+            val goalsFromDb = database.goalDao().getGoalsByUser(userId)
+            goalsList.clear()
+            goalsList.addAll(goalsFromDb)
+            withContext(Dispatchers.Main) {
+                goalAdapter.notifyDataSetChanged()
+                updateEmptyState()
+            }
+        }
+    }
+
+    private fun saveNewGoal() {
+        val nameInput = binding.goalNameInput.text.toString().trim()
+        val amountInput = binding.goalAmountInput.text.toString().trim()
+        val deadlineInput = binding.goalDeadlineInput.text.toString().trim()
+
+        if (nameInput.isEmpty() || amountInput.isEmpty() || deadlineInput.isEmpty()) return
+
+        val newGoal = Goal(
+            name = nameInput,
+            description = "",
+            target = amountInput.toDouble(),
+            current = 0.0,
+            deadline = deadlineInput,
+            userId = getCurrentUserId() // Add user ID
+        )
+
+        CoroutineScope(Dispatchers.IO).launch {
+            database.goalDao().insertGoal(newGoal)
+            val updatedGoals = database.goalDao().getGoalsByUser(getCurrentUserId())
+            withContext(Dispatchers.Main) {
+                goalsList.clear()
+                goalsList.addAll(updatedGoals)
+                goalAdapter.notifyDataSetChanged()
+                binding.createGoalPage.visibility = View.GONE
+                binding.goalsGrid.visibility = View.VISIBLE
+                updateEmptyState()
+            }
+        }
+    }
+
+    // ... rest of the methods remain the same
     private fun openCreateGoalPage(hideGoals: Boolean = false) {
         binding.emptyState.visibility = View.GONE
         if (hideGoals) binding.goalsGrid.visibility = View.GONE
@@ -90,47 +139,6 @@ class GoalsFragment : Fragment() {
         }
     }
 
-    private fun loadGoalsFromDatabase() {
-        CoroutineScope(Dispatchers.IO).launch {
-            val goalsFromDb = database.goalDao().getAllGoals()
-            goalsList.clear()
-            goalsList.addAll(goalsFromDb)
-            withContext(Dispatchers.Main) {
-                goalAdapter.notifyDataSetChanged()
-                updateEmptyState()
-            }
-        }
-    }
-
-    private fun saveNewGoal() {
-        val nameInput = binding.goalNameInput.text.toString().trim()
-        val amountInput = binding.goalAmountInput.text.toString().trim()
-        val deadlineInput = binding.goalDeadlineInput.text.toString().trim()
-
-        if (nameInput.isEmpty() || amountInput.isEmpty() || deadlineInput.isEmpty()) return
-
-        val newGoal = Goal(
-            name = nameInput,
-            description = "",
-            target = amountInput.toDouble(),
-            current = 0.0,
-            deadline = deadlineInput
-        )
-
-        CoroutineScope(Dispatchers.IO).launch {
-            database.goalDao().insertGoal(newGoal)
-            val updatedGoals = database.goalDao().getAllGoals()
-            withContext(Dispatchers.Main) {
-                goalsList.clear()
-                goalsList.addAll(updatedGoals)
-                goalAdapter.notifyDataSetChanged()
-                binding.createGoalPage.visibility = View.GONE
-                binding.goalsGrid.visibility = View.VISIBLE
-                updateEmptyState()
-            }
-        }
-    }
-
     private fun openAddMoneyMenu(goal: Goal) {
         currentGoalForAddingMoney = goal
         binding.addMoney.visibility = View.VISIBLE
@@ -152,7 +160,7 @@ class GoalsFragment : Fragment() {
         CoroutineScope(Dispatchers.IO).launch {
             goal.current += amount
             database.goalDao().updateGoal(goal)
-            val updatedGoals = database.goalDao().getAllGoals()
+            val updatedGoals = database.goalDao().getGoalsByUser(getCurrentUserId())
             withContext(Dispatchers.Main) {
                 goalsList.clear()
                 goalsList.addAll(updatedGoals)
@@ -165,7 +173,7 @@ class GoalsFragment : Fragment() {
     private fun completeGoal(goal: Goal) {
         CoroutineScope(Dispatchers.IO).launch {
             database.goalDao().deleteGoal(goal)
-            val updatedGoals = database.goalDao().getAllGoals()
+            val updatedGoals = database.goalDao().getGoalsByUser(getCurrentUserId())
             withContext(Dispatchers.Main) {
                 goalsList.clear()
                 goalsList.addAll(updatedGoals)

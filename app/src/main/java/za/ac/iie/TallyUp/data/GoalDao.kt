@@ -1,6 +1,5 @@
 package za.ac.iie.TallyUp.model
 
-
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -19,6 +18,11 @@ interface GoalDao {
     @Delete
     suspend fun deleteGoal(goal: Goal)
 
+    // Get goals for specific user
+    @Query("SELECT * FROM goals WHERE userId = :userId ORDER BY createdAt DESC")
+    suspend fun getGoalsByUser(userId: String): List<Goal>
+
+    // Keep this for migration or remove if not needed
     @Query("SELECT * FROM goals")
     suspend fun getAllGoals(): List<Goal>
 }

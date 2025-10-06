@@ -1,5 +1,6 @@
 package za.ac.iie.TallyUp.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -70,16 +71,23 @@ class DashboardFragment : Fragment() {
     }
 
     private fun loadGoalsFromDatabase() {
+        val userId = getCurrentUserId()
         CoroutineScope(Dispatchers.IO).launch {
-            val goalsFromDb = goalDatabase.goalDao().getAllGoals()
+            val goalsFromDb = goalDatabase.goalDao().getGoalsByUser(userId)
             goalsList.clear()
-            goalsList.addAll(goalsFromDb.take(2)) // Show only 2 goals on dashboard
+            goalsList.addAll(goalsFromDb.take(2))
 
             withContext(Dispatchers.Main) {
                 goalAdapter.notifyDataSetChanged()
                 updateGoalsVisibility()
             }
         }
+    }
+
+    // Add this method to DashboardFragment
+    private fun getCurrentUserId(): String {
+        val prefs = requireContext().getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
+        return prefs.getString("loggedInEmail", "") ?: "default"
     }
 
     private fun updateGoalsVisibility() {
