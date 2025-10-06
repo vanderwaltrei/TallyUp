@@ -2,6 +2,7 @@ package za.ac.iie.TallyUp.ui
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,6 +34,10 @@ class DashboardFragment : Fragment() {
     private var goalsList = mutableListOf<Goal>()
     private lateinit var goalAdapter: GoalAdapter
 
+    companion object {
+        private const val TAG = "DashboardFragment"
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -55,24 +60,7 @@ class DashboardFragment : Fragment() {
         setupQuickActions()
         loadGoalsFromDatabase()
         loadTransactionsAndUpdateBudget()
-        debugCheckTransactions() // ← ADD THIS LINE HERE
-    }
-
-    // ADD THIS DEBUG METHOD RIGHT AFTER onViewCreated method:
-    private fun debugCheckTransactions() {
-        val userId = getCurrentUserId()
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val transactions = appDatabase.transactionDao().getTransactionsForUser(userId)
-                println("=== DEBUG: Found ${transactions.size} transactions ===")
-                transactions.forEach { transaction ->
-                    println("Transaction: ${transaction.type} - R${transaction.amount} - ${transaction.category} - User: ${transaction.userId}")
-                }
-                println("=================================")
-            } catch (e: Exception) {
-                println("DEBUG Error: ${e.message}")
-            }
-        }
+        debugCheckTransactions()
     }
 
     private fun setupGoalRecyclerView() {
@@ -120,6 +108,9 @@ class DashboardFragment : Fragment() {
                     .filter { it.type == "Expense" }
                     .sumOf { it.amount }
 
+                // Calculate spending per category
+                val categorySpending = calculateCategorySpending(transactions)
+
                 // Get monthly budget from app state (total of budget categories)
                 val monthlyBudget = appState.budgetCategories.sumOf { it.budgeted }
 
@@ -133,12 +124,22 @@ class DashboardFragment : Fragment() {
                     0
                 }
 
+                // Debug logging for category spending
+                Log.d(TAG, "=== CATEGORY SPENDING ===")
+                categorySpending.forEach { (category, amount) ->
+                    Log.d(TAG, "$category: R$amount")
+                }
+                Log.d(TAG, "Total Expenses: R$totalExpenses")
+                Log.d(TAG, "Monthly Budget: R$monthlyBudget")
+                Log.d(TAG, "Available to Spend: R$availableToSpend")
+                Log.d(TAG, "==========================")
+
                 withContext(Dispatchers.Main) {
                     updateBudgetUI(availableToSpend, totalExpenses, monthlyBudget, progressPercentage, totalIncome)
                 }
 
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.e(TAG, "Error loading transactions: ${e.message}", e)
                 withContext(Dispatchers.Main) {
                     // Show error state
                     binding.availableAmount.text = "R0.00"
@@ -147,6 +148,19 @@ class DashboardFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun calculateCategorySpending(transactions: List<za.ac.iie.TallyUp.data.Transaction>): Map<String, Double> {
+        val categorySpending = mutableMapOf<String, Double>()
+
+        transactions
+            .filter { it.type == "Expense" }
+            .forEach { transaction ->
+                val currentAmount = categorySpending[transaction.category] ?: 0.0
+                categorySpending[transaction.category] = currentAmount + transaction.amount
+            }
+
+        return categorySpending
     }
 
     private fun updateBudgetUI(
@@ -188,17 +202,9 @@ class DashboardFragment : Fragment() {
             }
         }
 
-        // Debug logging
-        println("=== BUDGET CALCULATION ===")
-        println("Total Budget: R$totalBudget")
-        println("Total Spent: R$totalSpent")
-        println("Total Income: R$totalIncome")
-        println("Available: R$availableToSpend")
-        println("Progress: $progressPercentage%")
-        println("==========================")
+        Log.d(TAG, "Budget UI Updated - Available: R$availableToSpend, Spent: R$totalSpent, Budget: R$totalBudget")
     }
 
-    // Add this method to DashboardFragment
     private fun getCurrentUserId(): String {
         val prefs = requireContext().getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
         return prefs.getString("loggedInEmail", "") ?: "default"
@@ -276,7 +282,23 @@ class DashboardFragment : Fragment() {
         // Refresh goals and transactions when returning to dashboard
         loadGoalsFromDatabase()
         loadTransactionsAndUpdateBudget()
-        debugCheckTransactions() // ← You can also add it here to see updates
+        debugCheckTransactions()
+    }
+
+    private fun debugCheckTransactions() {
+        val userId = getCurrentUserId()
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val transactions = appDatabase.transactionDao().getTransactionsForUser(userId)
+                Log.d(TAG, "=== DEBUG: Found ${transactions.size} transactions ===")
+                transactions.forEach { transaction ->
+                    Log.d(TAG, "Transaction: ${transaction.type} - R${transaction.amount} - ${transaction.category} - User: ${transaction.userId}")
+                }
+                Log.d(TAG, "=================================")
+            } catch (e: Exception) {
+                Log.e(TAG, "DEBUG Error: ${e.message}")
+            }
+        }
     }
 
     override fun onDestroyView() {
