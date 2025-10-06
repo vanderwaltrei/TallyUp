@@ -20,7 +20,6 @@ class AddCategoryDialogFragment(
     private val binding get() = _binding!!
     private var selectedColor: String = "#E0E0E0" // Default swatch
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -62,9 +61,10 @@ class AddCategoryDialogFragment(
             return
         }
 
+        // Create new category with proper defaults
         val newCategory = Category(
             name = name,
-            type = defaultType,
+            type = defaultType, // Use the passed type (Income/Expense)
             color = selectedColor,
             userId = userId
         )

@@ -50,7 +50,7 @@ abstract class AppDatabase : RoomDatabase() {
                             Category(name = "Books", type = "Expense", color = "#B2E2B2", userId = defaultUserId),
                             Category(name = "Fun", type = "Expense", color = "#FFF4A3", userId = defaultUserId),
                             Category(name = "Shopping", type = "Expense", color = "#FFB6C1", userId = defaultUserId),
-                            Category(name = "Other", type = "Expense", color = "#E0E0E0", userId = defaultUserId),
+                            Category(name = "Other", type = "Expense", color = "#E0E0E0", userId = defaultUserId), // Ensure Other exists
                             Category(name = "Salary", type = "Income", color = "#D1B3FF", userId = defaultUserId),
                             Category(name = "Gift", type = "Income", color = "#D1B3FF", userId = defaultUserId),
                             Category(name = "Freelance", type = "Income", color = "#D1B3FF", userId = defaultUserId),
