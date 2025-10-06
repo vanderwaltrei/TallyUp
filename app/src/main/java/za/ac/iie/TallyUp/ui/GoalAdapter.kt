@@ -1,5 +1,8 @@
+@file:Suppress("PackageName")
+
 package za.ac.iie.TallyUp.ui
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -38,6 +41,7 @@ class GoalAdapter(
         return GoalViewHolder(view)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: GoalViewHolder, position: Int) {
         val goal = goals[position]
 
@@ -66,9 +70,8 @@ class GoalAdapter(
 
     override fun getItemCount(): Int = goals.size
 
-    /**
-     * Normalizes deadline input so "1" becomes "1 Month", "2" becomes "2 Months", etc.
-     */
+     //Normalizes deadline input so "1" becomes "1 Month", "2" becomes "2 Months", etc.
+
     private fun normalizeDeadline(input: String?): String {
         if (input.isNullOrBlank()) return ""
 

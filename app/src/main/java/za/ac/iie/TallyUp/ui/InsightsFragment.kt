@@ -1,4 +1,6 @@
-package za.ac.iie.TallyUp.ui.insights
+@file:Suppress("PackageName")
+
+package za.ac.iie.TallyUp.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater

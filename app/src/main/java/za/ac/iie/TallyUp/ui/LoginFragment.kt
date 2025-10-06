@@ -1,5 +1,8 @@
+@file:Suppress("PackageName")
+
 package za.ac.iie.TallyUp.ui
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -18,6 +21,7 @@ import za.ac.iie.TallyUp.data.DatabaseProvider
 
 class LoginFragment : Fragment(R.layout.fragment_login) {
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -28,7 +32,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         val progressBar = view.findViewById<ProgressBar>(R.id.progress_indicator)
         val signUpText = view.findViewById<TextView>(R.id.sign_up_text)
 
-        // SIMPLE CLICK LISTENER - Make entire TextView clickable
+        //Make entire TextView clickable
         signUpText.setOnClickListener {
             Log.d("LoginFragment", "Sign up text clicked - navigating to SignUpFragment")
             navigateToSignUp()
@@ -61,7 +65,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             // Access to RoomDB
             val db = DatabaseProvider.getDatabase(requireContext())
 
-            // SINGLE database query with proper error handling
+            // Adds one database query with proper error handling
             lifecycleScope.launch {
                 try {
                     Log.d("LoginFragment", "Attempting login for email: $email")

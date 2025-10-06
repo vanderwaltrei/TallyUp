@@ -1,3 +1,5 @@
+@file:Suppress("PackageName")
+
 package za.ac.iie.TallyUp.ui
 
 import android.annotation.SuppressLint
@@ -27,6 +29,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+@Suppress("UNUSED_ANONYMOUS_PARAMETER")
 class DashboardFragment : Fragment() {
 
     private var _binding: FragmentDashboardBinding? = null

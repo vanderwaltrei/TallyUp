@@ -1,5 +1,8 @@
+@file:Suppress("PackageName")
+
 package za.ac.iie.TallyUp.ui
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -134,6 +137,7 @@ class BudgetFragment : Fragment() {
         binding.categoryRecycler.adapter = adapter
     }
 
+    @SuppressLint("SetTextI18n")
     private fun updateBudgetSummary(categories: List<BudgetCategory>, transactions: List<za.ac.iie.TallyUp.data.Transaction>) {
         // Calculate total budget from all categories
         val totalBudget = calculateTotalBudget(categories)

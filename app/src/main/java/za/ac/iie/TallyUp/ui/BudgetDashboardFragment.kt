@@ -1,5 +1,8 @@
+@file:Suppress("PackageName")
+
 package za.ac.iie.TallyUp.ui
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -22,6 +25,7 @@ import za.ac.iie.TallyUp.models.BudgetCategory
 import java.util.Calendar
 import java.util.Date
 
+@Suppress("UNUSED_DESTRUCTURED_PARAMETER_ENTRY")
 class BudgetDashboardFragment : Fragment() {
 
     private var _binding: FragmentBudgetDashboardBinding? = null
@@ -110,10 +114,7 @@ class BudgetDashboardFragment : Fragment() {
         }
     }
 
-    /**
-     * Convert database categories to BudgetCategory objects
-     * Uses existing budget amounts from AppState if available, otherwise sets default budget
-     */
+    // Convert database categories to BudgetCategory objects. Uses existing budget amounts from AppState if available, otherwise sets default budget
     private fun convertToBudgetCategories(
         dbCategories: List<za.ac.iie.TallyUp.data.Category>,
         state: za.ac.iie.TallyUp.models.AppState,
@@ -195,6 +196,7 @@ class BudgetDashboardFragment : Fragment() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun updateBudgetHealthCard(categories: List<BudgetCategory>, transactions: List<za.ac.iie.TallyUp.data.Transaction>) {
         // Calculate total budget from all categories
         val totalBudget = categories.sumOf { it.budgeted }
@@ -223,6 +225,7 @@ class BudgetDashboardFragment : Fragment() {
         Log.d(TAG, "Budget Health Updated - Period: $selectedTimePeriod, Spent: R$totalSpent, Budget: R$totalBudget, Progress: $progressPercentage%")
     }
 
+    @SuppressLint("SetTextI18n")
     private fun updatePerformanceSummary(categories: List<BudgetCategory>, transactions: List<za.ac.iie.TallyUp.data.Transaction>) {
         val categoryPerformance = calculateCategoryPerformance(categories, transactions)
 

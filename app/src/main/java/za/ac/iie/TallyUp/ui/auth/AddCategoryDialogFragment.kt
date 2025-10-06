@@ -1,4 +1,6 @@
-package za.ac.iie.TallyUp.ui
+@file:Suppress("PackageName")
+
+package za.ac.iie.TallyUp.ui.auth
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,6 +11,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import za.ac.iie.TallyUp.data.Category
 import za.ac.iie.TallyUp.databinding.DialogueAddCategoryBinding
+import za.ac.iie.TallyUp.ui.SwatchAdapter
 
 class AddCategoryDialogFragment(
     private val userId: String,

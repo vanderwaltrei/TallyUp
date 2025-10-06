@@ -1,5 +1,8 @@
+@file:Suppress("PackageName")
+
 package za.ac.iie.TallyUp.ui
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,15 +11,16 @@ import za.ac.iie.TallyUp.databinding.ItemCategoryBreakdownBinding
 import za.ac.iie.TallyUp.models.BudgetCategory
 import za.ac.iie.TallyUp.data.Transaction
 
-/**
- * Adapter for displaying budget category breakdown in BudgetDashboardFragment
- * This is DIFFERENT from CategoryAdapter which is used for category selection
- */
+
+ // Adapter is for displaying budget category breakdown in BudgetDashboardFragment. This is different from CategoryAdapter which is used for category selection
+
+@Suppress("unused")
 class CategoryBreakdownAdapter(
     private val categories: List<BudgetCategory>,
     private val transactions: List<Transaction>
 ) : RecyclerView.Adapter<CategoryBreakdownAdapter.ViewHolder>() {
 
+    @SuppressLint("UseKtx", "SetTextI18n")
     inner class ViewHolder(val binding: ItemCategoryBreakdownBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -50,7 +54,6 @@ class CategoryBreakdownAdapter(
             binding.btnSave.setOnClickListener {
                 val newAmount = binding.editAmount.text.toString().toDoubleOrNull()
                 if (newAmount != null) {
-                    // TODO: Implement saving logic via ViewModel or callback
                     binding.editSection.visibility = View.GONE
                     expandText.text = "Edit Budget"
                     expandArrow.animate().rotation(0f).setDuration(200).start()
@@ -67,6 +70,7 @@ class CategoryBreakdownAdapter(
         return ViewHolder(binding)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val category = categories[position]
 

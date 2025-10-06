@@ -1,3 +1,5 @@
+@file:Suppress("PackageName")
+
 package za.ac.iie.TallyUp.ui
 
 import android.annotation.SuppressLint
@@ -47,6 +49,7 @@ class ProfileMainFragment : Fragment() {
         }
     }
 
+    @SuppressLint("UseKtx")
     private fun loadUserData() {
         val prefs = requireContext().getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
         val email = prefs.getString("loggedInEmail", null)
@@ -72,6 +75,7 @@ class ProfileMainFragment : Fragment() {
         }
     }
 
+    @SuppressLint("UseKtx")
     private fun saveProfileChanges() {
         val prefs = requireContext().getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
         val email = prefs.getString("loggedInEmail", null)

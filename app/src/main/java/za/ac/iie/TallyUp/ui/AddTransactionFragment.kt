@@ -1,3 +1,5 @@
+@file:Suppress("ReplaceIsEmptyWithIfEmpty", "PackageName")
+
 package za.ac.iie.TallyUp.ui
 
 
@@ -26,10 +28,12 @@ import za.ac.iie.TallyUp.models.TransactionViewModelFactory
 import java.io.File
 import android.app.DatePickerDialog
 import za.ac.iie.TallyUp.models.TransactionViewModel
+import za.ac.iie.TallyUp.ui.auth.AddCategoryDialogFragment
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
+@Suppress("UNUSED_ANONYMOUS_PARAMETER")
 class AddTransactionFragment : Fragment() {
 
     private var _binding: FragmentAddTransactionBinding? = null
@@ -178,7 +182,7 @@ class AddTransactionFragment : Fragment() {
             val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
                 putExtra(MediaStore.EXTRA_OUTPUT, cameraPhotoUri)
                 addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION) // ✅Added for safety
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION) //
             }
 
             // Create the gallery intent

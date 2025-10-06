@@ -1,3 +1,5 @@
+@file:Suppress("PackageName")
+
 package za.ac.iie.TallyUp.ui
 
 import android.view.LayoutInflater
@@ -8,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import za.ac.iie.TallyUp.data.Category
 import za.ac.iie.TallyUp.databinding.ItemCategoryBinding
 
+@Suppress("UNUSED_VARIABLE")
 class CategoryAdapter(
     val categories: MutableList<Category>,
     private val onCategorySelected: (Category) -> Unit,

@@ -1,5 +1,8 @@
+@file:Suppress("PackageName")
+
 package za.ac.iie.TallyUp.ui
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -52,7 +55,7 @@ class GoalsFragment : Fragment() {
         binding.goalsGrid.adapter = goalAdapter
         binding.goalsGrid.layoutManager = LinearLayoutManager(requireContext())
 
-        // Load goals from database FOR CURRENT USER
+        // Load goals from database for current user
         loadGoalsFromDatabase()
 
         // Initial visibility
@@ -69,6 +72,7 @@ class GoalsFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun loadGoalsFromDatabase() {
         val userId = getCurrentUserId()
         CoroutineScope(Dispatchers.IO).launch {
@@ -82,6 +86,7 @@ class GoalsFragment : Fragment() {
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun saveNewGoal() {
         val nameInput = binding.goalNameInput.text.toString().trim()
         val amountInput = binding.goalAmountInput.text.toString().trim()
@@ -112,13 +117,13 @@ class GoalsFragment : Fragment() {
         }
     }
 
-    // ... rest of the methods remain the same
     private fun openCreateGoalPage(hideGoals: Boolean = false) {
         binding.emptyState.visibility = View.GONE
         if (hideGoals) binding.goalsGrid.visibility = View.GONE
         binding.createGoalPage.visibility = View.VISIBLE
     }
 
+    @SuppressLint("UseKtx")
     private fun handleBackButton() {
         if (binding.createGoalPage.visibility == View.VISIBLE) {
             binding.createGoalPage.visibility = View.GONE
@@ -139,6 +144,7 @@ class GoalsFragment : Fragment() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun openAddMoneyMenu(goal: Goal) {
         currentGoalForAddingMoney = goal
         binding.addMoney.visibility = View.VISIBLE
@@ -152,6 +158,7 @@ class GoalsFragment : Fragment() {
         binding.goalsGrid.visibility = View.VISIBLE
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun addMoneyToGoal() {
         val goal = currentGoalForAddingMoney ?: return
         val inputText = binding.goalAdd.text.toString().replace("R", "").trim()
@@ -170,6 +177,7 @@ class GoalsFragment : Fragment() {
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun completeGoal(goal: Goal) {
         CoroutineScope(Dispatchers.IO).launch {
             database.goalDao().deleteGoal(goal)

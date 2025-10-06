@@ -1,5 +1,8 @@
+@file:Suppress("PackageName")
+
 package za.ac.iie.TallyUp.ui
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -69,6 +72,7 @@ class ChooseCharacterTutorialFragment : Fragment(R.layout.fragment_choose_charac
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun updateContinueButtonText(character: String) {
         val continueButton = view?.findViewById<Button>(R.id.continue_button)
         when (character) {
