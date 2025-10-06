@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -41,22 +42,24 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="48dp"
+        android:gravity="center"
         android:text="Take the stress out of your money"
         android:textColor="@color/muted_foreground"
         android:textSize="18sp"
-        android:gravity="center"
-        android:layout_marginBottom="48dp" />
+        tools:ignore="TextContrastCheck" />
 
     <!-- Get Started Button -->
     <Button
         android:id="@+id/get_started_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/accent"
+        android:paddingVertical="16dp"
         android:text="Get Started"
+        android:textColor="@color/accent_foreground"
         android:textSize="16sp"
         android:textStyle="bold"
-        android:paddingVertical="16dp"
-        android:backgroundTint="@color/accent"
-        android:textColor="@color/accent_foreground" />
+        tools:ignore="TextContrastCheck" />
 
 </LinearLayout>

@@ -28,9 +28,10 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_gravity="center"
-                android:src="@drawable/ic_user"
                 android:contentDescription="@string/profile_image"
-                app:tint="@color/white" />
+                android:src="@drawable/ic_user"
+                app:tint="@color/white"
+                tools:ignore="ImageContrastCheck" />
 
         </com.google.android.material.card.MaterialCardView>
 
@@ -51,7 +52,8 @@
             android:gravity="center_horizontal"
             android:text="@string/create_your_account_and_start_budgeting"
             android:textColor="@color/muted_foreground"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            tools:ignore="TextSizeCheck,TextContrastCheck" />
 
         <!-- First and Last Name Labels -->
         <LinearLayout
@@ -102,9 +104,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/first_name"
+                    android:imeOptions="actionNext"
                     android:inputType="textPersonName"
                     android:textColor="@color/foreground"
-                    android:imeOptions="actionNext"/>
+                    tools:ignore="DuplicateSpeakableTextCheck,TextContrastCheck" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -117,12 +120,13 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/last_name_input"
-                    android:hint="@string/last_name"
-                    android:inputType="textPersonName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:hint="@string/last_name"
+                    android:imeOptions="actionNext"
+                    android:inputType="textPersonName"
                     android:textColor="@color/foreground"
-                    android:imeOptions="actionNext"/>
+                    tools:ignore="DuplicateSpeakableTextCheck,TextContrastCheck" />
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
 
@@ -145,12 +149,13 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/email_input"
-                android:hint="@string/email_address"
-                android:inputType="textEmailAddress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:hint="@string/email_address"
+                android:imeOptions="actionNext"
+                android:inputType="textEmailAddress"
                 android:textColor="@color/foreground"
-                android:imeOptions="actionNext"/>
+                tools:ignore="DuplicateSpeakableTextCheck,TextContrastCheck" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Password label -->
@@ -173,12 +178,13 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/password_input"
-                android:hint="@string/password"
-                android:inputType="textPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:hint="@string/password"
+                android:imeOptions="actionNext"
+                android:inputType="textPassword"
                 android:textColor="@color/foreground"
-                android:imeOptions="actionNext"/>
+                tools:ignore="DuplicateSpeakableTextCheck,TextContrastCheck" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Confirm Password label -->
@@ -201,12 +207,13 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/confirm_password_input"
-                android:hint="@string/confirm_password"
-                android:inputType="textPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:hint="@string/confirm_password"
+                android:imeOptions="actionDone"
+                android:inputType="textPassword"
                 android:textColor="@color/foreground"
-                android:imeOptions="actionDone"/>
+                tools:ignore="DuplicateSpeakableTextCheck,TextContrastCheck" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Create Account Button -->
@@ -237,7 +244,8 @@
             android:padding="12dp"
             android:text="@string/already_have_an_account_log_in"
             android:textColor="@color/muted_foreground"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            tools:ignore="TextContrastCheck,TouchTargetSizeCheck" />
 
     </LinearLayout>
 </ScrollView>

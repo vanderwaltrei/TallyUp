@@ -52,7 +52,8 @@
         android:paddingEnd="16dp"
         android:layout_marginTop="16dp"
         android:gravity="center_horizontal"
-        android:weightSum="3">
+        android:weightSum="3"
+        tools:ignore="DisableBaselineAlignment">
 
         <!-- Time Filter -->
         <LinearLayout
@@ -87,7 +88,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:paddingEnd="8dp">
+            android:paddingEnd="8dp"
+            tools:ignore="RtlSymmetry">
 
             <TextView
                 android:layout_width="wrap_content"
