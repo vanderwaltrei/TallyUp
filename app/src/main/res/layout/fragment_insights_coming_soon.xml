@@ -2,6 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -29,7 +30,7 @@
             android:id="@+id/titleText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Insights"
+            android:text="@string/insights"
             android:textSize="20sp"
             android:textStyle="bold"
             android:textColor="@color/foreground"
@@ -62,7 +63,7 @@
                     android:id="@+id/insights_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Insights Coming Soon"
+                    android:text="@string/insights_coming_soon"
                     android:textStyle="bold"
                     android:textSize="18sp"
                     android:textColor="@color/foreground"
@@ -72,11 +73,12 @@
                     android:id="@+id/insights_message"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Insights are not currently available. Check back later."
-                    android:textSize="14sp"
-                    android:textAlignment="center"
                     android:gravity="center"
-                    android:textColor="@color/muted_foreground"/>
+                    android:text="@string/insights_are_not_currently_available_check_back_later"
+                    android:textAlignment="center"
+                    android:textColor="@color/muted_foreground"
+                    android:textSize="14sp"
+                    tools:ignore="TextContrastCheck" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
     </LinearLayout>

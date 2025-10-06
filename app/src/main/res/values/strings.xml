@@ -104,6 +104,32 @@
     <string name="deadline">Deadline</string>
     <string name="amount_to_add">Amount To Add</string>
     <string name="add_money_to_quot_quot">Add Money To \"_\"</string>
+    <string name="this_month_summary">This Month Summary</string>
+    <string name="total_spent">Total Spent</string>
+    <string name="remaining">Remaining</string>
+    <string name="_0_transactions_this_month">0 transactions this month</string>
+    <string name="spending_analysis">Spending Analysis</string>
+    <string name="no_spending_data">No Spending Data</string>
+    <string name="start_adding_transactions_to_see_your_spending_insights">Start adding transactions to see your spending insights!</string>
+    <string name="spending_insights">Spending Insights</string>
+    <string name="highest_spending_day_aug_25">• Highest spending day: Aug 25</string>
+    <string name="most_expensive_category_food_r227_38">• Most expensive category: Food (R227.38)</string>
+    <string name="spending_is_increasing">• Spending is increasing !</string>
+    <string name="try_to_keep_daily_spending_under_r25">• Try to keep daily spending under R25</string>
+    <string name="key_insights">Key Insights</string>
+    <string name="great_job_you_have_r600_remaining_in_your_budget">Great Job! You have R600 remaining in your budget</string>
+    <string name="money_tip_you_re_doing_great_keep_tracking_your_expenses">Money Tip: You\'re doing great! Keep tracking your expenses.</string>
+    <string name="goals_progress">Goals Progress</string>
+    <string name="new_phone">New Phone</string>
+    <string name="trend">Trend</string>
+    <string name="daily">Daily</string>
+    <string name="r600_00">R600.00</string>
+    <string name="r0_00">R0.00</string>
+    <string name="insights_coming_soon">Insights Coming Soon</string>
+    <string name="insights_are_not_currently_available_check_back_later">Insights are not currently available. Check back later.</string>
+    <string name="manage_your_account_and_rewards">Manage your account and rewards</string>
+    <string name="rewards">Rewards</string>
+    <string name="settings">Settings</string>
     <string-array name="type_filter_options">
         <item>All</item>
         <item>Income</item>

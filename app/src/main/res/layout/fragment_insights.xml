@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F6FCFF">
@@ -23,12 +24,14 @@
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="This Month" />
+                android:text="This Month"
+                tools:ignore="HardcodedText" />
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Last Month" />
+                android:text="Last Month"
+                tools:ignore="HardcodedText" />
         </com.google.android.material.tabs.TabLayout>
 
         <!-- This Month Summary -->
@@ -48,7 +51,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="This Month Summary"
+                    android:text="@string/this_month_summary"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -56,7 +59,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_marginTop="12dp">
+                    android:layout_marginTop="12dp"
+                    tools:ignore="DisableBaselineAlignment">
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -68,7 +72,7 @@
                             android:id="@+id/totalSpent"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="R0.00"
+                            android:text="@string/r0_00"
                             android:textColor="@android:color/holo_blue_dark"
                             android:textSize="18sp"
                             android:textStyle="bold" />
@@ -76,7 +80,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Total Spent" />
+                            android:text="@string/total_spent" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -89,7 +93,7 @@
                             android:id="@+id/remainingAmount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="R600.00"
+                            android:text="@string/r600_00"
                             android:textColor="@android:color/holo_green_dark"
                             android:textSize="18sp"
                             android:textStyle="bold" />
@@ -97,17 +101,18 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Remaining" />
+                            android:text="@string/remaining" />
                     </LinearLayout>
                 </LinearLayout>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="0 transactions this month"
-                    android:textSize="12sp"
                     android:layout_marginTop="6dp"
-                    android:textColor="@android:color/darker_gray" />
+                    android:text="@string/_0_transactions_this_month"
+                    android:textColor="@android:color/darker_gray"
+                    android:textSize="12sp"
+                    tools:ignore="TextContrastCheck" />
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -129,7 +134,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Spending Analysis"
+                    android:text="@string/spending_analysis"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -143,17 +148,17 @@
                     <com.google.android.material.tabs.TabItem
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Trend" />
+                        android:text="@string/trend" />
 
                     <com.google.android.material.tabs.TabItem
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Daily" />
+                        android:text="@string/daily" />
 
                     <com.google.android.material.tabs.TabItem
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Categories" />
+                        android:text="@string/categories" />
                 </com.google.android.material.tabs.TabLayout>
 
                 <!-- Chart Placeholder -->
@@ -184,14 +189,15 @@
                 <ImageView
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:src="@drawable/ic_no_data"
                     android:contentDescription="@string/no_spending_data_icon"
-                    app:tint="@android:color/darker_gray" />
+                    android:src="@drawable/ic_no_data"
+                    app:tint="@android:color/darker_gray"
+                    tools:ignore="ImageContrastCheck" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="No Spending Data"
+                    android:text="@string/no_spending_data"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     android:layout_marginTop="8dp" />
@@ -199,11 +205,12 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Start adding transactions to see your spending insights!"
-                    android:textSize="14sp"
+                    android:layout_marginTop="4dp"
                     android:gravity="center"
+                    android:text="@string/start_adding_transactions_to_see_your_spending_insights"
                     android:textColor="@android:color/darker_gray"
-                    android:layout_marginTop="4dp" />
+                    android:textSize="14sp"
+                    tools:ignore="TextContrastCheck" />
 
                 <Button
                     android:id="@+id/addFirstTransactionBtnAlt"
@@ -211,7 +218,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:backgroundTint="@android:color/holo_orange_light"
-                    android:text="Add Your First Transaction" />
+                    android:text="@string/add_your_first_transaction"
+                    tools:ignore="TextContrastCheck" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
@@ -233,30 +241,30 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Spending Insights"
+                    android:text="@string/spending_insights"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="• Highest spending day: Aug 25"
+                    android:text="@string/highest_spending_day_aug_25"
                     android:layout_marginTop="8dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="• Most expensive category: Food (R227.38)" />
+                    android:text="@string/most_expensive_category_food_r227_38" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="• Spending is increasing !" />
+                    android:text="@string/spending_is_increasing" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="• Try to keep daily spending under R25" />
+                    android:text="@string/try_to_keep_daily_spending_under_r25" />
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -281,14 +289,14 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="No Spending Data"
+                    android:text="@string/no_goals_yet"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Start adding transactions to see your spending insights!"
+                    android:text="@string/start_adding_transactions_to_see_your_spending_insights"
                     android:gravity="center"
                     android:layout_marginTop="4dp"
                     android:textColor="@android:color/darker_gray" />
@@ -299,7 +307,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:backgroundTint="@android:color/holo_orange_light"
-                    android:text="Add Your First Transaction" />
+                    android:text="@string/add_your_first_transaction" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
@@ -320,20 +328,20 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Key Insights"
+                    android:text="@string/key_insights"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Great Job! You have R600 remaining in your budget"
+                    android:text="@string/great_job_you_have_r600_remaining_in_your_budget"
                     android:layout_marginTop="8dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Money Tip: You're doing great! Keep tracking your expenses."
+                    android:text="@string/money_tip_you_re_doing_great_keep_tracking_your_expenses"
                     android:layout_marginTop="4dp" />
 
             </LinearLayout>
@@ -356,14 +364,14 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Goals Progress"
+                    android:text="@string/goals_progress"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="New Phone"
+                    android:text="@string/new_phone"
                     android:layout_marginTop="8dp" />
 
                 <ProgressBar
