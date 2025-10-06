@@ -114,7 +114,8 @@ class MainActivity : AppCompatActivity() {
             "SignUpFragment",
             "StartTutorialFragment",
             "Question1TutorialFragment",
-            "Question2TutorialFragment"
+            "Question2TutorialFragment",
+            "ChooseCharacterTutorialFragment"
         )
 
         val fragmentClassName = fragment?.javaClass?.simpleName ?: ""
