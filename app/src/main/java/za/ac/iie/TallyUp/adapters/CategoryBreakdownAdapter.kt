@@ -1,5 +1,8 @@
+@file:Suppress("PackageName")
+
 package za.ac.iie.TallyUp.adapters
 
+import android.annotation.SuppressLint
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -10,6 +13,7 @@ import za.ac.iie.TallyUp.databinding.ItemCategoryBreakdownBinding
 import za.ac.iie.TallyUp.models.BudgetCategory
 import za.ac.iie.TallyUp.data.Transaction
 
+@Suppress("DEPRECATION")
 class CategoryBreakdownAdapter(
     private var categories: List<BudgetCategory>,
     private val transactions: List<Transaction>
@@ -18,6 +22,7 @@ class CategoryBreakdownAdapter(
     // Callback for budget update events
     var onBudgetUpdated: ((categoryName: String, newAmount: Double) -> Unit)? = null
 
+    @SuppressLint("UseKtx")
     inner class ViewHolder(val binding: ItemCategoryBreakdownBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -54,6 +59,7 @@ class CategoryBreakdownAdapter(
         }
 
         /** Opens or closes the edit section with animation and arrow rotation */
+        @SuppressLint("SetTextI18n")
         private fun toggleEditSection(expand: Boolean) {
             if (expand) {
                 binding.editSection.visibility = View.VISIBLE
@@ -74,6 +80,7 @@ class CategoryBreakdownAdapter(
         }
 
         /** Update preview text and progress as user types */
+        @SuppressLint("SetTextI18n")
         private fun updateBudgetPreview(entered: String) {
             val newAmount = entered.toDoubleOrNull() ?: 0.0
             val category = categories[adapterPosition]
@@ -89,6 +96,7 @@ class CategoryBreakdownAdapter(
         }
 
         /** Refresh category labels and progress after closing editor */
+        @SuppressLint("SetTextI18n")
         private fun updateCategoryTexts() {
             val category = categories[adapterPosition]
             val spent = getSpentAmount(category.name)
@@ -113,6 +121,7 @@ class CategoryBreakdownAdapter(
         return ViewHolder(binding)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val category = categories[position]
         val spent = transactions.filter { it.category == category.name }.sumOf { it.amount }
@@ -138,6 +147,7 @@ class CategoryBreakdownAdapter(
     override fun getItemCount() = categories.size
 
     // Add this method to update categories and refresh the adapter
+    @SuppressLint("NotifyDataSetChanged")
     fun updateCategories(newCategories: List<BudgetCategory>) {
         categories = newCategories
         notifyDataSetChanged()

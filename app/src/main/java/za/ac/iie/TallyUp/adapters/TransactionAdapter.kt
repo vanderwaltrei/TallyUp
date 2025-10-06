@@ -1,9 +1,9 @@
+@file:Suppress("PackageName")
+
 package za.ac.iie.TallyUp.adapters
 
-import android.text.Editable
-import android.text.TextWatcher
-import za.ac.iie.TallyUp.databinding.ItemCategoryBreakdownBinding
-import za.ac.iie.TallyUp.models.BudgetCategory
+
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,6 +32,7 @@ class TransactionAdapter : ListAdapter<Transaction, TransactionAdapter.Transacti
     inner class TransactionViewHolder(private val binding: ItemTransactionBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
+        @SuppressLint("DefaultLocale")
         fun bind(transaction: Transaction) {
             // Description and category
             val descriptionText = if (!transaction.description.isNullOrEmpty()) {

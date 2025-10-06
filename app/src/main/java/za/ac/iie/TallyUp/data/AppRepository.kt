@@ -1,5 +1,8 @@
+@file:Suppress("CanBeParameter", "unused", "PackageName")
+
 package za.ac.iie.TallyUp.data
 
+import android.annotation.SuppressLint
 import android.content.Context
 import za.ac.iie.TallyUp.models.* // This imports models.User
 import com.google.gson.Gson
@@ -9,6 +12,7 @@ class AppRepository(private val context: Context) {
     private val sharedPreferences = context.getSharedPreferences("TallyUp", Context.MODE_PRIVATE)
     private val gson = Gson()
 
+    @SuppressLint("UseKtx")
     fun saveAppState(appState: AppState) {
         val json = gson.toJson(appState)
         sharedPreferences.edit().putString("app_state", json).apply()
@@ -23,7 +27,7 @@ class AppRepository(private val context: Context) {
         }
     }
 
-    fun getDefaultAccessories(): List<CharacterAccessory> = listOf(
+    private fun getDefaultAccessories(): List<CharacterAccessory> = listOf(
         CharacterAccessory(
             id = "casual-outfit",
             name = "Casual Outfit",
@@ -42,7 +46,7 @@ class AppRepository(private val context: Context) {
         )
     )
 
-    fun getRewardAccessories(): List<CharacterAccessory> = listOf(
+    private fun getRewardAccessories(): List<CharacterAccessory> = listOf(
         CharacterAccessory(
             id = "graduation-cap",
             name = "Graduation Cap",
