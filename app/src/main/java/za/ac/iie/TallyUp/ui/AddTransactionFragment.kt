@@ -15,7 +15,6 @@ import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import kotlinx.coroutines.launch
 import za.ac.iie.TallyUp.data.AppDatabase
@@ -190,7 +189,9 @@ class AddTransactionFragment : Fragment() {
             )
 
             Toast.makeText(requireContext(), "Transaction saved!", Toast.LENGTH_SHORT).show()
-            findNavController().popBackStack()
+
+            //  Manual fragment back navigation
+            requireActivity().supportFragmentManager.popBackStack()
         }
     }
 
