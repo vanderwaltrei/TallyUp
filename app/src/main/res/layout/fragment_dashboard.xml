@@ -29,6 +29,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:baselineAligned="false"
                 android:orientation="horizontal"
                 android:padding="16dp">
 
@@ -51,7 +52,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Here's your money overview"
+                        android:text="@string/here_s_your_money_overview"
                         android:textColor="@color/muted_foreground"
                         android:textSize="14sp"
                         android:layout_marginTop="4dp" />
@@ -81,7 +82,7 @@
                         android:visibility="gone"
                         android:layout_alignEnd="@id/characterImage"
                         app:tint="@color/accent"
-                        android:contentDescription="Mood" />
+                        android:contentDescription="@string/mood" />
 
                     <TextView
                         android:id="@+id/coinsText"
@@ -89,7 +90,7 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/characterImage"
                         android:layout_centerHorizontal="true"
-                        android:text="0"
+                        android:text="@string/_0"
                         android:drawablePadding="4dp"
                         android:textColor="@color/foreground"
                         android:textSize="14sp"
@@ -129,19 +130,21 @@
                     android:layout_height="match_parent"
                     android:orientation="vertical"
                     android:gravity="center"
-                    android:padding="8dp">
+                    android:padding="8dp"
+                    tools:ignore="UseCompoundDrawables">
 
                     <ImageView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@drawable/ic_trending_up"
                         android:contentDescription="@string/budget_dashboard"
-                        app:tint="@color/primary" />
+                        android:src="@drawable/ic_trending_up"
+                        app:tint="@color/primary"
+                        tools:ignore="ImageContrastCheck" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Budget Dashboard"
+                        android:text="@string/budget_dashboard"
                         android:textColor="@color/foreground"
                         android:textSize="12sp"
                         android:textStyle="bold"
@@ -169,19 +172,21 @@
                     android:layout_height="match_parent"
                     android:orientation="vertical"
                     android:gravity="center"
-                    android:padding="8dp">
+                    android:padding="8dp"
+                    tools:ignore="UseCompoundDrawables">
 
                     <ImageView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@drawable/ic_bar_chart"
                         android:contentDescription="@string/insights"
-                        app:tint="@color/accent" />
+                        android:src="@drawable/ic_bar_chart"
+                        app:tint="@color/accent"
+                        tools:ignore="ImageContrastCheck" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Insights"
+                        android:text="@string/insights"
                         android:textColor="@color/foreground"
                         android:textSize="12sp"
                         android:textStyle="bold"
@@ -213,10 +218,10 @@
                     android:id="@+id/availableSubtitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Available to Spend"
-                    android:textColor="@color/muted_foreground"
-                    android:textSize="14sp"
-                    android:layout_marginBottom="16dp" />
+                    android:layout_marginBottom="16dp"
+                    android:text="@string/available_to_spend"
+                    android:textColor="#757575"
+                    android:textSize="14sp" />
 
                 <RelativeLayout
                     android:layout_width="128dp"
@@ -226,17 +231,19 @@
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:src="@drawable/circular_progress_bg" />
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/circular_progress_bg"
+                        tools:ignore="ImageContrastCheck" />
 
                     <TextView
                         android:id="@+id/availableAmount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        tools:text="$350.00"
-                        android:textColor="@color/primary"
+                        android:layout_centerInParent="true"
+                        android:textColor="#039BE5"
                         android:textSize="24sp"
                         android:textStyle="bold"
-                        android:layout_centerInParent="true" />
+                        tools:text="$350.00" />
 
                     <TextView
                         android:id="@+id/progressText"
@@ -256,7 +263,7 @@
                     android:gravity="center"
                     android:paddingHorizontal="12dp"
                     android:paddingVertical="4dp"
-                    android:text="On Track!"
+                    android:text="@string/on_track"
                     android:textColor="#33691E"
                     android:textSize="12sp"
                     android:textStyle="bold" />
@@ -276,7 +283,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Recent Activity"
+                android:text="@string/recent_activity"
                 android:textColor="@color/foreground"
                 android:textSize="18sp"
                 android:textStyle="bold"
@@ -299,11 +306,12 @@
                         android:id="@+id/no_transactions_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="No transactions yet"
+                        android:gravity="center"
+                        android:padding="32dp"
+                        android:text="@string/no_transactions_yet"
                         android:textColor="@color/muted_foreground"
                         android:textSize="14sp"
-                        android:gravity="center"
-                        android:padding="32dp" />
+                        tools:ignore="TextContrastCheck" />
 
                 </LinearLayout>
 
@@ -323,7 +331,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Your Goals"
+                android:text="@string/your_goals"
                 android:textColor="@color/foreground"
                 android:textSize="18sp"
                 android:textStyle="bold"
@@ -353,11 +361,12 @@
                         android:id="@+id/no_goals_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="No goals yet"
+                        android:gravity="center"
+                        android:padding="32dp"
+                        android:text="@string/no_goals_yet"
                         android:textColor="@color/muted_foreground"
                         android:textSize="14sp"
-                        android:gravity="center"
-                        android:padding="32dp" />
+                        tools:ignore="TextContrastCheck" />
 
                 </LinearLayout>
 

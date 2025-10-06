@@ -63,6 +63,12 @@
     <string name="income_expenseHeader">Income/Expense:</string>
     <string name="time_periodHeader">Time Period:</string>
     <string name="add_your_first_transaction">Add Your First Transaction</string>
+    <string name="mood">Mood</string>
+    <string name="_0">0</string>
+    <string name="here_s_your_money_overview">Here\'s your money overview</string>
+    <string name="on_track">On Track!</string>
+    <string name="no_transactions_yet">No transactions yet</string>
+    <string name="no_goals_yet">No goals yet</string>
     <string-array name="type_filter_options">
         <item>All</item>
         <item>Income</item>
