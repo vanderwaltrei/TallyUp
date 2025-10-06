@@ -26,7 +26,7 @@
 
             <ImageButton
                 android:id="@+id/back_button"
-                android:layout_width="48dp"
+                android:layout_width="47dp"
                 android:layout_height="48dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/back"
@@ -58,29 +58,31 @@
                 android:id="@+id/transaction_type_group"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/transparent">
+                android:background="@android:color/transparent"
+                app:singleSelection="true"
+                app:selectionRequired="true">
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/expense_button"
-                    style="@style/Widget.Material3.Button.TonalButton"
+                    style="@style/Widget.Material3.Button"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:backgroundTint="@color/card_background"
                     android:text="Expense (-)"
                     android:textColor="@color/foreground"
-                    app:cornerRadius="24dp" />
+                    app:cornerRadius="24dp"
+                    app:backgroundTint="@color/transaction_toggle_bg" />
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/income_button"
-                    style="@style/Widget.Material3.Button.TonalButton"
+                    style="@style/Widget.Material3.Button"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:backgroundTint="@color/success"
                     android:text="Income (+)"
                     android:textColor="@color/foreground"
-                    app:cornerRadius="24dp" />
+                    app:cornerRadius="24dp"
+                    app:backgroundTint="@color/transaction_toggle_bg" />
             </com.google.android.material.button.MaterialButtonToggleGroup>
         </com.google.android.material.card.MaterialCardView>
 

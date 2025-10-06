@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import kotlinx.coroutines.launch
+import za.ac.iie.TallyUp.R
 import za.ac.iie.TallyUp.data.AppDatabase
 import za.ac.iie.TallyUp.data.Category
 import za.ac.iie.TallyUp.databinding.FragmentAddTransactionBinding
@@ -114,15 +115,22 @@ class AddTransactionFragment : Fragment() {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
 
-        binding.expenseButton.setOnClickListener {
-            selectedType = "Expense"
-            Toast.makeText(requireContext(), "Expense selected", Toast.LENGTH_SHORT).show()
+        binding.transactionTypeGroup.addOnButtonCheckedListener { group, checkedId, isChecked ->
+            if (isChecked) {
+                when (checkedId) {
+                    R.id.expense_button -> {
+                        selectedType = "Expense"
+                        Toast.makeText(requireContext(), "Expense selected", Toast.LENGTH_SHORT).show()
+                    }
+                    R.id.income_button -> {
+                        selectedType = "Income"
+                        Toast.makeText(requireContext(), "Income selected", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
         }
+        binding.transactionTypeGroup.check(R.id.expense_button)
 
-        binding.incomeButton.setOnClickListener {
-            selectedType = "Income"
-            Toast.makeText(requireContext(), "Income selected", Toast.LENGTH_SHORT).show()
-        }
 
         binding.photoUploadButton.setOnClickListener {
             // Step 1: Create a file to store the camera photo
