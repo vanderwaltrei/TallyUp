@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background"
     android:padding="16dp">
 
     <LinearLayout
@@ -10,13 +11,16 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- App Settings -->
+        <!-- App Settings Card -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             app:cardCornerRadius="12dp"
-            app:cardElevation="2dp">
+            app:cardElevation="2dp"
+            app:cardBackgroundColor="@color/card_background"
+            app:strokeColor="@color/border"
+            app:strokeWidth="1dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -28,11 +32,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="App Settings"
+                    android:textColor="@color/foreground"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     android:layout_marginBottom="12dp" />
 
-                <!-- Notifications -->
+                <!-- Notifications Row -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -50,7 +55,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Notifications"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            android:textColor="@color/foreground" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -64,11 +70,13 @@
                         android:id="@+id/notificationsSwitch"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:checked="true" />
+                        android:checked="true"
+                        android:thumbTint="@color/primary"
+                        android:trackTint="@color/primary_soft" />
 
                 </LinearLayout>
 
-                <!-- Privacy & Security -->
+                <!-- Privacy & Security Row -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -85,7 +93,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Privacy and Security"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            android:textColor="@color/foreground" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -99,19 +108,24 @@
                         android:id="@+id/privacySecuritySwitch"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:checked="true" />
+                        android:checked="true"
+                        android:thumbTint="@color/primary"
+                        android:trackTint="@color/primary_soft" />
 
                 </LinearLayout>
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Log Out -->
+        <!-- Log Out Card -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:cardCornerRadius="12dp"
-            app:cardElevation="2dp">
+            app:cardElevation="2dp"
+            app:cardBackgroundColor="@color/card_background"
+            app:strokeColor="@color/border"
+            app:strokeWidth="1dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
