@@ -12,6 +12,7 @@ import za.ac.iie.TallyUp.ui.GoalsFragment
 import za.ac.iie.TallyUp.ui.ProfileFragment
 import za.ac.iie.TallyUp.ui.LoginFragment
 import android.content.Context
+import android.view.View
 import za.ac.iie.TallyUp.R
 
 class MainActivity : AppCompatActivity() {
@@ -26,6 +27,11 @@ class MainActivity : AppCompatActivity() {
         setupToolbar()
         setupBottomNavigation()
         setupFAB()
+
+        // Listen for fragment changes to hide/show navigation
+        supportFragmentManager.addOnBackStackChangedListener {
+            updateNavigationVisibility()
+        }
 
         // Load default fragment
         if (savedInstanceState == null) {
@@ -87,6 +93,41 @@ class MainActivity : AppCompatActivity() {
             .replace(R.id.fragment_container, fragment)
             .addToBackStack(null)
             .commit()
+    }
+
+    private fun updateNavigationVisibility() {
+        val currentFragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
+        val shouldHideNavigation = shouldHideNavigationForFragment(currentFragment)
+
+        if (shouldHideNavigation) {
+            hideNavigation()
+        } else {
+            showNavigation()
+        }
+    }
+
+    private fun shouldHideNavigationForFragment(fragment: Fragment?): Boolean {
+        // List of fragment class names that should hide navigation
+        val fragmentsToHideNav = listOf(
+            "LoginFragment",
+            "SignUpFragment",
+            "StartTutorialFragment",
+            "Question1TutorialFragment",
+            "Question2TutorialFragment"
+        )
+
+        val fragmentClassName = fragment?.javaClass?.simpleName ?: ""
+        return fragmentsToHideNav.contains(fragmentClassName)
+    }
+
+    fun hideNavigation() {
+        binding.bottomNavigation.visibility = View.GONE
+        binding.fabAddTransaction.visibility = View.GONE
+    }
+
+    fun showNavigation() {
+        binding.bottomNavigation.visibility = View.VISIBLE
+        binding.fabAddTransaction.visibility = View.VISIBLE
     }
 
     private fun userIsLoggedIn(): Boolean {
