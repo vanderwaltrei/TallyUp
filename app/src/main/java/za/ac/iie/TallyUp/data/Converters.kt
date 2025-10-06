@@ -15,13 +15,12 @@ class Converters {
         return if (value.isEmpty()) emptyList() else value.split(",")
     }
 
-    // Remove the duplicate fromList and toList methods
-    // @TypeConverter
-    // fun fromList(list: List<String>): String = list.joinToString(",")
-    //
-    // @TypeConverter
-    // fun toList(data: String): List<String> =
-    //     if (data.isEmpty()) emptyList() else data.split(",")
+    @TypeConverter
+    fun fromList(list: List<String>): String = list.joinToString(",")
+
+    @TypeConverter
+    fun toList(data: String): List<String> =
+        if (data.isEmpty()) emptyList() else data.split(",")
 
     // Add Date converters (even though you're using Long now, good to have)
     @TypeConverter

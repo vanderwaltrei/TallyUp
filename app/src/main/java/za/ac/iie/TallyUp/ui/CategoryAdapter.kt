@@ -1,15 +1,15 @@
 package za.ac.iie.TallyUp.ui
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.annotation.ColorInt
+import androidx.core.graphics.toColorInt
 import androidx.recyclerview.widget.RecyclerView
-import za.ac.iie.TallyUp.R
 import za.ac.iie.TallyUp.data.Category
 import za.ac.iie.TallyUp.databinding.ItemCategoryBinding
 
 class CategoryAdapter(
-    private val categories: List<Category>,
+    val categories: MutableList<Category>,
     private val onCategorySelected: (Category) -> Unit,
     private val onAddNewClicked: () -> Unit
 ) : RecyclerView.Adapter<CategoryAdapter.ViewHolder>() {
@@ -33,15 +33,10 @@ class CategoryAdapter(
 
         holder.binding.categoryName.text = category.name
 
-        // Set icon background color
-        try {
-            val color = Color.parseColor(category.color)
-            holder.binding.categoryIcon.setColorFilter(color)
-        } catch (e: Exception) {
-            holder.binding.categoryIcon.setColorFilter(Color.parseColor("#E0E0E0"))
-        }
+        // Set icon color safely using KTX
+        holder.binding.categoryIcon.setColorFilter(safeParseColor(category.color))
 
-        // Visual feedback for selection - you can add a stroke or change opacity
+        // Selection feedback
         holder.binding.root.alpha = if (isSelected) 1.0f else 0.7f
 
         holder.binding.root.setOnClickListener {
@@ -49,9 +44,8 @@ class CategoryAdapter(
                 onAddNewClicked()
             } else {
                 val previousPosition = selectedPosition
-                selectedPosition = holder.adapterPosition
+                selectedPosition = holder.bindingAdapterPosition
 
-                // Update both items
                 notifyItemChanged(previousPosition)
                 notifyItemChanged(selectedPosition)
 
@@ -61,4 +55,20 @@ class CategoryAdapter(
     }
 
     override fun getItemCount() = categories.size
+
+    fun updateCategories(newList: List<Category>) {
+        val oldSize = categories.size
+        categories.clear()
+        categories.addAll(newList)
+        notifyItemRangeChanged(0, newList.size)
+    }
+
+    @ColorInt
+    private fun safeParseColor(colorString: String): Int {
+        return try {
+            colorString.toColorInt()
+        } catch (e: IllegalArgumentException) {
+            "#E0E0E0".toColorInt()
+        }
+    }
 }

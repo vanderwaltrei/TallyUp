@@ -1,8 +1,8 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
     // Android Gradle Plugin (AGP) - Updated to 8.7.3 for better compatibility
-    id("com.android.application") version "8.7.3" apply false
-    id("com.android.library") version "8.7.3" apply false
+    id("com.android.application") version "8.11.2" apply false
+    id("com.android.library") version "8.11.2" apply false
 
     // Kotlin Gradle Plugin (KGP) - Using 2.0.21 for stability with KSP
     id("org.jetbrains.kotlin.android") version "2.0.21" apply false

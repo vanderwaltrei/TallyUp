@@ -57,5 +57,6 @@
     <string name="save_transaction">Save Transaction</string>
     <string name="category_name">Category name</string>
     <string name="pick_a_icon_colour">Pick an icon colour</string>
+    <string name="create_category">Create Category</string>
 
 </resources>

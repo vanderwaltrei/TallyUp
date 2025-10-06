@@ -21,8 +21,8 @@ class TransactionViewModel(private val transactionDao: TransactionDao) : ViewMod
     ) {
         viewModelScope.launch {
             val transaction = Transaction(
-                type = type,
                 amount = amount,
+                type = type,
                 category = category,
                 description = description,
                 photoUris = photoUris,
