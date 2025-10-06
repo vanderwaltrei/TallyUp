@@ -19,7 +19,7 @@
 
         <!-- Left Column -->
         <LinearLayout
-            android:layout_width="244dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical"
@@ -43,8 +43,9 @@
                 android:layout_marginTop="8dp"
                 android:paddingStart="8dp"
                 android:text="06 Oct 2025"
-                android:textColor="@color/muted_foreground"
-                android:textSize="14sp" />
+                android:textColor="#757575"
+                android:textSize="14sp"
+                tools:ignore="RtlSymmetry" />
 
             <TextView
                 android:id="@+id/photo_status"
@@ -54,7 +55,7 @@
                 android:paddingStart="8dp"
                 android:paddingBottom="8dp"
                 android:text="Photos attached"
-                android:textColor="@color/muted_foreground"
+                android:textColor="#757575"
                 android:textSize="14sp"
                 tools:ignore="RtlSymmetry" />
         </LinearLayout>

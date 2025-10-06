@@ -2,6 +2,7 @@
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
@@ -20,19 +21,20 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:background="@drawable/circle_background"
-            android:src="@drawable/ic_add"
-            android:scaleType="centerInside"
             android:contentDescription="@string/add_new_category"
-            app:tint="@android:color/holo_blue_light" />
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_add"
+            app:tint="@android:color/holo_blue_light"
+            tools:ignore="ImageContrastCheck" />
 
         <TextView
             android:id="@+id/addLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/add_new"
-            android:textSize="14sp"
-            android:textColor="@android:color/holo_blue_light"
             android:layout_marginTop="4dp"
-            android:gravity="center" />
+            android:gravity="center"
+            android:text="@string/add_new"
+            android:textColor="#00838F"
+            android:textSize="14sp" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>
