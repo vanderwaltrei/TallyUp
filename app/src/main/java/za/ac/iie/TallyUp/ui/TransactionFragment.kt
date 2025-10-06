@@ -66,11 +66,9 @@ class TransactionsFragment : Fragment() {
     }
 
     private fun setupSpinners() {
-        // Define filter options
         val typeOptions = listOf("All", "Income", "Expense")
         val timeOptions = listOf("All", "Today", "This Week", "This Month")
 
-        // Create adapters
         val typeAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, typeOptions)
         typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.typeFilterSpinner.adapter = typeAdapter
@@ -79,11 +77,10 @@ class TransactionsFragment : Fragment() {
         timeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.timePeriodSpinner.adapter = timeAdapter
 
-        // Make spinners visible
         binding.timePeriodSpinner.visibility = View.VISIBLE
         binding.typeFilterSpinner.visibility = View.VISIBLE
+        binding.categoryFilterSpinner.visibility = View.VISIBLE
 
-        // Set listeners
         binding.typeFilterSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 val selectedType = parent.getItemAtPosition(position).toString()
@@ -100,6 +97,27 @@ class TransactionsFragment : Fragment() {
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {}
+        }
+
+        // Category spinner setup
+        val categoryDao = appDatabase.categoryDao()
+        lifecycleScope.launch {
+            val userId = getCurrentUserId()
+            val categories = categoryDao.getCategoriesForUser(userId).map { it.name }
+            val categoryOptions = listOf("All") + categories
+
+            val categoryAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, categoryOptions)
+            categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            binding.categoryFilterSpinner.adapter = categoryAdapter
+
+            binding.categoryFilterSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                    val selectedCategory = parent.getItemAtPosition(position).toString()
+                    transactionViewModel.setCategoryFilter(selectedCategory)
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>) {}
+            }
         }
     }
 

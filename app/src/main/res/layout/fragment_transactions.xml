@@ -2,6 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -43,28 +44,94 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <!-- Time Period Filter Combobox -->
-    <Spinner
-        android:id="@+id/timePeriodSpinner"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         android:layout_marginTop="16dp"
-        android:layout_marginBottom="8dp"
-        android:background="@drawable/spinner_background"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="8dp" />
+        android:gravity="center_horizontal"
+        android:weightSum="3">
 
-    <!-- Transaction Type Filter (optional second spinner) -->
-    <Spinner
-        android:id="@+id/typeFilterSpinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="16dp"
-        android:background="@drawable/spinner_background"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="8dp" />
+        <!-- Time Filter -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingEnd="8dp"
+            tools:ignore="RtlSymmetry">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/time_periodHeader"
+                android:textColor="@color/foreground"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="4dp" />
+
+            <Spinner
+                android:id="@+id/timePeriodSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp" />
+        </LinearLayout>
+
+        <!-- Type Filter -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingEnd="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/income_expenseHeader"
+                android:textColor="@color/foreground"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="4dp" />
+
+            <Spinner
+                android:id="@+id/typeFilterSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp" />
+        </LinearLayout>
+
+        <!-- Category Filter -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/categoryHeader"
+                android:textColor="@color/foreground"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="4dp" />
+
+            <Spinner
+                android:id="@+id/categoryFilterSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp" />
+        </LinearLayout>
+    </LinearLayout>
 
     <!-- Empty State -->
     <LinearLayout
@@ -110,7 +177,7 @@
             android:backgroundTint="@color/accent"
             android:paddingHorizontal="24dp"
             android:paddingVertical="12dp"
-            android:text="Add Your First Transaction"
+            android:text="@string/add_your_first_transaction"
             android:textColor="@color/accent_foreground" />
     </LinearLayout>
 
@@ -120,8 +187,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:padding="16dp"
         android:clipToPadding="false"
+        android:padding="16dp"
         android:scrollbars="vertical"
         android:visibility="visible" />
 </LinearLayout>

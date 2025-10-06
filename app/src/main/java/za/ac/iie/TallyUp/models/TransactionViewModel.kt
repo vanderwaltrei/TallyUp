@@ -1,5 +1,5 @@
 package za.ac.iie.TallyUp.models
-import androidx.lifecycle.LiveData
+
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
@@ -9,14 +9,12 @@ import za.ac.iie.TallyUp.data.Transaction
 import za.ac.iie.TallyUp.data.TransactionDao
 import java.util.*
 
-
-
 class TransactionViewModel(private val transactionDao: TransactionDao) : ViewModel() {
 
     private val typeFilter = MutableLiveData("All")
     private val timeFilter = MutableLiveData("All")
+    private val categoryFilter = MutableLiveData("All")
     private val allTransactions = MutableLiveData<List<Transaction>>()
-
 
     val filteredTransactions = MediatorLiveData<List<Transaction>>()
 
@@ -24,12 +22,14 @@ class TransactionViewModel(private val transactionDao: TransactionDao) : ViewMod
         filteredTransactions.addSource(allTransactions) { updateFiltered() }
         filteredTransactions.addSource(typeFilter) { updateFiltered() }
         filteredTransactions.addSource(timeFilter) { updateFiltered() }
+        filteredTransactions.addSource(categoryFilter) { updateFiltered() }
     }
 
     private fun updateFiltered() {
         val all = allTransactions.value ?: emptyList()
         val type = typeFilter.value ?: "All"
         val time = timeFilter.value ?: "All"
+        val category = categoryFilter.value ?: "All"
 
         val filtered = all.filter { transaction ->
             val matchesType = type == "All" || transaction.type == type
@@ -39,7 +39,9 @@ class TransactionViewModel(private val transactionDao: TransactionDao) : ViewMod
                 "This Month" -> isThisMonth(transaction.date)
                 else -> true
             }
-            matchesType && matchesTime
+            val matchesCategory = category == "All" || transaction.category == category
+
+            matchesType && matchesTime && matchesCategory
         }
 
         filteredTransactions.value = filtered
@@ -51,6 +53,10 @@ class TransactionViewModel(private val transactionDao: TransactionDao) : ViewMod
 
     fun setTimeFilter(time: String) {
         timeFilter.value = time
+    }
+
+    fun setCategoryFilter(category: String) {
+        categoryFilter.value = category
     }
 
     fun loadTransactionsForUser(userId: String) {

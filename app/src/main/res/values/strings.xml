@@ -59,6 +59,10 @@
     <string name="pick_a_icon_colour">Pick an icon colour</string>
     <string name="create_category">Create Category</string>
     <string name="select_date">Select Date</string>
+    <string name="categoryHeader">Category:</string>
+    <string name="income_expenseHeader">Income/Expense:</string>
+    <string name="time_periodHeader">Time Period:</string>
+    <string name="add_your_first_transaction">Add Your First Transaction</string>
     <string-array name="type_filter_options">
         <item>All</item>
         <item>Income</item>
