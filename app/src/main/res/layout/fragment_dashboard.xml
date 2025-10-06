@@ -302,6 +302,7 @@
                     android:orientation="vertical"
                     android:padding="16dp">
 
+                    <!-- Empty State Text -->
                     <TextView
                         android:id="@+id/no_transactions_text"
                         android:layout_width="match_parent"
@@ -313,6 +314,13 @@
                         android:textSize="14sp"
                         tools:ignore="TextContrastCheck" />
 
+                    <!-- Recent Transactions Container -->
+                    <LinearLayout
+                        android:id="@+id/recentTransactionsContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone" />
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>
@@ -379,5 +387,4 @@
             android:layout_height="32dp" />
 
     </LinearLayout>
-
 </ScrollView>

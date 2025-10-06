@@ -1,12 +1,16 @@
 package za.ac.iie.TallyUp.ui
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,6 +26,9 @@ import za.ac.iie.TallyUp.ui.insights.InsightsFragment
 import za.ac.iie.TallyUp.utils.CharacterManager
 import za.ac.iie.TallyUp.model.Goal
 import za.ac.iie.TallyUp.model.GoalDatabase
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class DashboardFragment : Fragment() {
 
@@ -54,13 +61,13 @@ class DashboardFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         setupGoalRecyclerView()
         setupUI()
         setupQuickActions()
         loadGoalsFromDatabase()
         loadTransactionsAndUpdateBudget()
         debugCheckTransactions()
+        loadRecentTransactions()
     }
 
     private fun setupGoalRecyclerView() {
@@ -78,6 +85,52 @@ class DashboardFragment : Fragment() {
         binding.goalsRecyclerView.adapter = goalAdapter
     }
 
+    private fun formatDate(timestamp: Long): String {
+        val sdf = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+        return sdf.format(Date(timestamp))
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun loadRecentTransactions() {
+        val userId = getCurrentUserId()
+        val transactionDao = AppDatabase.getDatabase(requireContext()).transactionDao()
+
+        lifecycleScope.launch {
+            val recentTransactions = transactionDao.getTransactionsForUser(userId)
+                .sortedByDescending { it.date }
+                .take(3)
+
+            if (recentTransactions.isNotEmpty()) {
+                binding.noTransactionsText.visibility = View.GONE
+                binding.recentTransactionsContainer.visibility = View.VISIBLE
+                binding.recentTransactionsContainer.removeAllViews()
+
+                recentTransactions.forEach { transaction ->
+                    val itemView = layoutInflater.inflate(R.layout.item_transaction, binding.recentTransactionsContainer, false)
+
+                    // Bind to your actual view IDs
+                    itemView.findViewById<TextView>(R.id.transaction_description).text =
+                        "${transaction.category} - ${transaction.type}"
+
+                    itemView.findViewById<TextView>(R.id.transaction_date).text =
+                        formatDate(transaction.date)
+
+                    itemView.findViewById<TextView>(R.id.transaction_amount).text =
+                        "R ${"%.2f".format(transaction.amount)}"
+
+                    itemView.findViewById<TextView>(R.id.photo_status).text =
+                        if (transaction.photoUris.isNotEmpty()) "Photos attached" else "No photos"
+
+                    binding.recentTransactionsContainer.addView(itemView)
+                }
+            } else {
+                binding.noTransactionsText.visibility = View.VISIBLE
+                binding.recentTransactionsContainer.visibility = View.GONE
+            }
+        }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
     private fun loadGoalsFromDatabase() {
         val userId = getCurrentUserId()
         CoroutineScope(Dispatchers.IO).launch {
@@ -92,6 +145,7 @@ class DashboardFragment : Fragment() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun loadTransactionsAndUpdateBudget() {
         val userId = getCurrentUserId()
         CoroutineScope(Dispatchers.IO).launch {
@@ -163,6 +217,7 @@ class DashboardFragment : Fragment() {
         return categorySpending
     }
 
+    @SuppressLint("SetTextI18n")
     private fun updateBudgetUI(
         availableToSpend: Double,
         totalSpent: Double,
@@ -171,7 +226,7 @@ class DashboardFragment : Fragment() {
         totalIncome: Double
     ) {
         // Update available amount - show the actual calculated amount
-        binding.availableAmount.text = "R${"%.2f".format(availableToSpend)}"
+        "R${"%.2f".format(availableToSpend)}".also { binding.availableAmount.text = it }
         binding.availableSubtitle.text = "Available to Spend"
 
         // Update progress text
@@ -255,6 +310,7 @@ class DashboardFragment : Fragment() {
             .commit()
     }
 
+    @SuppressLint("SetTextI18n")
     private fun setupUI() {
         // Welcome message with character name
         val characterName = CharacterManager.getCharacterName(requireContext())
@@ -262,7 +318,7 @@ class DashboardFragment : Fragment() {
         binding.welcomeText.text = "Hey $firstName! Say hi to $characterName!"
 
         // Recent transactions section visibility
-        binding.recentSection.visibility = View.GONE
+        binding.recentSection.visibility = View.VISIBLE
 
         // Character display using CharacterManager
         val characterDrawable = CharacterManager.getCharacterDrawable(requireContext())
