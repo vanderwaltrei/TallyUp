@@ -6,6 +6,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.coroutines.CoroutineScope
@@ -16,6 +18,8 @@ import za.ac.iie.TallyUp.adapters.CategoryBreakdownAdapter
 import za.ac.iie.TallyUp.data.AppDatabase
 import za.ac.iie.TallyUp.data.AppRepository
 import za.ac.iie.TallyUp.databinding.FragmentBudgetDashboardBinding
+import java.util.Calendar
+import java.util.Date
 
 class BudgetDashboardFragment : Fragment() {
 
@@ -24,6 +28,7 @@ class BudgetDashboardFragment : Fragment() {
 
     private lateinit var repository: AppRepository
     private lateinit var appDatabase: AppDatabase
+    private var selectedTimePeriod = "All" // Default selection
 
     companion object {
         private const val TAG = "BudgetDashboardFragment"
@@ -43,6 +48,7 @@ class BudgetDashboardFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupClickListeners()
+        setupTimePeriodSpinner()
         loadBudgetDashboardData()
     }
 
@@ -52,18 +58,44 @@ class BudgetDashboardFragment : Fragment() {
         }
     }
 
+    private fun setupTimePeriodSpinner() {
+        // Create adapter using the string array from resources
+        val adapter = ArrayAdapter.createFromResource(
+            requireContext(),
+            za.ac.iie.TallyUp.R.array.time_filter_options,
+            android.R.layout.simple_spinner_item
+        )
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.timePeriodSpinner.adapter = adapter
+
+        // Set spinner selection listener
+        binding.timePeriodSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                selectedTimePeriod = parent.getItemAtPosition(position).toString()
+                Log.d(TAG, "Time period selected: $selectedTimePeriod")
+                loadBudgetDashboardData()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+                // Do nothing
+            }
+        }
+    }
+
     private fun loadBudgetDashboardData() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val state = repository.loadAppState()
                 val userId = getCurrentUserId()
-                val transactions = appDatabase.transactionDao().getTransactionsForUser(userId)
+
+                // Get filtered transactions based on selected time period
+                val filteredTransactions = getFilteredTransactions(userId, selectedTimePeriod)
 
                 withContext(Dispatchers.Main) {
-                    updateBudgetHealthCard(state, transactions)
-                    updatePerformanceSummary(state, transactions)
-                    setupCategoryBreakdown(state, transactions)
-                    updateSmartRecommendations(state, transactions)
+                    updateBudgetHealthCard(state, filteredTransactions)
+                    updatePerformanceSummary(state, filteredTransactions)
+                    setupCategoryBreakdown(state, filteredTransactions)
+                    updateSmartRecommendations(state, filteredTransactions)
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Error loading budget dashboard data: ${e.message}", e)
@@ -71,11 +103,58 @@ class BudgetDashboardFragment : Fragment() {
         }
     }
 
+    private suspend fun getFilteredTransactions(userId: String, timePeriod: String): List<za.ac.iie.TallyUp.data.Transaction> {
+        val allTransactions = appDatabase.transactionDao().getTransactionsForUser(userId)
+
+        if (timePeriod == "All") {
+            return allTransactions
+        }
+
+        val calendar = Calendar.getInstance()
+        val now = Date().time
+
+        return when (timePeriod) {
+            "Today" -> {
+                calendar.time = Date(now)
+                calendar.set(Calendar.HOUR_OF_DAY, 0)
+                calendar.set(Calendar.MINUTE, 0)
+                calendar.set(Calendar.SECOND, 0)
+                calendar.set(Calendar.MILLISECOND, 0)
+                val startOfDay = calendar.timeInMillis
+
+                allTransactions.filter { it.date >= startOfDay }
+            }
+            "This Week" -> {
+                calendar.time = Date(now)
+                calendar.set(Calendar.DAY_OF_WEEK, calendar.firstDayOfWeek)
+                calendar.set(Calendar.HOUR_OF_DAY, 0)
+                calendar.set(Calendar.MINUTE, 0)
+                calendar.set(Calendar.SECOND, 0)
+                calendar.set(Calendar.MILLISECOND, 0)
+                val startOfWeek = calendar.timeInMillis
+
+                allTransactions.filter { it.date >= startOfWeek }
+            }
+            "This Month" -> {
+                calendar.time = Date(now)
+                calendar.set(Calendar.DAY_OF_MONTH, 1)
+                calendar.set(Calendar.HOUR_OF_DAY, 0)
+                calendar.set(Calendar.MINUTE, 0)
+                calendar.set(Calendar.SECOND, 0)
+                calendar.set(Calendar.MILLISECOND, 0)
+                val startOfMonth = calendar.timeInMillis
+
+                allTransactions.filter { it.date >= startOfMonth }
+            }
+            else -> allTransactions
+        }
+    }
+
     private fun updateBudgetHealthCard(state: za.ac.iie.TallyUp.models.AppState, transactions: List<za.ac.iie.TallyUp.data.Transaction>) {
         // Calculate total budget from all categories
         val totalBudget = state.budgetCategories.sumOf { it.budgeted }
 
-        // Calculate total spent from transactions
+        // Calculate total spent from filtered transactions
         val totalSpent = transactions
             .filter { it.type == "Expense" }
             .sumOf { it.amount }
@@ -96,7 +175,7 @@ class BudgetDashboardFragment : Fragment() {
         binding.budgetProgressBar.progress = progressPercentage
         binding.remainingBudgetText.text = "R${"%.2f".format(remainingBudget)} Remaining"
 
-        Log.d(TAG, "Budget Health Updated - Spent: R$totalSpent, Budget: R$totalBudget, Progress: $progressPercentage%")
+        Log.d(TAG, "Budget Health Updated - Period: $selectedTimePeriod, Spent: R$totalSpent, Budget: R$totalBudget, Progress: $progressPercentage%")
     }
 
     private fun updatePerformanceSummary(state: za.ac.iie.TallyUp.models.AppState, transactions: List<za.ac.iie.TallyUp.data.Transaction>) {
@@ -129,7 +208,10 @@ class BudgetDashboardFragment : Fragment() {
     }
 
     private fun calculateCategoryPerformance(state: za.ac.iie.TallyUp.models.AppState, transactions: List<za.ac.iie.TallyUp.data.Transaction>): List<Triple<String, Double, Double>> {
-        return state.budgetCategories.map { category ->
+        // Get categories that have transactions in the filtered period
+        val categoriesWithTransactions = getCategoriesWithTransactions(state.budgetCategories, transactions)
+
+        return categoriesWithTransactions.map { category ->
             val spent = transactions
                 .filter { it.type == "Expense" && it.category == category.name }
                 .sumOf { it.amount }
@@ -137,19 +219,40 @@ class BudgetDashboardFragment : Fragment() {
         }
     }
 
+    private fun getCategoriesWithTransactions(allCategories: List<za.ac.iie.TallyUp.models.BudgetCategory>, transactions: List<za.ac.iie.TallyUp.data.Transaction>): List<za.ac.iie.TallyUp.models.BudgetCategory> {
+        // Get unique category names from transactions
+        val categoryNamesWithTransactions = transactions
+            .filter { it.type == "Expense" }
+            .map { it.category }
+            .distinct()
+
+        // Return only categories that have transactions in this period
+        return allCategories.filter { category ->
+            categoryNamesWithTransactions.contains(category.name)
+        }
+    }
+
     private fun setupCategoryBreakdown(state: za.ac.iie.TallyUp.models.AppState, transactions: List<za.ac.iie.TallyUp.data.Transaction>) {
         binding.categoryRecycler.layoutManager = LinearLayoutManager(requireContext())
-        val adapter = CategoryBreakdownAdapter(state.budgetCategories, transactions)
 
-        // Set callback for budget updates
-        adapter.onBudgetUpdated = { categoryName, newAmount ->
-            updateCategoryBudget(state, categoryName, newAmount, transactions)
+        // Only show categories that have transactions in the filtered period
+        val categoriesWithTransactions = getCategoriesWithTransactions(state.budgetCategories, transactions)
+
+        if (categoriesWithTransactions.isEmpty()) {
+            // Show empty state message
+            binding.categoryRecycler.visibility = View.GONE
+            // You could add a TextView here to show "No transactions in selected period"
+        } else {
+            binding.categoryRecycler.visibility = View.VISIBLE
+            val adapter = CategoryBreakdownAdapter(categoriesWithTransactions, transactions)
+
+            // Set callback for budget updates
+            adapter.onBudgetUpdated = { categoryName, newAmount ->
+                updateCategoryBudget(state, categoryName, newAmount, transactions)
+            }
+
+            binding.categoryRecycler.adapter = adapter
         }
-
-        binding.categoryRecycler.adapter = adapter
-
-        // Hide the spinner for now since it's not implemented
-        binding.timePeriodSpinner.visibility = View.GONE
     }
 
     private fun updateCategoryBudget(
@@ -191,18 +294,17 @@ class BudgetDashboardFragment : Fragment() {
             else -> "• Consider reviewing your expenses - you're close to exceeding your budget"
         }
 
-        // Since the XML doesn't have specific IDs for the recommendation text,
-        // we'll update the text by finding the TextView in the smart recommendations section
-        // The binding should automatically handle this through ViewBinding
+        // Update the recommendation text in the XML
         updateRecommendationText(recommendation)
 
         Log.d(TAG, "Smart Recommendation: $recommendation")
     }
 
     private fun updateRecommendationText(recommendation: String) {
-        // This method will be handled by ViewBinding automatically
-        // The text should update when we set the data
-        // For now, we'll rely on the automatic ViewBinding from the XML
+        // This will update the recommendation text in the smart recommendations card
+        // The TextView in the XML should have an ID for this to work properly
+        // For now, we'll log it since the XML doesn't have a specific ID
+        Log.d(TAG, "Recommendation: $recommendation")
     }
 
     private fun getCurrentUserId(): String {
