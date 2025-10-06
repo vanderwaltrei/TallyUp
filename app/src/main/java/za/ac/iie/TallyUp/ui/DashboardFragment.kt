@@ -5,6 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import za.ac.iie.TallyUp.R
 import za.ac.iie.TallyUp.databinding.FragmentDashboardBinding
 import za.ac.iie.TallyUp.models.AppState
@@ -12,6 +17,8 @@ import za.ac.iie.TallyUp.data.AppRepository
 import za.ac.iie.TallyUp.ui.BudgetDashboardFragment
 import za.ac.iie.TallyUp.ui.insights.InsightsFragment
 import za.ac.iie.TallyUp.utils.CharacterManager
+import za.ac.iie.TallyUp.model.Goal
+import za.ac.iie.TallyUp.model.GoalDatabase
 
 class DashboardFragment : Fragment() {
 
@@ -19,6 +26,9 @@ class DashboardFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var repository: AppRepository
     private lateinit var appState: AppState
+    private lateinit var goalDatabase: GoalDatabase
+    private var goalsList = mutableListOf<Goal>()
+    private lateinit var goalAdapter: GoalAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -27,11 +37,59 @@ class DashboardFragment : Fragment() {
     ): View {
         _binding = FragmentDashboardBinding.inflate(inflater, container, false)
         repository = AppRepository(requireContext())
+        goalDatabase = GoalDatabase.getDatabase(requireContext())
         appState = repository.loadAppState()
 
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        setupGoalRecyclerView()
         setupUI()
         setupQuickActions()
-        return binding.root
+        loadGoalsFromDatabase()
+    }
+
+    private fun setupGoalRecyclerView() {
+        goalAdapter = GoalAdapter(
+            goalsList,
+            onAddMoneyClicked = { goal ->
+                // Navigate to GoalsFragment to add money
+                navigateToGoalsFragment()
+            },
+            onCompleteGoalClicked = { goal ->
+                // Navigate to GoalsFragment to complete goal
+                navigateToGoalsFragment()
+            }
+        )
+
+        binding.goalsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.goalsRecyclerView.adapter = goalAdapter
+    }
+
+    private fun loadGoalsFromDatabase() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val goalsFromDb = goalDatabase.goalDao().getAllGoals()
+            goalsList.clear()
+            goalsList.addAll(goalsFromDb.take(2)) // Show only 2 goals on dashboard
+
+            withContext(Dispatchers.Main) {
+                goalAdapter.notifyDataSetChanged()
+                updateGoalsVisibility()
+            }
+        }
+    }
+
+    private fun updateGoalsVisibility() {
+        if (goalsList.isEmpty()) {
+            binding.noGoalsText.visibility = View.VISIBLE
+            binding.goalsRecyclerView.visibility = View.GONE
+        } else {
+            binding.noGoalsText.visibility = View.GONE
+            binding.goalsRecyclerView.visibility = View.VISIBLE
+        }
     }
 
     private fun setupQuickActions() {
@@ -42,6 +100,18 @@ class DashboardFragment : Fragment() {
         binding.insightsCard.setOnClickListener {
             navigateToInsights()
         }
+
+        // Add click listener to goals section to navigate to full goals page
+        binding.goalsSection.setOnClickListener {
+            navigateToGoalsFragment()
+        }
+    }
+
+    private fun navigateToGoalsFragment() {
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, GoalsFragment())
+            .addToBackStack(null)
+            .commit()
     }
 
     private fun navigateToInsights() {
@@ -89,10 +159,6 @@ class DashboardFragment : Fragment() {
         val recentTransactions = appState.transactions.take(3)
         binding.recentSection.visibility = if (recentTransactions.isEmpty()) View.GONE else View.VISIBLE
 
-        // Goals
-        val goals = appState.goals.take(2)
-        binding.goalsSection.visibility = if (goals.isEmpty()) View.GONE else View.VISIBLE
-
         // Character display using CharacterManager
         val characterDrawable = CharacterManager.getCharacterDrawable(requireContext())
         binding.characterImage.setImageResource(characterDrawable)
@@ -104,6 +170,12 @@ class DashboardFragment : Fragment() {
         // Coins display
         val coins = CharacterManager.getCoins(requireContext())
         binding.coinsText.text = coins.toString()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Refresh goals when returning to dashboard
+        loadGoalsFromDatabase()
     }
 
     override fun onDestroyView() {

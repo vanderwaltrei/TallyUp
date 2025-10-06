@@ -1,5 +1,6 @@
 package za.ac.iie.TallyUp.model
 
+
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.util.UUID

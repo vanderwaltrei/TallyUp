@@ -17,6 +17,7 @@ import za.ac.iie.TallyUp.databinding.FragmentGoalsBinding
 import za.ac.iie.TallyUp.model.Goal
 import za.ac.iie.TallyUp.model.GoalDatabase
 
+
 class GoalsFragment : Fragment() {
 
     private var _binding: FragmentGoalsBinding? = null
