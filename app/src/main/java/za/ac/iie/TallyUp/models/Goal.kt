@@ -1,5 +1,3 @@
-@file:Suppress("PackageName")
-
 package za.ac.iie.TallyUp.models
 
 import androidx.room.Entity
@@ -12,11 +10,12 @@ data class Goal(
     @PrimaryKey val id: String = UUID.randomUUID().toString(),
     val name: String,
     val description: String,
-    val target: Double,
+    val target: Double,  // maximum amount
+    val minimum: Double = 0.0,  // minimum amount
     var current: Double = 0.0,
     val deadline: String,
     val createdAt: String = "",
-    val userId: String // Add this field to associate with user
+    val userId: String
 ) {
     fun progressPercent(): Int {
         if (target <= 0.0) return 0

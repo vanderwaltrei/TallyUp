@@ -1,5 +1,3 @@
-@file:Suppress("PackageName")
-
 package za.ac.iie.TallyUp.ui
 
 import android.annotation.SuppressLint
@@ -78,6 +76,14 @@ class DashboardFragment : Fragment() {
             },
             onCompleteGoalClicked = { goal ->
                 navigateToGoalsFragment()
+            },
+            onEditGoalClicked = { goal ->
+                // Navigate to goals fragment where they can edit
+                navigateToGoalsFragment()
+            },
+            onDeleteGoalClicked = { goal ->
+                // Navigate to goals fragment where they can delete
+                navigateToGoalsFragment()
             }
         )
 
@@ -108,7 +114,6 @@ class DashboardFragment : Fragment() {
                 recentTransactions.forEach { transaction ->
                     val itemView = layoutInflater.inflate(R.layout.item_transaction, binding.recentTransactionsContainer, false)
 
-                    // Bind to your actual view IDs
                     itemView.findViewById<TextView>(R.id.transaction_description).text =
                         "${transaction.category} - ${transaction.type}"
 
@@ -150,10 +155,8 @@ class DashboardFragment : Fragment() {
         val userId = getCurrentUserId()
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                // Get all transactions for current user
                 val transactions = appDatabase.transactionDao().getTransactionsForUser(userId)
 
-                // Calculate total income and expenses
                 val totalIncome = transactions
                     .filter { it.type == "Income" }
                     .sumOf { it.amount }
@@ -162,23 +165,18 @@ class DashboardFragment : Fragment() {
                     .filter { it.type == "Expense" }
                     .sumOf { it.amount }
 
-                // Calculate spending per category
                 val categorySpending = calculateCategorySpending(transactions)
 
-                // Get monthly budget from app state (total of budget categories)
                 val monthlyBudget = appState.budgetCategories.sumOf { it.budgeted }
 
-                // Calculate available to spend based on budget
                 val availableToSpend = monthlyBudget - totalExpenses
 
-                // Calculate progress percentage (how much of budget is spent)
                 val progressPercentage = if (monthlyBudget > 0) {
                     ((totalExpenses / monthlyBudget) * 100).toInt().coerceIn(0, 100)
                 } else {
                     0
                 }
 
-                // Debug logging for category spending
                 Log.d(TAG, "=== CATEGORY SPENDING ===")
                 categorySpending.forEach { (category, amount) ->
                     Log.d(TAG, "$category: R$amount")
@@ -195,7 +193,6 @@ class DashboardFragment : Fragment() {
             } catch (e: Exception) {
                 Log.e(TAG, "Error loading transactions: ${e.message}", e)
                 withContext(Dispatchers.Main) {
-                    // Show error state
                     binding.availableAmount.text = "R0.00"
                     binding.progressText.text = "0%"
                     binding.statusText.text = "Error loading data"
@@ -225,14 +222,11 @@ class DashboardFragment : Fragment() {
         progressPercentage: Int,
         totalIncome: Double
     ) {
-        // Update available amount - show the actual calculated amount
         "R${"%.2f".format(availableToSpend)}".also { binding.availableAmount.text = it }
         binding.availableSubtitle.text = "Available to Spend"
 
-        // Update progress text
         binding.progressText.text = "${progressPercentage}%"
 
-        // Update status indicator based on spending
         val statusText = when {
             progressPercentage < 60 -> "On Track!"
             progressPercentage < 80 -> "Watch It!"
@@ -240,7 +234,6 @@ class DashboardFragment : Fragment() {
         }
         binding.statusText.text = statusText
 
-        // Update status color based on spending level
         val context = requireContext()
         when {
             progressPercentage < 60 -> {
@@ -312,30 +305,24 @@ class DashboardFragment : Fragment() {
 
     @SuppressLint("SetTextI18n")
     private fun setupUI() {
-        // Welcome message with character name
         val characterName = CharacterManager.getCharacterName(requireContext())
         val firstName = appState.user?.firstName ?: "there"
         binding.welcomeText.text = "Hey $firstName! Say hi to $characterName!"
 
-        // Recent transactions section visibility
         binding.recentSection.visibility = View.VISIBLE
 
-        // Character display using CharacterManager
         val characterDrawable = CharacterManager.getCharacterDrawable(requireContext())
         binding.characterImage.setImageResource(characterDrawable)
 
-        // Mood indicator
         val mood = CharacterManager.getCurrentMood(requireContext())
         binding.moodIndicator.visibility = if (mood == za.ac.iie.TallyUp.models.Mood.SAD) View.VISIBLE else View.GONE
 
-        // Coins display
         val coins = CharacterManager.getCoins(requireContext())
         binding.coinsText.text = coins.toString()
     }
 
     override fun onResume() {
         super.onResume()
-        // Refresh goals and transactions when returning to dashboard
         loadGoalsFromDatabase()
         loadTransactionsAndUpdateBudget()
         debugCheckTransactions()

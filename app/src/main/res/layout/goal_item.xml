@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -8,51 +9,37 @@
     app:cardElevation="2dp"
     app:cardUseCompatPadding="true">
 
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="180dp"
-        android:padding="12dp"
-        tools:ignore="TextSizeCheck">
+        android:layout_height="wrap_content"
+        android:padding="12dp">
 
         <!-- Goal Icon -->
         <ImageView
             android:id="@+id/goalIcon"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:contentDescription="@string/character"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/character_happy"
-            tools:ignore="ContentDescription" />
+            app:srcCompat="@drawable/character_happy" />
 
         <!-- Goal Name -->
         <TextView
             android:id="@+id/goalName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
             android:ellipsize="end"
-            android:singleLine="true"
+            android:maxLines="1"
             android:text="@string/goal_name"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:translationX="10dp"
             app:layout_constraintEnd_toStartOf="@id/goalPercentage"
             app:layout_constraintStart_toEndOf="@id/goalIcon"
             app:layout_constraintTop_toTopOf="@id/goalIcon" />
 
-
-        <TextView
-            android:id="@+id/goalDeadline"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/deadline"
-            android:textSize="14sp"
-            android:translationX="10dp"
-            app:layout_constraintEnd_toStartOf="@id/goalPercentage"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="@id/goalName"
-            app:layout_constraintTop_toBottomOf="@id/goalAmount" />
-
+        <!-- Goal Percentage -->
         <TextView
             android:id="@+id/goalPercentage"
             android:layout_width="wrap_content"
@@ -62,7 +49,32 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <!-- Goal Amount -->
+        <TextView
+            android:id="@+id/goalAmount"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginStart="10dp"
+            android:text="@string/r0_r0"
+            android:textSize="14sp"
+            app:layout_constraintStart_toEndOf="@id/goalIcon"
+            app:layout_constraintTop_toBottomOf="@id/goalName"
+            app:layout_constraintEnd_toStartOf="@id/goalPercentage" />
 
+        <!-- Goal Deadline -->
+        <TextView
+            android:id="@+id/goalDeadline"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="@string/deadline"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/goalIcon"
+            app:layout_constraintTop_toBottomOf="@id/goalAmount" />
+
+        <!-- Progress Bar -->
         <ProgressBar
             android:id="@+id/goalProgress"
             style="?android:attr/progressBarStyleHorizontal"
@@ -72,38 +84,52 @@
             android:max="100"
             android:progress="0"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/goalDeadline" />
 
-        <TextView
-            android:id="@+id/goalAmount"
+        <!-- Button Row with Edit, Delete, and Add Money -->
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="@string/r0_r0"
-            android:textSize="14sp"
-            android:translationX="-40dp"
-            android:translationY="90dp"
-            app:layout_constraintEnd_toStartOf="@id/goalPercentage"
-            app:layout_constraintHorizontal_bias="0.58"
-            app:layout_constraintStart_toStartOf="@id/goalName"
-            app:layout_constraintTop_toBottomOf="@id/goalName" />
-
-        <Button
-            android:id="@+id/goalButton"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
             android:layout_marginTop="8dp"
-            android:backgroundTint="#FF9800"
-            android:text="@string/add_money"
+            android:orientation="horizontal"
+            android:gravity="end"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/goalProgress"
-            app:layout_constraintVertical_bias="1.0"
-            tools:ignore="TextContrastCheck" />
+            app:layout_constraintTop_toBottomOf="@id/goalProgress">
+
+            <!-- Edit Button -->
+            <ImageButton
+                android:id="@+id/goalEditButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="4dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Edit Goal"
+                android:src="@drawable/ic_edit"
+                app:tint="@color/primary" />
+
+            <!-- Delete Button -->
+            <ImageButton
+                android:id="@+id/goalDeleteButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Delete Goal"
+                android:src="@drawable/ic_delete"
+                app:tint="@color/destructive" />
+
+            <!-- Add Money Button -->
+            <Button
+                android:id="@+id/goalButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#FF9800"
+                android:text="@string/add_money"
+                android:textColor="@android:color/white" />
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

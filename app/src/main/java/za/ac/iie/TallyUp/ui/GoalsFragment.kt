@@ -1,5 +1,3 @@
-@file:Suppress("PackageName")
-
 package za.ac.iie.TallyUp.ui
 
 import android.annotation.SuppressLint
@@ -8,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -30,7 +29,6 @@ class GoalsFragment : Fragment() {
     private var goalsList = mutableListOf<Goal>()
     private var currentGoalForAddingMoney: Goal? = null
 
-    // Add method to get current user ID
     private fun getCurrentUserId(): String {
         val prefs = requireContext().getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
         return prefs.getString("loggedInEmail", "") ?: "default"
@@ -43,22 +41,20 @@ class GoalsFragment : Fragment() {
     ): View {
         _binding = FragmentGoalsBinding.inflate(inflater, container, false)
 
-        // Initialize database
         database = GoalDatabase.getDatabase(requireContext())
 
-        // RecyclerView setup
+        // RecyclerView setup with NEW callbacks
         goalAdapter = GoalAdapter(
             goalsList,
             onAddMoneyClicked = { goal -> openAddMoneyMenu(goal) },
-            onCompleteGoalClicked = { goal -> completeGoal(goal) }
+            onCompleteGoalClicked = { goal -> completeGoal(goal) },
+            onEditGoalClicked = { goal -> editGoal(goal) },  // NEW
+            onDeleteGoalClicked = { goal -> confirmDeleteGoal(goal) }  // NEW
         )
         binding.goalsGrid.adapter = goalAdapter
         binding.goalsGrid.layoutManager = LinearLayoutManager(requireContext())
 
-        // Load goals from database for current user
         loadGoalsFromDatabase()
-
-        // Initial visibility
         updateEmptyState()
 
         // Buttons
@@ -98,9 +94,10 @@ class GoalsFragment : Fragment() {
             name = nameInput,
             description = "",
             target = amountInput.toDouble(),
+            minimum = 0.0,  // Default minimum
             current = 0.0,
             deadline = deadlineInput,
-            userId = getCurrentUserId() // Add user ID
+            userId = getCurrentUserId()
         )
 
         CoroutineScope(Dispatchers.IO).launch {
@@ -112,6 +109,49 @@ class GoalsFragment : Fragment() {
                 goalAdapter.notifyDataSetChanged()
                 binding.createGoalPage.visibility = View.GONE
                 binding.goalsGrid.visibility = View.VISIBLE
+                updateEmptyState()
+            }
+        }
+    }
+
+    // NEW: Edit goal function
+    private fun editGoal(goal: Goal) {
+        val dialog = EditGoalDialogFragment(goal) { updatedGoal ->
+            CoroutineScope(Dispatchers.IO).launch {
+                database.goalDao().updateGoal(updatedGoal)
+                val updatedGoals = database.goalDao().getGoalsByUser(getCurrentUserId())
+                withContext(Dispatchers.Main) {
+                    goalsList.clear()
+                    goalsList.addAll(updatedGoals)
+                    goalAdapter.notifyDataSetChanged()
+                }
+            }
+        }
+        dialog.show(parentFragmentManager, "EditGoalDialog")
+    }
+
+    // NEW: Confirm delete goal with dialog
+    private fun confirmDeleteGoal(goal: Goal) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Delete Goal")
+            .setMessage("Are you sure you want to delete '${goal.name}'? This action cannot be undone.")
+            .setPositiveButton("Delete") { _, _ ->
+                deleteGoal(goal)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    // NEW: Delete goal function
+    @SuppressLint("NotifyDataSetChanged")
+    private fun deleteGoal(goal: Goal) {
+        CoroutineScope(Dispatchers.IO).launch {
+            database.goalDao().deleteGoal(goal)
+            val updatedGoals = database.goalDao().getGoalsByUser(getCurrentUserId())
+            withContext(Dispatchers.Main) {
+                goalsList.clear()
+                goalsList.addAll(updatedGoals)
+                goalAdapter.notifyDataSetChanged()
                 updateEmptyState()
             }
         }
