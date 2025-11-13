@@ -21,6 +21,10 @@ class Question1TutorialFragment : Fragment(R.layout.fragment_question1_tutorial)
         val optionBiweekly = view.findViewById<MaterialCardView>(R.id.option_biweekly)
         val optionMonthly = view.findViewById<MaterialCardView>(R.id.option_monthly)
         val nextButton = view.findViewById<Button>(R.id.next_button)
+        val skipButton = view.findViewById<Button>(R.id.btn_introSkip)
+        skipButton.setOnClickListener {
+            skipTutorial()
+        }
 
 
         optionWeekly.setOnClickListener {
@@ -92,5 +96,26 @@ class Question1TutorialFragment : Fragment(R.layout.fragment_question1_tutorial)
         val editor = prefs.edit()
         editor.putString("income_frequency", selectedOption)
         editor.apply()
+    }
+
+    private fun skipTutorial() {
+        // Set default values as if the tutorial was completed
+        val prefs = requireContext().getSharedPreferences("TallyUpPrefs", android.content.Context.MODE_PRIVATE)
+        val editor = prefs.edit()
+        editor.putString("income_frequency", "monthly") // default question 1 value
+        editor.putString("saving_goal", "My Savings Goal") // default question 2 value
+        editor.apply()
+
+        // Save the default character
+        za.ac.iie.TallyUp.utils.CharacterManager.saveSelectedCharacter(requireContext(), "max")
+
+        // Mark tutorial as completed
+        za.ac.iie.TallyUp.utils.CharacterManager.setTutorialCompleted(requireContext(), true)
+
+        // Navigate directly to the dashboard
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, DashboardFragment())
+            .addToBackStack("skip_to_dashboard")
+            .commit()
     }
 }

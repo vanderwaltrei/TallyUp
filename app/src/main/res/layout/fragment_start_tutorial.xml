@@ -51,6 +51,7 @@
         tools:ignore="TextContrastCheck" />
 
     <!-- Get Started Button -->
+
     <Button
         android:id="@+id/get_started_button"
         android:layout_width="match_parent"

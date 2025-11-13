@@ -172,5 +172,19 @@
             android:stateListAnimator="@null"
             tools:ignore="VisualLintButtonSize" />
 
+        <Button
+            android:id="@+id/btn_introSkip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/accent"
+            android:enabled="true"
+            android:paddingVertical="16dp"
+            android:stateListAnimator="@null"
+            android:text="Skip"
+            android:textColor="@color/primary_foreground"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:ignore="VisualLintButtonSize" />
+
     </LinearLayout>
 </ScrollView>
