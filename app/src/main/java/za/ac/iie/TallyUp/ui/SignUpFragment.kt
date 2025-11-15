@@ -18,10 +18,12 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.launch
 import za.ac.iie.TallyUp.R
-import za.ac.iie.TallyUp.data.DatabaseProvider
-import za.ac.iie.TallyUp.data.User
+import za.ac.iie.TallyUp.firebase.FirebaseRepository
+import za.ac.iie.TallyUp.data.Category
 
 class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
+
+    private val firebaseRepo = FirebaseRepository()
 
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -100,46 +102,59 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
             createButton.isEnabled = false
             createButton.text = "Creating Account..."
 
-            val db = DatabaseProvider.getDatabase(requireContext())
-
+            // Firebase Authentication
             lifecycleScope.launch {
                 try {
-                    Log.d("SignUpFragment", "Checking if email exists: $email")
-                    val existingUser = db.userDao().getUserByEmail(email)
+                    Log.d("SignUpFragment", "Attempting Firebase signup for email: $email")
+                    val result = firebaseRepo.signUp(email, password, firstName, lastName)
 
-                    if (existingUser != null) {
-                        Log.d("SignUpFragment", "Email already exists: $email")
-                        Toast.makeText(requireContext(), "Email already exists. Please use a different email.", Toast.LENGTH_LONG).show()
-                    } else {
-                        Log.d("SignUpFragment", "Creating new user: $email")
-                        val newUser = User(
-                            email = email,
-                            password = password,
-                            firstName = firstName,
-                            lastName = lastName
-                        )
+                    result.onSuccess { userId ->
+                        Log.d("SignUpFragment", "User created successfully with userId: $userId")
 
-                        db.userDao().insertUser(newUser)
-                        Log.d("SignUpFragment", "User inserted successfully")
-
-                        // Save email for profile access
+                        // Save to SharedPreferences
                         val prefs = requireContext().getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
                         prefs.edit {
                             putString("loggedInEmail", email)
+                            putString("userId", userId)
+                            putString("userFirstName", firstName)
                         }
-                        Log.d("SignUpFragment", "Preferences saved for email: $email")
 
-                        Toast.makeText(requireContext(), "Account created successfully! Welcome, $firstName!", Toast.LENGTH_SHORT).show()
+                        // Initialize default categories for new user
+                        initializeDefaultCategories(userId)
 
-                        //Navigate to Start Tutorial page instead of Dashboard
+                        Toast.makeText(
+                            requireContext(),
+                            "Account created successfully! Welcome, $firstName!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        // Navigate to Start Tutorial page
                         requireActivity().supportFragmentManager.beginTransaction()
                             .replace(R.id.fragment_container, StartTutorialFragment())
-                            .addToBackStack(null)
                             .commit()
+
+                    }.onFailure { error ->
+                        Log.e("SignUpFragment", "Sign up error: ${error.message}", error)
+
+                        val errorMessage = when {
+                            error.message?.contains("already in use") == true ->
+                                "Email already exists. Please use a different email."
+                            error.message?.contains("network") == true ->
+                                "Network error. Please check your connection."
+                            error.message?.contains("weak-password") == true ->
+                                "Password is too weak. Please use a stronger password."
+                            else -> "Error creating account: ${error.message}"
+                        }
+
+                        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
                     }
                 } catch (e: Exception) {
-                    Log.e("SignUpFragment", "Sign up error: ${e.message}", e)
-                    Toast.makeText(requireContext(), "Error creating account: ${e.message}", Toast.LENGTH_LONG).show()
+                    Log.e("SignUpFragment", "Unexpected sign up error: ${e.message}", e)
+                    Toast.makeText(
+                        requireContext(),
+                        "Error creating account: ${e.message}",
+                        Toast.LENGTH_LONG
+                    ).show()
                 } finally {
                     // Re-enable button
                     requireActivity().runOnUiThread {
@@ -157,6 +172,36 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                 .replace(R.id.fragment_container, LoginFragment())
                 .addToBackStack("signup_to_login")
                 .commit()
+        }
+    }
+
+    private suspend fun initializeDefaultCategories(userId: String) {
+        try {
+            Log.d("SignUpFragment", "Initializing default categories for user: $userId")
+
+            val defaultCategories = listOf(
+                Category(name = "Food", type = "Expense", color = "#FFB085", userId = userId),
+                Category(name = "Transport", type = "Expense", color = "#A3D5FF", userId = userId),
+                Category(name = "Books", type = "Expense", color = "#B2E2B2", userId = userId),
+                Category(name = "Fun", type = "Expense", color = "#FFF4A3", userId = userId),
+                Category(name = "Shopping", type = "Expense", color = "#FFB6C1", userId = userId),
+                Category(name = "Other", type = "Expense", color = "#E0E0E0", userId = userId),
+                Category(name = "Salary", type = "Income", color = "#D1B3FF", userId = userId),
+                Category(name = "Gift", type = "Income", color = "#D1B3FF", userId = userId),
+                Category(name = "Freelance", type = "Income", color = "#D1B3FF", userId = userId),
+                Category(name = "Allowance", type = "Income", color = "#D1B3FF", userId = userId)
+            )
+
+            defaultCategories.forEach { category ->
+                val result = firebaseRepo.addCategory(category)
+                result.onFailure { error ->
+                    Log.e("SignUpFragment", "Error adding category ${category.name}: ${error.message}")
+                }
+            }
+
+            Log.d("SignUpFragment", "Default categories initialized successfully")
+        } catch (e: Exception) {
+            Log.e("SignUpFragment", "Error initializing default categories: ${e.message}", e)
         }
     }
 

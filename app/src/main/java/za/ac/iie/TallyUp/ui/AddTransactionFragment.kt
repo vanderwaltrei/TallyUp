@@ -2,7 +2,6 @@
 
 package za.ac.iie.TallyUp.ui
 
-
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -16,19 +15,17 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import kotlinx.coroutines.launch
 import za.ac.iie.TallyUp.R
-import za.ac.iie.TallyUp.data.AppDatabase
 import za.ac.iie.TallyUp.data.Category
+import za.ac.iie.TallyUp.data.Transaction
 import za.ac.iie.TallyUp.databinding.FragmentAddTransactionBinding
-import za.ac.iie.TallyUp.models.TransactionViewModelFactory
+import za.ac.iie.TallyUp.firebase.FirebaseRepository
+import za.ac.iie.TallyUp.ui.auth.AddCategoryDialogFragment
 import java.io.File
 import android.app.DatePickerDialog
-import za.ac.iie.TallyUp.models.TransactionViewModel
-import za.ac.iie.TallyUp.ui.auth.AddCategoryDialogFragment
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -39,13 +36,14 @@ class AddTransactionFragment : Fragment() {
     private var _binding: FragmentAddTransactionBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var transactionViewModel: TransactionViewModel
+    private val firebaseRepo = FirebaseRepository()
     private var selectedCategoryName: String? = null
     private var selectedType: String = "Expense"
     private val selectedPhotoUris = mutableListOf<String>()
     private lateinit var adapter: CategoryAdapter
     private var cameraPhotoUri: Uri? = null
     private var selectedDate: Long? = null
+    private var categories = mutableListOf<Category>()
 
     private val photoPickerLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -64,7 +62,7 @@ class AddTransactionFragment : Fragment() {
                     newUris.add(uri.toString())
                 } ?: cameraPhotoUri?.let { uri ->
                     newUris.add(uri.toString())
-                    cameraPhotoUri = null // Clear after use
+                    cameraPhotoUri = null
                 }
 
                 val remainingSlots = 3 - selectedPhotoUris.size
@@ -78,7 +76,6 @@ class AddTransactionFragment : Fragment() {
 
                 photoViews.forEachIndexed { index, imageView ->
                     if (index < selectedPhotoUris.size) {
-                        // Safe: URIs come from system picker or camera
                         imageView.setImageURI(selectedPhotoUris[index].toUri())
                         imageView.visibility = View.VISIBLE
                     } else {
@@ -95,30 +92,19 @@ class AddTransactionFragment : Fragment() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        val transactionDao = AppDatabase.getDatabase(requireContext()).transactionDao()
-        val factory = TransactionViewModelFactory(transactionDao)
-        transactionViewModel = ViewModelProvider(this, factory)[TransactionViewModel::class.java]
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentAddTransactionBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-    // FIXED: Use the same user ID retrieval as TransactionsFragment
     private fun getCurrentUserId(): String {
         val prefs = requireContext().getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
-        return prefs.getString("loggedInEmail", "") ?: "default"
+        return prefs.getString("userId", "") ?: ""
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val currentUserId = getCurrentUserId()
-        val transactionDao = AppDatabase.getDatabase(requireContext()).transactionDao()
-        val factory = TransactionViewModelFactory(transactionDao)
-        transactionViewModel = ViewModelProvider(this, factory)[TransactionViewModel::class.java]
 
         // Debug log to verify user ID
         println("=== AddTransactionFragment ===")
@@ -136,10 +122,12 @@ class AddTransactionFragment : Fragment() {
                 when (checkedId) {
                     R.id.expense_button -> {
                         selectedType = "Expense"
+                        loadCategories(currentUserId)
                         Toast.makeText(requireContext(), "Expense selected", Toast.LENGTH_SHORT).show()
                     }
                     R.id.income_button -> {
                         selectedType = "Income"
+                        loadCategories(currentUserId)
                         Toast.makeText(requireContext(), "Income selected", Toast.LENGTH_SHORT).show()
                     }
                 }
@@ -165,27 +153,23 @@ class AddTransactionFragment : Fragment() {
         }
 
         binding.photoUploadButton.setOnClickListener {
-            // Step 1: Create a file to store the camera photo
             val photoFile = File(
                 requireContext().getExternalFilesDir("Pictures"),
                 "photo_${System.currentTimeMillis()}.jpg"
             )
 
-            // Create a URI for the file using FileProvider
             cameraPhotoUri = FileProvider.getUriForFile(
                 requireContext(),
-                "za.ac.iie.TallyUp.fileprovider", // must match your manifest
+                "za.ac.iie.TallyUp.fileprovider",
                 photoFile
             )
 
-            // Create the camera intent and pass the URI
             val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
                 putExtra(MediaStore.EXTRA_OUTPUT, cameraPhotoUri)
                 addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION) //
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
 
-            // Create the gallery intent
             val galleryIntent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
                 addCategory(Intent.CATEGORY_OPENABLE)
                 type = "image/*"
@@ -195,11 +179,9 @@ class AddTransactionFragment : Fragment() {
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
 
-            // Combine both intents into a chooser
             val chooser = Intent.createChooser(galleryIntent, "Select or capture photo")
             chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, arrayOf(cameraIntent))
 
-            // Launch the chooser
             photoPickerLauncher.launch(chooser)
         }
 
@@ -233,74 +215,142 @@ class AddTransactionFragment : Fragment() {
             }
 
             // Debug log before saving
-            println("=== SAVING TRANSACTION ===")
+            println("=== SAVING TRANSACTION TO FIREBASE ===")
             println("User ID: $currentUserId")
             println("Type: $type")
             println("Amount: $amount")
             println("Category: $selectedCategory")
             println("Description: $description")
-            println("==========================")
+            println("======================================")
 
-            transactionViewModel.addTransaction(
-                type = type,
-                amount = amount,
-                category = selectedCategory,
-                description = description,
-                photoUris = photoUris,
-                date = selectedDate!!,
-                userId = currentUserId // This should now be "nap@gmail.com" instead of empty
-            )
+            // Disable button during save
+            binding.saveButton.isEnabled = false
+            binding.saveButton.text = "Saving..."
 
-            Toast.makeText(requireContext(), "Transaction saved!", Toast.LENGTH_SHORT).show()
+            lifecycleScope.launch {
+                try {
+                    val transaction = Transaction(
+                        id = 0, // Not used with Firebase
+                        amount = amount,
+                        type = type,
+                        category = selectedCategory,
+                        description = description,
+                        photoUris = photoUris,
+                        date = selectedDate!!,
+                        userId = currentUserId
+                    )
 
-            // Manual fragment back navigation
-            requireActivity().supportFragmentManager.popBackStack()
+                    val result = firebaseRepo.addTransaction(transaction)
+
+                    result.onSuccess { transactionId ->
+                        println("Transaction saved successfully with ID: $transactionId")
+                        Toast.makeText(requireContext(), "Transaction saved!", Toast.LENGTH_SHORT).show()
+                        requireActivity().supportFragmentManager.popBackStack()
+                    }.onFailure { error ->
+                        println("Error saving transaction: ${error.message}")
+                        Toast.makeText(
+                            requireContext(),
+                            "Error saving transaction: ${error.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        binding.saveButton.isEnabled = true
+                        binding.saveButton.text = "Save Transaction"
+                    }
+                } catch (e: Exception) {
+                    println("Unexpected error: ${e.message}")
+                    Toast.makeText(
+                        requireContext(),
+                        "Unexpected error: ${e.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    binding.saveButton.isEnabled = true
+                    binding.saveButton.text = "Save Transaction"
+                }
+            }
         }
     }
 
     private fun setupCategoryGrid(currentUserId: String) {
-        val categoryDao = AppDatabase.getDatabase(requireContext()).categoryDao()
-
         lifecycleScope.launch {
-            // Get categories for current type (Income or Expense), including defaults
-            val categories = categoryDao.getCategoriesByType(selectedType, currentUserId)
-                .distinctBy { it.name } // Prevent duplicates
-                .toMutableList()
+            loadCategories(currentUserId)
+        }
+    }
 
-            // Add "Add New" button at the end
-            categories.add(
-                Category(
-                    name = "Add New",
-                    type = selectedType,
-                    color = "#E0E0E0",
-                    userId = currentUserId
-                )
-            )
+    private fun loadCategories(currentUserId: String) {
+        lifecycleScope.launch {
+            try {
+                val result = firebaseRepo.getCategories()
 
-            adapter = CategoryAdapter(
-                categories,
-                onCategorySelected = { selectedCategory ->
-                    selectedCategoryName = selectedCategory.name
-                },
-                onAddNewClicked = {
-                    AddCategoryDialogFragment(
-                        userId = currentUserId,
-                        defaultType = selectedType,
-                        onCategoryCreated = { newCategory ->
-                            lifecycleScope.launch {
-                                categoryDao.insertCategory(newCategory)
-                                val updatedCategories = adapter.categories.toMutableList()
-                                updatedCategories.add(updatedCategories.size - 1, newCategory)
-                                adapter.updateCategories(updatedCategories)
-                                selectedCategoryName = newCategory.name
-                            }
+                result.onSuccess { allCategories ->
+                    // Filter by type and remove duplicates
+                    categories = allCategories
+                        .filter { it.type == selectedType }
+                        .distinctBy { it.name }
+                        .toMutableList()
+
+                    // Add "Add New" button at the end
+                    categories.add(
+                        Category(
+                            name = "Add New",
+                            type = selectedType,
+                            color = "#E0E0E0",
+                            userId = currentUserId
+                        )
+                    )
+
+                    adapter = CategoryAdapter(
+                        categories,
+                        onCategorySelected = { selectedCategory ->
+                            selectedCategoryName = selectedCategory.name
+                        },
+                        onAddNewClicked = {
+                            AddCategoryDialogFragment(
+                                userId = currentUserId,
+                                defaultType = selectedType,
+                                onCategoryCreated = { newCategory ->
+                                    lifecycleScope.launch {
+                                        val addResult = firebaseRepo.addCategory(newCategory)
+
+                                        addResult.onSuccess {
+                                            val updatedCategories = adapter.categories.toMutableList()
+                                            updatedCategories.add(updatedCategories.size - 1, newCategory)
+                                            adapter.updateCategories(updatedCategories)
+                                            selectedCategoryName = newCategory.name
+                                            Toast.makeText(
+                                                requireContext(),
+                                                "Category added successfully",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }.onFailure { error ->
+                                            Toast.makeText(
+                                                requireContext(),
+                                                "Error adding category: ${error.message}",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                    }
+                                }
+                            ).show(parentFragmentManager, "AddCategoryDialog")
                         }
-                    ).show(parentFragmentManager, "AddCategoryDialog")
-                }
-            )
+                    )
 
-            binding.categoryGrid.layoutManager = GridLayoutManager(requireContext(), 2)
-            binding.categoryGrid.adapter = adapter
+                    binding.categoryGrid.layoutManager = GridLayoutManager(requireContext(), 2)
+                    binding.categoryGrid.adapter = adapter
+
+                }.onFailure { error ->
+                    Toast.makeText(
+                        requireContext(),
+                        "Error loading categories: ${error.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(
+                    requireContext(),
+                    "Unexpected error loading categories: ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
     }
 

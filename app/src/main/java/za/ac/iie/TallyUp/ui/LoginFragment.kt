@@ -17,9 +17,11 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.launch
 import za.ac.iie.TallyUp.R
-import za.ac.iie.TallyUp.data.DatabaseProvider
+import za.ac.iie.TallyUp.firebase.FirebaseRepository
 
 class LoginFragment : Fragment(R.layout.fragment_login) {
+
+    private val firebaseRepo = FirebaseRepository()
 
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -32,7 +34,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         val progressBar = view.findViewById<ProgressBar>(R.id.progress_indicator)
         val signUpText = view.findViewById<TextView>(R.id.sign_up_text)
 
-        //Make entire TextView clickable
+        // Make entire TextView clickable
         signUpText.setOnClickListener {
             Log.d("LoginFragment", "Sign up text clicked - navigating to SignUpFragment")
             navigateToSignUp()
@@ -62,43 +64,67 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             progressBar.visibility = View.VISIBLE
             errorText.visibility = View.GONE
 
-            // Access to RoomDB
-            val db = DatabaseProvider.getDatabase(requireContext())
-
-            // Adds one database query with proper error handling
+            // Firebase login
             lifecycleScope.launch {
                 try {
-                    Log.d("LoginFragment", "Attempting login for email: $email")
-                    val user = db.userDao().login(email, password)
+                    Log.d("LoginFragment", "Attempting Firebase login for email: $email")
+
+                    val result = firebaseRepo.login(email, password)
 
                     // Re-enable login button after query finishes
                     loginButton.isEnabled = true
                     progressBar.visibility = View.GONE
 
-                    if (user != null) {
-                        // Save email for profile access
-                        val prefs = requireContext().getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
-                        prefs.edit {
-                            putString("loggedInEmail", email)
+                    result.onSuccess { userId ->
+                        // Get user profile to display first name
+                        val profileResult = firebaseRepo.getUserProfile()
+
+                        profileResult.onSuccess { profile ->
+                            val firstName = profile["firstName"] as? String ?: "User"
+
+                            // Save credentials for session management
+                            val prefs = requireContext().getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
+                            prefs.edit {
+                                putString("loggedInEmail", email)
+                                putString("userId", userId)
+                                putString("userFirstName", firstName)
+                            }
+                            Log.d("LoginFragment", "Login successful, saved user data to prefs")
+
+                            Toast.makeText(requireContext(), "Welcome back, $firstName!", Toast.LENGTH_SHORT).show()
+
+                            // Navigate to dashboard
+                            requireActivity().supportFragmentManager.beginTransaction()
+                                .replace(R.id.fragment_container, DashboardFragment())
+                                .commit() // Don't add to back stack for login
+                        }.onFailure { profileError ->
+                            Log.e("LoginFragment", "Failed to get profile: ${profileError.message}")
+                            // Still proceed with login even if profile fetch fails
+                            val prefs = requireContext().getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
+                            prefs.edit {
+                                putString("loggedInEmail", email)
+                                putString("userId", userId)
+                            }
+
+                            Toast.makeText(requireContext(), "Welcome back!", Toast.LENGTH_SHORT).show()
+
+                            requireActivity().supportFragmentManager.beginTransaction()
+                                .replace(R.id.fragment_container, DashboardFragment())
+                                .commit()
                         }
-                        Log.d("LoginFragment", "Login successful, saved email to prefs: $email")
-
-                        Toast.makeText(requireContext(), "Welcome back, ${user.firstName}!", Toast.LENGTH_SHORT).show()
-
-                        // Navigate to dashboard
-                        requireActivity().supportFragmentManager.beginTransaction()
-                            .replace(R.id.fragment_container, DashboardFragment())
-                            .addToBackStack(null)
-                            .commit()
-                    } else {
+                    }.onFailure { error ->
                         // Login failed - show error
-                        errorText.text = getString(R.string.error_invalid_credentials)
+                        errorText.text = when {
+                            error.message?.contains("password") == true -> "Invalid email or password"
+                            error.message?.contains("network") == true -> "Network error. Please check your connection."
+                            else -> "Login failed. Please try again."
+                        }
                         errorText.visibility = View.VISIBLE
-                        Log.d("LoginFragment", "Login failed - invalid credentials for email: $email")
-                        Toast.makeText(requireContext(), "Invalid email or password", Toast.LENGTH_SHORT).show()
+                        Log.d("LoginFragment", "Login failed: ${error.message}")
+                        Toast.makeText(requireContext(), "Login failed: ${error.message}", Toast.LENGTH_SHORT).show()
                     }
                 } catch (e: Exception) {
-                    // Handle any database errors
+                    // Handle any unexpected errors
                     Log.e("LoginFragment", "Login error: ${e.message}", e)
                     loginButton.isEnabled = true
                     progressBar.visibility = View.GONE

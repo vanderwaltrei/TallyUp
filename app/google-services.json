@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "931646304498",
+    "project_id": "tally-up-ab43e",
+    "storage_bucket": "tally-up-ab43e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:931646304498:android:cb839c567b6f71415b206b",
+        "android_client_info": {
+          "package_name": "za.ac.iie.TallyUp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5GPXArBi9vOmLrL6WkD28gtB_rfGSI4g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
