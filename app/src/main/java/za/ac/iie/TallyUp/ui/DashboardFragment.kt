@@ -306,8 +306,11 @@ class DashboardFragment : Fragment() {
     @SuppressLint("SetTextI18n")
     private fun setupUI() {
         val characterName = CharacterManager.getCharacterName(requireContext())
-        val firstName = appState.user?.firstName ?: "there"
-        binding.welcomeText.text = "Hey $firstName! Say hi to $characterName!"
+
+        val prefs = requireContext().getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
+        val firstName = prefs.getString("userFirstName", null) ?: "User"
+
+        binding.welcomeText.text = "Hey $firstName! $characterName is here to help!"
 
         binding.recentSection.visibility = View.VISIBLE
 

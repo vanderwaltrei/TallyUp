@@ -1,5 +1,3 @@
-@file:Suppress("PackageName")
-
 package za.ac.iie.TallyUp.ui
 
 import android.os.Bundle
@@ -26,7 +24,27 @@ class ProfileCharacterFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // Character customization logic will go here
+
+        // Call your new function
+        updateCoinCount()
+    }
+
+    @android.annotation.SuppressLint("SetTextI18n")
+    private fun updateCoinCount() {
+        // Get the actual coin count from your CharacterManager
+        val coins = za.ac.iie.TallyUp.utils.CharacterManager.getCoins(requireContext())
+
+        // Set the text of your TextView
+        binding.coinsCountText.text = "$coins Coins"
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Refresh the coin count in case the user earns/spends
+        // coins and switches back to this tab.
+        if (_binding != null) {
+            updateCoinCount()
+        }
     }
 
     override fun onDestroyView() {

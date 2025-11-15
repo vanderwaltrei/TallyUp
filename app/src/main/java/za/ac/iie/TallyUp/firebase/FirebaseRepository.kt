@@ -73,6 +73,21 @@ class FirebaseRepository {
         }
     }
 
+    suspend fun updateUserProfile(updates: Map<String, Any>): Result<Unit> {
+        return try {
+            val userId = getCurrentUserId() ?: throw Exception("No user logged in")
+
+            firestore.collection("users")
+                .document(userId)
+                .update(updates)
+                .await()
+
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     // ============= TRANSACTIONS =============
 
     suspend fun addTransaction(transaction: Transaction): Result<String> {

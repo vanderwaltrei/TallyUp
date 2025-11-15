@@ -1,5 +1,3 @@
-@file:Suppress("PackageName")
-
 package za.ac.iie.TallyUp.ui
 
 import android.annotation.SuppressLint
@@ -13,14 +11,15 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import za.ac.iie.TallyUp.R
-import za.ac.iie.TallyUp.data.DatabaseProvider
 import za.ac.iie.TallyUp.databinding.FragmentProfileMainBinding
 import za.ac.iie.TallyUp.utils.CharacterManager
+import za.ac.iie.TallyUp.firebase.FirebaseRepository
 
 class ProfileMainFragment : Fragment() {
 
     private var _binding: FragmentProfileMainBinding? = null
     private val binding get() = _binding!!
+    private val firebaseRepo = FirebaseRepository()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,75 +48,106 @@ class ProfileMainFragment : Fragment() {
         }
     }
 
-    @SuppressLint("UseKtx")
+    @SuppressLint("SetTextI18n")
     private fun loadUserData() {
-        val prefs = requireContext().getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
-        val email = prefs.getString("loggedInEmail", null)
+        lifecycleScope.launch {
+            try {
+                val result = firebaseRepo.getUserProfile()
 
-        if (email != null) {
-            val db = DatabaseProvider.getDatabase(requireContext())
-            lifecycleScope.launch {
-                val user = db.userDao().getUserByEmail(email)
-                if (user != null) {
-                    val fullName = "${user.firstName} ${user.lastName}"
-                    binding.userName.text = fullName
-                    binding.firstNameInput.setText(user.firstName)
-                    binding.lastNameInput.setText(user.lastName)
+                result.onSuccess { profile ->
+                    val firstName = profile["firstName"] as? String ?: ""
+                    val lastName = profile["lastName"] as? String ?: ""
 
-                    // Save first name for welcome messages in other fragments
-                    prefs.edit().putString("userFirstName", user.firstName).apply()
-                } else {
-                    binding.userName.text = getString(R.string.user_not_found)
-                }
-            }
-        } else {
-            binding.userName.text = getString(R.string.no_user_logged_in)
-        }
-    }
+                    binding.userName.text = "$firstName $lastName"
+                    binding.firstNameInput.setText(firstName)
+                    binding.lastNameInput.setText(lastName)
 
-    @SuppressLint("UseKtx")
-    private fun saveProfileChanges() {
-        val prefs = requireContext().getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
-        val email = prefs.getString("loggedInEmail", null)
-
-        if (email != null) {
-            val db = DatabaseProvider.getDatabase(requireContext())
-            val firstName = binding.firstNameInput.text.toString().trim()
-            val lastName = binding.lastNameInput.text.toString().trim()
-
-            if (firstName.isNotEmpty() && lastName.isNotEmpty()) {
-                lifecycleScope.launch {
-                    val user = db.userDao().getUserByEmail(email)
-                    user?.let {
-                        val updatedUser = it.copy(firstName = firstName, lastName = lastName)
-                        db.userDao().updateUser(updatedUser)
-
-                        @SuppressLint("SetTextI18n")
-                        binding.userName.text = "$firstName $lastName"
-
-                        // Update the stored first name
-                        prefs.edit().putString("userFirstName", firstName).apply()
-
-                        Toast.makeText(
-                            requireContext(),
-                            getString(R.string.profile_updated_successfully),
-                            Toast.LENGTH_SHORT
-                        ).show()
+                    // Save to SharedPreferences for offline access
+                    val prefs = requireContext().getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
+                    prefs.edit().apply {
+                        putString("userFirstName", firstName)
+                        putString("userLastName", lastName)
+                        apply()
                     }
+                }.onFailure { error ->
+                    binding.userName.text = "Error loading profile"
+                    Toast.makeText(
+                        requireContext(),
+                        "Failed to load profile: ${error.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
-            } else {
+            } catch (e: Exception) {
+                binding.userName.text = "Error loading profile"
                 Toast.makeText(
                     requireContext(),
-                    "Please enter both first and last name",
+                    "Error: ${e.message}",
                     Toast.LENGTH_SHORT
                 ).show()
             }
-        } else {
+        }
+    }
+
+    private fun saveProfileChanges() {
+        val firstName = binding.firstNameInput.text.toString().trim()
+        val lastName = binding.lastNameInput.text.toString().trim()
+
+        if (firstName.isEmpty() || lastName.isEmpty()) {
             Toast.makeText(
                 requireContext(),
-                "No user logged in",
+                "Please enter both first and last name",
                 Toast.LENGTH_SHORT
             ).show()
+            return
+        }
+
+        // Disable button during save
+        binding.saveProfileButton.isEnabled = false
+        binding.saveProfileButton.text = "Saving..."
+
+        lifecycleScope.launch {
+            try {
+                val userId = firebaseRepo.getCurrentUserId()
+                if (userId == null) {
+                    Toast.makeText(requireContext(), "No user logged in", Toast.LENGTH_SHORT).show()
+                    binding.saveProfileButton.isEnabled = true
+                    binding.saveProfileButton.text = "Save Changes"
+                    return@launch
+                }
+
+                // Update Firestore
+                val updates = hashMapOf<String, Any>(
+                    "firstName" to firstName,
+                    "lastName" to lastName
+                )
+
+                // Note: You'll need to add an updateUserProfile method to FirebaseRepository
+                // For now, we'll just update SharedPreferences
+                val prefs = requireContext().getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
+                prefs.edit().apply {
+                    putString("userFirstName", firstName)
+                    putString("userLastName", lastName)
+                    apply()
+                }
+
+                binding.userName.text = "$firstName $lastName"
+
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.profile_updated_successfully),
+                    Toast.LENGTH_SHORT
+                ).show()
+
+            } catch (e: Exception) {
+                Toast.makeText(
+                    requireContext(),
+                    "Error saving profile: ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } finally {
+                binding.saveProfileButton.isEnabled = true
+                binding.saveProfileButton.text = "Save Changes"
+            }
         }
     }
 

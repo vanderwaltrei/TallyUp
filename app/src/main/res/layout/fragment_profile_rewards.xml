@@ -197,13 +197,13 @@
                             android:textStyle="bold"
                             tools:ignore="TextContrastCheck" />
 
-                        <ImageView
-                            android:layout_width="16dp"
-                            android:layout_height="16dp"
-                            android:layout_marginStart="4dp"
-                            android:src="@drawable/ic_coin"
-                            android:tint="@color/accent"
-                            tools:ignore="ContentDescription,UseAppTint,ImageContrastCheck" />
+<!--                        <ImageView-->
+<!--                            android:layout_width="16dp"-->
+<!--                            android:layout_height="16dp"-->
+<!--                            android:layout_marginStart="4dp"-->
+<!--                            android:src="@drawable/ic_coin"-->
+<!--                            android:tint="@color/accent"-->
+<!--                            tools:ignore="ContentDescription,UseAppTint,ImageContrastCheck" />-->
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -286,13 +286,13 @@
                             android:textStyle="bold"
                             tools:ignore="TextContrastCheck" />
 
-                        <ImageView
-                            android:layout_width="16dp"
-                            android:layout_height="16dp"
-                            android:layout_marginStart="4dp"
-                            android:src="@drawable/ic_coin"
-                            android:tint="@color/accent"
-                            tools:ignore="ContentDescription,UseAppTint,ImageContrastCheck" />
+<!--                        <ImageView-->
+<!--                            android:layout_width="16dp"-->
+<!--                            android:layout_height="16dp"-->
+<!--                            android:layout_marginStart="4dp"-->
+<!--                            android:src="@drawable/ic_coin"-->
+<!--                            android:tint="@color/accent"-->
+<!--                            tools:ignore="ContentDescription,UseAppTint,ImageContrastCheck" />-->
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>

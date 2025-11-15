@@ -119,6 +119,8 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                             putString("userFirstName", firstName)
                         }
 
+                        za.ac.iie.TallyUp.utils.CharacterManager.setCoins(requireContext(), 200)
+
                         // Initialize default categories for new user
                         initializeDefaultCategories(userId)
 
