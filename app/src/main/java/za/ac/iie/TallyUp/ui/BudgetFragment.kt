@@ -27,7 +27,6 @@ class BudgetFragment : Fragment() {
 
     private var _binding: FragmentBudgetBinding? = null
     private val binding get() = _binding!!
-
     private lateinit var repository: AppRepository
     private lateinit var appDatabase: AppDatabase
     private lateinit var adapter: CategoryBreakdownAdapter
@@ -220,7 +219,8 @@ class BudgetFragment : Fragment() {
 
     private fun getCurrentUserId(): String {
         val prefs = requireContext().getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
-        return prefs.getString("loggedInEmail", "") ?: "default"
+        // ✅ FIXED: Changed "loggedInEmail" to "userId"
+        return prefs.getString("userId", "") ?: "default"
     }
 
     override fun onResume() {

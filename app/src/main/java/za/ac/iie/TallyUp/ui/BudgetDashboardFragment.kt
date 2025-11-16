@@ -30,7 +30,6 @@ class BudgetDashboardFragment : Fragment() {
 
     private var _binding: FragmentBudgetDashboardBinding? = null
     private val binding get() = _binding!!
-
     private lateinit var repository: AppRepository
     private lateinit var appDatabase: AppDatabase
     private var selectedTimePeriod = "All" // Default selection
@@ -363,7 +362,8 @@ class BudgetDashboardFragment : Fragment() {
 
     private fun getCurrentUserId(): String {
         val prefs = requireContext().getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
-        return prefs.getString("loggedInEmail", "") ?: "default"
+        // ✅ FIXED: This was incorrectly using "loggedInEmail"
+        return prefs.getString("userId", "") ?: "default"
     }
 
     override fun onResume() {

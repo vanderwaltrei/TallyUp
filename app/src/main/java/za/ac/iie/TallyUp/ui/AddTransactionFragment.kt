@@ -19,6 +19,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import kotlinx.coroutines.launch
 import za.ac.iie.TallyUp.R
+import za.ac.iie.TallyUp.data.AppDatabase // ✅ ADDED: Import AppDatabase
 import za.ac.iie.TallyUp.data.Category
 import za.ac.iie.TallyUp.data.Transaction
 import za.ac.iie.TallyUp.databinding.FragmentAddTransactionBinding
@@ -35,7 +36,6 @@ class AddTransactionFragment : Fragment() {
 
     private var _binding: FragmentAddTransactionBinding? = null
     private val binding get() = _binding!!
-
     private val firebaseRepo = FirebaseRepository()
     private var selectedCategoryName: String? = null
     private var selectedType: String = "Expense"
@@ -44,6 +44,8 @@ class AddTransactionFragment : Fragment() {
     private var cameraPhotoUri: Uri? = null
     private var selectedDate: Long? = null
     private var categories = mutableListOf<Category>()
+
+    private lateinit var appDatabase: AppDatabase // ✅ ADDED: Database instance
 
     private val photoPickerLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -105,6 +107,8 @@ class AddTransactionFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val currentUserId = getCurrentUserId()
+
+        appDatabase = AppDatabase.getDatabase(requireContext()) // ✅ ADDED: Initialise database
 
         // Debug log to verify user ID
         println("=== AddTransactionFragment ===")
@@ -240,6 +244,10 @@ class AddTransactionFragment : Fragment() {
                         userId = currentUserId
                     )
 
+                    // ✅ ADDED: Save to local Room database
+                    appDatabase.transactionDao().insertTransaction(transaction)
+
+                    // Save to Firebase
                     val result = firebaseRepo.addTransaction(transaction)
 
                     result.onSuccess { transactionId ->

@@ -23,6 +23,7 @@ import za.ac.iie.TallyUp.data.AppDatabase
 import za.ac.iie.TallyUp.utils.CharacterManager
 import za.ac.iie.TallyUp.models.Goal
 import za.ac.iie.TallyUp.models.GoalDatabase
+import za.ac.iie.TallyUp.firebase.FirebaseRepository
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -36,6 +37,7 @@ class DashboardFragment : Fragment() {
     private lateinit var appState: AppState
     private lateinit var goalDatabase: GoalDatabase
     private lateinit var appDatabase: AppDatabase
+    private val firebaseRepo = FirebaseRepository()
     private var goalsList = mutableListOf<Goal>()
     private lateinit var goalAdapter: GoalAdapter
 
@@ -64,7 +66,6 @@ class DashboardFragment : Fragment() {
         setupQuickActions()
         loadGoalsFromDatabase()
         loadTransactionsAndUpdateBudget()
-        debugCheckTransactions()
         loadRecentTransactions()
     }
 
@@ -78,11 +79,9 @@ class DashboardFragment : Fragment() {
                 navigateToGoalsFragment()
             },
             onEditGoalClicked = { goal ->
-                // Navigate to goals fragment where they can edit
                 navigateToGoalsFragment()
             },
             onDeleteGoalClicked = { goal ->
-                // Navigate to goals fragment where they can delete
                 navigateToGoalsFragment()
             }
         )
@@ -99,36 +98,50 @@ class DashboardFragment : Fragment() {
     @SuppressLint("SetTextI18n")
     private fun loadRecentTransactions() {
         val userId = getCurrentUserId()
-        val transactionDao = AppDatabase.getDatabase(requireContext()).transactionDao()
 
         lifecycleScope.launch {
-            val recentTransactions = transactionDao.getTransactionsForUser(userId)
-                .sortedByDescending { it.date }
-                .take(3)
-
-            if (recentTransactions.isNotEmpty()) {
-                binding.noTransactionsText.visibility = View.GONE
-                binding.recentTransactionsContainer.visibility = View.VISIBLE
-                binding.recentTransactionsContainer.removeAllViews()
-
-                recentTransactions.forEach { transaction ->
-                    val itemView = layoutInflater.inflate(R.layout.item_transaction, binding.recentTransactionsContainer, false)
-
-                    itemView.findViewById<TextView>(R.id.transaction_description).text =
-                        "${transaction.category} - ${transaction.type}"
-
-                    itemView.findViewById<TextView>(R.id.transaction_date).text =
-                        formatDate(transaction.date)
-
-                    itemView.findViewById<TextView>(R.id.transaction_amount).text =
-                        "R ${"%.2f".format(transaction.amount)}"
-
-                    itemView.findViewById<TextView>(R.id.photo_status).text =
-                        if (transaction.photoUris.isNotEmpty()) "Photos attached" else "No photos"
-
-                    binding.recentTransactionsContainer.addView(itemView)
+            try {
+                // ✅ FIXED: Read from local Room database instead of Firebase
+                val allTransactions = withContext(Dispatchers.IO) {
+                    appDatabase.transactionDao().getTransactionsForUser(userId)
                 }
-            } else {
+
+                val recentTransactions = allTransactions
+                    .sortedByDescending { it.date }
+                    .take(3)
+
+                if (recentTransactions.isNotEmpty()) {
+                    binding.noTransactionsText.visibility = View.GONE
+                    binding.recentTransactionsContainer.visibility = View.VISIBLE
+                    binding.recentTransactionsContainer.removeAllViews()
+
+                    recentTransactions.forEach { transaction ->
+                        val itemView = layoutInflater.inflate(
+                            R.layout.item_transaction,
+                            binding.recentTransactionsContainer,
+                            false
+                        )
+
+                        itemView.findViewById<TextView>(R.id.transaction_description).text =
+                            "${transaction.category} - ${transaction.type}"
+
+                        itemView.findViewById<TextView>(R.id.transaction_date).text =
+                            formatDate(transaction.date)
+
+                        itemView.findViewById<TextView>(R.id.transaction_amount).text =
+                            "R ${"%.2f".format(transaction.amount)}"
+
+                        itemView.findViewById<TextView>(R.id.photo_status).text =
+                            if (transaction.photoUris.isNotEmpty()) "Photos attached" else "No photos"
+
+                        binding.recentTransactionsContainer.addView(itemView)
+                    }
+                } else {
+                    binding.noTransactionsText.visibility = View.VISIBLE
+                    binding.recentTransactionsContainer.visibility = View.GONE
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error loading recent transactions from Room: ${e.message}")
                 binding.noTransactionsText.visibility = View.VISIBLE
                 binding.recentTransactionsContainer.visibility = View.GONE
             }
@@ -153,9 +166,12 @@ class DashboardFragment : Fragment() {
     @SuppressLint("SetTextI18n")
     private fun loadTransactionsAndUpdateBudget() {
         val userId = getCurrentUserId()
-        CoroutineScope(Dispatchers.IO).launch {
+        lifecycleScope.launch {
             try {
-                val transactions = appDatabase.transactionDao().getTransactionsForUser(userId)
+                // ✅ FIXED: Read from local Room database instead of Firebase
+                val transactions = withContext(Dispatchers.IO) {
+                    appDatabase.transactionDao().getTransactionsForUser(userId)
+                }
 
                 val totalIncome = transactions
                     .filter { it.type == "Income" }
@@ -166,9 +182,7 @@ class DashboardFragment : Fragment() {
                     .sumOf { it.amount }
 
                 val categorySpending = calculateCategorySpending(transactions)
-
                 val monthlyBudget = appState.budgetCategories.sumOf { it.budgeted }
-
                 val availableToSpend = monthlyBudget - totalExpenses
 
                 val progressPercentage = if (monthlyBudget > 0) {
@@ -186,17 +200,13 @@ class DashboardFragment : Fragment() {
                 Log.d(TAG, "Available to Spend: R$availableToSpend")
                 Log.d(TAG, "==========================")
 
-                withContext(Dispatchers.Main) {
-                    updateBudgetUI(availableToSpend, totalExpenses, monthlyBudget, progressPercentage, totalIncome)
-                }
+                updateBudgetUI(availableToSpend, totalExpenses, monthlyBudget, progressPercentage, totalIncome)
 
             } catch (e: Exception) {
-                Log.e(TAG, "Error loading transactions: ${e.message}", e)
-                withContext(Dispatchers.Main) {
-                    binding.availableAmount.text = "R0.00"
-                    binding.progressText.text = "0%"
-                    binding.statusText.text = "Error loading data"
-                }
+                Log.e(TAG, "Error loading transactions for budget: ${e.message}", e)
+                binding.availableAmount.text = "R0.00"
+                binding.progressText.text = "0%"
+                binding.statusText.text = "Error loading data"
             }
         }
     }
@@ -255,7 +265,7 @@ class DashboardFragment : Fragment() {
 
     private fun getCurrentUserId(): String {
         val prefs = requireContext().getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
-        return prefs.getString("loggedInEmail", "") ?: "default"
+        return prefs.getString("userId", "") ?: "default"
     }
 
     private fun updateGoalsVisibility() {
@@ -303,7 +313,7 @@ class DashboardFragment : Fragment() {
             .commit()
     }
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI1Tern")
     private fun setupUI() {
         val characterName = CharacterManager.getCharacterName(requireContext())
 
@@ -328,23 +338,7 @@ class DashboardFragment : Fragment() {
         super.onResume()
         loadGoalsFromDatabase()
         loadTransactionsAndUpdateBudget()
-        debugCheckTransactions()
-    }
-
-    private fun debugCheckTransactions() {
-        val userId = getCurrentUserId()
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val transactions = appDatabase.transactionDao().getTransactionsForUser(userId)
-                Log.d(TAG, "=== DEBUG: Found ${transactions.size} transactions ===")
-                transactions.forEach { transaction ->
-                    Log.d(TAG, "Transaction: ${transaction.type} - R${transaction.amount} - ${transaction.category} - User: ${transaction.userId}")
-                }
-                Log.d(TAG, "=================================")
-            } catch (e: Exception) {
-                Log.e(TAG, "DEBUG Error: ${e.message}")
-            }
-        }
+        loadRecentTransactions()
     }
 
     override fun onDestroyView() {
