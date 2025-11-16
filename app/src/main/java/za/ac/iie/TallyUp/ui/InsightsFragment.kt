@@ -12,7 +12,9 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.*
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -24,9 +26,6 @@ import za.ac.iie.TallyUp.data.Transaction
 import za.ac.iie.TallyUp.databinding.FragmentInsightsBinding
 import java.text.SimpleDateFormat
 import java.util.*
-import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
-import kotlin.math.roundToInt
 import za.ac.iie.TallyUp.R
 
 class InsightsFragment : Fragment() {
@@ -54,16 +53,23 @@ class InsightsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupTabs()
         setupTransactionList()
+        setupTabs()
         loadTransactions()
 
-        // Open AddTransactionFragment when button is clicked
         binding.addFirstTransactionBtnAlt.setOnClickListener {
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, AddTransactionFragment())
                 .addToBackStack("insights_to_add")
                 .commit()
+        }
+    }
+
+    private fun setupTransactionList() {
+        transactionAdapter = TransactionAdapter()
+        binding.transactionsRecyclerView.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = transactionAdapter
         }
     }
 
@@ -80,15 +86,6 @@ class InsightsFragment : Fragment() {
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
             override fun onTabReselected(tab: TabLayout.Tab?) {}
         })
-        showTrendChart() // Default tab
-    }
-
-    private fun setupTransactionList() {
-        transactionAdapter = TransactionAdapter()
-        binding.transactionsRecyclerView.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = transactionAdapter
-        }
     }
 
     private fun loadTransactions() {
@@ -99,6 +96,15 @@ class InsightsFragment : Fragment() {
             }
             allTransactions = transactions
             applyFilters()
+
+            binding.chartContainer.post {
+                when (binding.analysisTabs.selectedTabPosition) {
+                    0 -> showTrendChart()
+                    1 -> showDailyChart()
+                    2 -> showCategoriesChart()
+                    else -> showTrendChart()
+                }
+            }
         }
     }
 
@@ -148,13 +154,12 @@ class InsightsFragment : Fragment() {
     }
 
     // === Chart implementations ===
-
     private fun showTrendChart() {
         binding.chartContainer.removeAllViews()
         val chart = LineChart(requireContext())
         binding.chartContainer.addView(chart)
 
-        chart.description.isEnabled = false  // remove "Description Label"
+        chart.description.isEnabled = false
         chart.setTouchEnabled(true)
         chart.setPinchZoom(true)
 
@@ -173,8 +178,8 @@ class InsightsFragment : Fragment() {
         dataSet.color = Color.BLUE
         dataSet.setDrawFilled(true)
         dataSet.fillColor = Color.CYAN
-        val lineData = LineData(dataSet)
-        chart.data = lineData
+
+        chart.data = LineData(dataSet)
 
         val xAxis = chart.xAxis
         xAxis.position = XAxis.XAxisPosition.BOTTOM
@@ -204,11 +209,9 @@ class InsightsFragment : Fragment() {
         }
 
         val dataSet = BarDataSet(entries, "Daily Spending")
-        // Red bars with ~40% transparency
-        dataSet.color = 0x66FF0000.toInt()
+        dataSet.color = 0x66FF0000.toInt() // Red with alpha
 
-        val barData = BarData(dataSet)
-        chart.data = barData
+        chart.data = BarData(dataSet)
 
         val xAxis = chart.xAxis
         xAxis.position = XAxis.XAxisPosition.BOTTOM
@@ -229,11 +232,9 @@ class InsightsFragment : Fragment() {
 
         val filtered = filterTransactionsByTime(allTransactions).filter { it.type == "Expense" }
 
-        // Group transactions by category
         val categoryTotals = filtered.groupBy { it.category }
             .map { (category, txs) -> category to txs.sumOf { it.amount } }
 
-        // Entries for the chart
         val entries = categoryTotals.mapIndexed { index, pair ->
             BarEntry(index.toFloat(), pair.second.toFloat())
         }
@@ -252,8 +253,7 @@ class InsightsFragment : Fragment() {
         }
         dataSet.colors = categoryColors
 
-        val barData = BarData(dataSet)
-        chart.data = barData
+        chart.data = BarData(dataSet)
 
         val xAxis = chart.xAxis
         xAxis.position = XAxis.XAxisPosition.BOTTOM
@@ -294,4 +294,6 @@ class InsightsFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
+
 }

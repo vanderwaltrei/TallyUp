@@ -17,7 +17,7 @@
             android:id="@+id/monthTabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="invisible"
+            android:visibility="visible"
             app:tabIndicatorColor="@color/white"
             app:tabSelectedTextColor="@color/black"
             app:tabTextColor="@color/black">
@@ -252,6 +252,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
+            android:visibility="gone"
             app:cardCornerRadius="12dp"
             app:cardElevation="4dp">
 
@@ -271,8 +272,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/highest_spending_day_aug_25"
-                    android:layout_marginTop="8dp" />
+                    android:layout_marginTop="8dp"
+                    android:text="@string/highest_spending_day_aug_25" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -339,6 +340,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
+            android:visibility="gone"
             app:cardCornerRadius="12dp"
             app:cardElevation="4dp">
 
@@ -358,14 +360,14 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/great_job_you_have_r600_remaining_in_your_budget"
-                    android:layout_marginTop="8dp" />
+                    android:layout_marginTop="8dp"
+                    android:text="@string/great_job_you_have_r600_remaining_in_your_budget" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/money_tip_you_re_doing_great_keep_tracking_your_expenses"
-                    android:layout_marginTop="4dp" />
+                    android:layout_marginTop="4dp"
+                    android:text="@string/money_tip_you_re_doing_great_keep_tracking_your_expenses" />
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -375,6 +377,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
+            android:visibility="gone"
             app:cardCornerRadius="12dp"
             app:cardElevation="4dp">
 
@@ -394,16 +397,16 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/new_phone"
-                    android:layout_marginTop="8dp" />
+                    android:layout_marginTop="8dp"
+                    android:text="@string/new_phone" />
 
                 <ProgressBar
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="match_parent"
                     android:layout_height="8dp"
+                    android:layout_marginTop="4dp"
                     android:progress="0"
-                    android:progressTint="@android:color/holo_blue_light"
-                    android:layout_marginTop="4dp" />
+                    android:progressTint="@android:color/holo_blue_light" />
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
