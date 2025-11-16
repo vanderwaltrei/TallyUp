@@ -219,7 +219,7 @@ class BudgetFragment : Fragment() {
 
     private fun getCurrentUserId(): String {
         val prefs = requireContext().getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
-        // ✅ FIXED: Changed "loggedInEmail" to "userId"
+        // Changed "loggedInEmail" to "userId"
         return prefs.getString("userId", "") ?: "default"
     }
 
