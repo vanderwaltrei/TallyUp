@@ -107,7 +107,6 @@ class Question2TutorialFragment : Fragment(R.layout.fragment_question2_tutorial)
 
     private fun getCurrentUserId(): String {
         val prefs = requireContext().getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
-        // ✅ FIXED: This was incorrectly using "loggedInEmail"
         return prefs.getString("userId", "") ?: "default"
     }
 

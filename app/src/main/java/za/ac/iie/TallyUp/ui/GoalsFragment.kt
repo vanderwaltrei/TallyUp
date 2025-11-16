@@ -31,7 +31,7 @@ class GoalsFragment : Fragment() {
 
     private fun getCurrentUserId(): String {
         val prefs = requireContext().getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
-        return prefs.getString("loggedInEmail", "") ?: "default"
+        return prefs.getString("userId", "") ?: "default"
     }
 
     override fun onCreateView(
