@@ -2,9 +2,10 @@
 
 package za.ac.iie.TallyUp.ui
 
-import NotificationAdapter
-import NotificationItem
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,7 +17,9 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import za.ac.iie.TallyUp.R
 import za.ac.iie.TallyUp.databinding.FragmentManageNotificationsBinding
-
+import za.ac.iie.TallyUp.notifications.NotificationReceiver
+import za.ac.iie.TallyUp.ui.NotificationAdapter
+import za.ac.iie.TallyUp.ui.NotificationItem
 
 class ManageNotificationsFragment : Fragment() {
 
@@ -55,6 +58,7 @@ class ManageNotificationsFragment : Fragment() {
         adapter = NotificationAdapter(
             notifications.toMutableList(),
             onDelete = { itemToDelete ->
+                cancelNotification(itemToDelete)
                 val updated = saved.toMutableSet().apply {
                     remove("${itemToDelete.name}|${itemToDelete.time}|${itemToDelete.recurrence}")
                 }
@@ -81,7 +85,6 @@ class ManageNotificationsFragment : Fragment() {
         val datePicker = dialogView.findViewById<DatePicker>(R.id.datePicker)
         val spinner = dialogView.findViewById<Spinner>(R.id.spinnerRecurrence)
 
-        // Pre-fill fields
         nameField.setText(item.name)
 
         val calendar = java.util.Calendar.getInstance().apply { timeInMillis = item.time }
@@ -106,20 +109,66 @@ class ManageNotificationsFragment : Fragment() {
 
             val saved = prefs.getStringSet(key, emptySet())?.toMutableSet() ?: mutableSetOf()
 
-            // Replace old entry with updated one
+            // Replace old entry
             saved.remove("${item.name}|${item.time}|${item.recurrence}")
             saved.add("$newName|$newTime|$newRecurrence")
-
             prefs.edit { putStringSet(key, saved) }
+
+            cancelNotification(item)
+            scheduleNotification(newName, newTime, newRecurrence)
 
             Toast.makeText(requireContext(), "Notification updated!", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
-
-            // Refresh list
             loadNotifications()
         }
 
         dialog.show()
+    }
+
+    private fun cancelNotification(item: NotificationItem) {
+        val intent = Intent(requireContext(), NotificationReceiver::class.java).apply {
+            putExtra("name", item.name)
+            putExtra("recurrence", item.recurrence)
+            putExtra("time", item.time)
+        }
+
+        val pendingIntent = PendingIntent.getBroadcast(
+            requireContext(),
+            item.time.toInt(),
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.cancel(pendingIntent)
+    }
+
+    private fun scheduleNotification(name: String, time: Long, recurrence: String) {
+        val intent = Intent(requireContext(), NotificationReceiver::class.java).apply {
+            putExtra("name", name)
+            putExtra("recurrence", recurrence)
+            putExtra("time", time)
+        }
+
+        val pendingIntent = PendingIntent.getBroadcast(
+            requireContext(),
+            time.toInt(),
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        when (recurrence) {
+            "Never" -> alarmManager.setExact(AlarmManager.RTC_WAKEUP, time, pendingIntent)
+            "Weekly" -> alarmManager.setRepeating(
+                AlarmManager.RTC_WAKEUP,
+                time,
+                AlarmManager.INTERVAL_DAY * 7,
+                pendingIntent
+            )
+            "Monthly" -> alarmManager.setExact(AlarmManager.RTC_WAKEUP, time, pendingIntent)
+        }
     }
 
     override fun onDestroyView() {

@@ -3,18 +3,22 @@
 package za.ac.iie.TallyUp.ui
 
 import android.annotation.SuppressLint
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import za.ac.iie.TallyUp.R
 import za.ac.iie.TallyUp.databinding.FragmentProfileSettingsBinding
+import za.ac.iie.TallyUp.notifications.NotificationReceiver
 import java.util.*
-import androidx.core.content.edit
 
 class ProfileSettingsFragment : Fragment() {
 
@@ -33,12 +37,10 @@ class ProfileSettingsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Log Out Button
         binding.logoutButton.setOnClickListener {
             logoutUser()
         }
 
-        //Schedule Notification Button
         binding.btnScheduleNotification.setOnClickListener {
             val dialogView = layoutInflater.inflate(R.layout.dialog_schedule_notification, null)
             val dialog = AlertDialog.Builder(requireContext(), R.style.CustomDatePicker)
@@ -47,7 +49,11 @@ class ProfileSettingsFragment : Fragment() {
 
             val spinner = dialogView.findViewById<Spinner>(R.id.spinnerRecurrence)
             val recurrenceOptions = listOf("Never", "Weekly", "Monthly")
-            spinner.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, recurrenceOptions)
+            spinner.adapter = ArrayAdapter(
+                requireContext(),
+                android.R.layout.simple_spinner_item,
+                recurrenceOptions
+            )
 
             val confirmButton = dialogView.findViewById<Button>(R.id.btnConfirmSchedule)
             confirmButton.setOnClickListener {
@@ -66,10 +72,11 @@ class ProfileSettingsFragment : Fragment() {
             dialog.show()
         }
 
-        //Manage Notifications Button
         binding.btnManageNotifications.setOnClickListener {
-            Toast.makeText(requireContext(), "Manage Notifications clicked", Toast.LENGTH_SHORT).show()
-            // TODO: Navigate to a fragment or show a list of saved notifications
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, ManageNotificationsFragment())
+                .addToBackStack(null)
+                .commit()
         }
     }
 
@@ -83,9 +90,10 @@ class ProfileSettingsFragment : Fragment() {
         existing.add(entry)
         prefs.edit { putStringSet(key, existing) }
 
-        // Schedule the alarm
         val intent = Intent(requireContext(), NotificationReceiver::class.java).apply {
             putExtra("name", name)
+            putExtra("recurrence", recurrence)
+            putExtra("time", time)
         }
 
         val pendingIntent = PendingIntent.getBroadcast(
@@ -96,7 +104,17 @@ class ProfileSettingsFragment : Fragment() {
         )
 
         val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, time, pendingIntent)
+
+        when (recurrence) {
+            "Never" -> alarmManager.setExact(AlarmManager.RTC_WAKEUP, time, pendingIntent)
+            "Weekly" -> alarmManager.setRepeating(
+                AlarmManager.RTC_WAKEUP,
+                time,
+                AlarmManager.INTERVAL_DAY * 7,
+                pendingIntent
+            )
+            "Monthly" -> alarmManager.setExact(AlarmManager.RTC_WAKEUP, time, pendingIntent)
+        }
 
         Toast.makeText(requireContext(), "Notification scheduled!", Toast.LENGTH_SHORT).show()
     }
