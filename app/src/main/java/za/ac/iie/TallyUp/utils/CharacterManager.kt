@@ -12,18 +12,19 @@ import java.util.*
 object CharacterManager {
     private const val PREFS_NAME = "TallyUpPrefs"
     private const val SELECTED_CHARACTER_KEY = "selected_character"
+    private const val EQUIPPED_CHARACTER_KEY = "equipped_character"  // NEW: For equipped accessories
     private const val LAST_ACTIVE_DATE_KEY = "last_active_date"
     private const val USER_COINS_KEY = "user_coins"
 
     // Default to Max if no selection made
     private const val DEFAULT_CHARACTER = "max"
 
-    // Character selection methods
+    // Character selection methods (base character: max or luna)
     fun saveSelectedCharacter(context: Context, character: String) {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         prefs.edit().apply {
             putString(SELECTED_CHARACTER_KEY, character)
-            putLong(LAST_ACTIVE_DATE_KEY, Date().time) // Update last active date
+            putLong(LAST_ACTIVE_DATE_KEY, Date().time)
             apply()
         }
     }
@@ -33,27 +34,74 @@ object CharacterManager {
         return prefs.getString(SELECTED_CHARACTER_KEY, DEFAULT_CHARACTER) ?: DEFAULT_CHARACTER
     }
 
-    // Drawable and display methods
+    // NEW: Equipped character methods (for shop accessories)
+    fun saveEquippedCharacter(context: Context, characterId: String?) {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        prefs.edit().apply {
+            putString(EQUIPPED_CHARACTER_KEY, characterId)
+            apply()
+        }
+    }
+
+    fun getEquippedCharacter(context: Context): String? {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        return prefs.getString(EQUIPPED_CHARACTER_KEY, null)
+    }
+
+    // NEW: Get current active character (equipped takes priority)
+    fun getCurrentCharacterId(context: Context): String {
+        val equippedCharacter = getEquippedCharacter(context)
+        return equippedCharacter ?: getSelectedCharacter(context)
+    }
+
+    // Drawable and display methods - UPDATED to use equipped character
     fun getCharacterDrawable(context: Context): Int {
-        return when (getSelectedCharacter(context)) {
+        val currentCharacter = getCurrentCharacterId(context)
+
+        return when (currentCharacter) {
+            // Base characters
             "luna" -> R.drawable.character_female
             "max" -> R.drawable.character_happy
+
+            // Shop accessories (character variations)
+            "luna_gamer" -> R.drawable.luna_gamer
+            "luna_goddess" -> R.drawable.luna_goddess
+            "luna_gothic" -> R.drawable.luna_gothic
+            "luna_strawberry" -> R.drawable.luna_strawberry
+            "max_light" -> R.drawable.max_light
+            "max_villain" -> R.drawable.max_villain
+
             else -> R.drawable.character_happy // Default fallback
         }
     }
 
     fun getCharacterName(context: Context): String {
-        return when (getSelectedCharacter(context)) {
+        val currentCharacter = getCurrentCharacterId(context)
+
+        return when (currentCharacter) {
+            // Base characters
             "luna" -> "Luna"
             "max" -> "Max"
+
+            // Shop accessories with custom names
+            "luna_gamer" -> "Gamer Luna"
+            "luna_goddess" -> "Light Luna"
+            "luna_gothic" -> "Gothic Luna"
+            "luna_strawberry" -> "Strawberry Luna"
+            "max_light" -> "Light Max"
+            "max_villain" -> "Villain Max"
+
             else -> "Max" // Default fallback
         }
     }
 
     fun getCharacterType(context: Context): CharacterType {
-        return when (getSelectedCharacter(context)) {
-            "luna" -> CharacterType.FEMALE
-            "max" -> CharacterType.MALE
+        val currentCharacter = getCurrentCharacterId(context)
+
+        // Determine if character is Luna or Max variant
+        return when {
+            currentCharacter.startsWith("luna") -> CharacterType.FEMALE
+            currentCharacter.startsWith("max") -> CharacterType.MALE
             else -> CharacterType.MALE // Default fallback
         }
     }
@@ -120,6 +168,17 @@ object CharacterManager {
     fun setCoins(context: Context, amount: Int) {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         prefs.edit().putInt(USER_COINS_KEY, amount).apply()
+    }
+
+    // NEW: Purchase tracking
+    fun isPurchased(context: Context, accessoryId: String): Boolean {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        return prefs.getBoolean("purchased_$accessoryId", false)
+    }
+
+    fun setPurchased(context: Context, accessoryId: String, purchased: Boolean) {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        prefs.edit().putBoolean("purchased_$accessoryId", purchased).apply()
     }
 
     // Tutorial completion tracking
