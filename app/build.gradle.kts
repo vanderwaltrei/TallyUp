@@ -77,21 +77,21 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
 
-    // MPAndroidChart
+    //MPAndroidChart
     implementation("com.github.PhilJay:MPAndroidChart:3.1.0")
 
-    // ✅ FIREBASE - Use BoM for version management
-    implementation(platform("com.google.firebase:firebase-bom:33.7.0"))  // Latest BoM
+    //FIREBASE - Use BoM for version management
+    implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
-    implementation("com.google.firebase:firebase-analytics")  // ✅ ADD: Analytics helps with initialization
+    implementation("com.google.firebase:firebase-analytics")
 
-    // Coroutines
+    //Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
 
-    // ✅ ADD: MultiDex if your app exceeds 64K methods
+    //ADD: MultiDex if your app exceeds 64K methods
     implementation("androidx.multidex:multidex:2.0.1")
 }
 
-// ✅ IMPORTANT: Apply Google Services plugin at the END
+// IMPORTANT: Apply Google Services plugin at the END
 apply(plugin = "com.google.gms.google-services")

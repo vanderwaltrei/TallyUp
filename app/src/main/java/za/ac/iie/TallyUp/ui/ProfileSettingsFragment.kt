@@ -3,10 +3,7 @@
 package za.ac.iie.TallyUp.ui
 
 import android.annotation.SuppressLint
-import android.app.AlarmManager
-import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +14,7 @@ import androidx.fragment.app.Fragment
 import za.ac.iie.TallyUp.R
 import za.ac.iie.TallyUp.databinding.FragmentProfileSettingsBinding
 import java.util.*
+import androidx.core.content.edit
 
 class ProfileSettingsFragment : Fragment() {
 
@@ -76,8 +74,26 @@ class ProfileSettingsFragment : Fragment() {
     }
 
     private fun scheduleNotification(name: String, time: Long, recurrence: String) {
-        // Placeholder: we'll wire this up with AlarmManager next
-        println("Scheduled: $name at $time recurring: $recurrence")
+        val prefs = requireContext().getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
+        val email = prefs.getString("loggedInEmail", null)
+
+        if (email == null) {
+            Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val key = "notifications_$email"
+        val existing = prefs.getStringSet(key, mutableSetOf())?.toMutableSet() ?: mutableSetOf()
+
+        val entry = "$name|$time|$recurrence"
+        existing.add(entry)
+
+        prefs.edit {
+            putStringSet(key, existing)
+        }
+
+        Toast.makeText(requireContext(), "Notification scheduled!", Toast.LENGTH_SHORT).show()
+        println("Saved notification for $email: $entry")
     }
 
     @SuppressLint("UseKtx")
