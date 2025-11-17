@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -13,7 +14,7 @@
         android:orientation="vertical">
 
         <!-- Coins Display -->
-        <com.google.android.material.card.MaterialCardView
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
@@ -26,8 +27,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:padding="16dp"
-                android:gravity="center_vertical"
-                tools:ignore="UseCompoundDrawables">
+                android:gravity="center_vertical">
 
                 <TextView
                     android:id="@+id/coinsCountText"
@@ -44,13 +44,14 @@
                     android:layout_height="28dp"
                     android:src="@drawable/ic_coin"
                     app:tint="@color/accent"
-                    tools:ignore="ContentDescription,ImageContrastCheck" />
+                    android:contentDescription="@string/coins"
+                    tools:ignore="ImageContrastCheck" />
 
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+        </androidx.cardview.widget.CardView>
 
         <!-- Your Collection -->
-        <com.google.android.material.card.MaterialCardView
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
@@ -87,6 +88,7 @@
                         android:src="@drawable/ic_shirt"
                         android:background="@color/accent_soft"
                         android:padding="8dp"
+                        android:contentDescription="@string/casual_outfit"
                         tools:ignore="ContentDescription" />
 
                     <LinearLayout
@@ -135,6 +137,7 @@
                         android:src="@drawable/ic_shopping_bag"
                         android:background="@color/primary_soft"
                         android:padding="8dp"
+                        android:contentDescription="@string/backpack"
                         tools:ignore="ContentDescription" />
 
                     <LinearLayout
@@ -171,10 +174,10 @@
                 </LinearLayout>
 
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+        </androidx.cardview.widget.CardView>
 
         <!-- Accessory Shop -->
-        <com.google.android.material.card.MaterialCardView
+        <androidx.cardview.widget.CardView
             android:id="@+id/shopSection"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -204,7 +207,12 @@
                     android:nestedScrollingEnabled="false" />
 
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Bottom padding for scroll -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="16dp" />
 
     </LinearLayout>
-</ScrollView>
+</androidx.core.widget.NestedScrollView>
