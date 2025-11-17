@@ -2,19 +2,16 @@
 
 package za.ac.iie.TallyUp
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
+import android.os.Build
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import za.ac.iie.TallyUp.databinding.ActivityMainBinding
-import za.ac.iie.TallyUp.ui.DashboardFragment
-import za.ac.iie.TallyUp.ui.TransactionsFragment
-import za.ac.iie.TallyUp.ui.BudgetFragment
-import za.ac.iie.TallyUp.ui.GoalsFragment
-import za.ac.iie.TallyUp.ui.ProfileFragment
-import za.ac.iie.TallyUp.ui.LoginFragment
-import android.content.Context
-import android.view.View
-
+import za.ac.iie.TallyUp.ui.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -25,24 +22,38 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        createNotificationChannel() // ✅ Step 3 added here
+
         setupToolbar()
         setupBottomNavigation()
         setupFAB()
 
-        // Listen for fragment changes to hide/show navigation
         supportFragmentManager.addOnBackStackChangedListener {
             updateNavigationVisibility()
         }
 
-        // Load default fragment
         if (savedInstanceState == null) {
             if (userIsLoggedIn()) {
-                // If logged in, show dashboard
                 loadFragment(DashboardFragment())
             } else {
-                // If not logged in, show login screen
                 loadFragment(LoginFragment())
             }
+        }
+    }
+
+    // ✅ Step 3: Create the notification channel
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                "tallyup_channel",
+                "TallyUp Reminders",
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = "Reminders for scheduled notifications"
+            }
+
+            val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            manager.createNotificationChannel(channel)
         }
     }
 
@@ -81,10 +92,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupFAB() {
         binding.fabAddTransaction.setOnClickListener {
-            // Load AddTransactionFragment when FAB is clicked
-            loadFragment(za.ac.iie.TallyUp.ui.AddTransactionFragment())
-
-            // Update toolbar title
+            loadFragment(AddTransactionFragment())
             supportActionBar?.title = "Add Transaction"
         }
     }
@@ -108,7 +116,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun shouldHideNavigationForFragment(fragment: Fragment?): Boolean {
-        // List of fragment class names that should hide navigation
         val fragmentsToHideNav = listOf(
             "LoginFragment",
             "SignUpFragment",

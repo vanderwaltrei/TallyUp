@@ -75,25 +75,30 @@ class ProfileSettingsFragment : Fragment() {
 
     private fun scheduleNotification(name: String, time: Long, recurrence: String) {
         val prefs = requireContext().getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
-        val email = prefs.getString("loggedInEmail", null)
-
-        if (email == null) {
-            Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
-            return
-        }
-
+        val email = prefs.getString("loggedInEmail", null) ?: return
         val key = "notifications_$email"
         val existing = prefs.getStringSet(key, mutableSetOf())?.toMutableSet() ?: mutableSetOf()
 
         val entry = "$name|$time|$recurrence"
         existing.add(entry)
+        prefs.edit { putStringSet(key, existing) }
 
-        prefs.edit {
-            putStringSet(key, existing)
+        // Schedule the alarm
+        val intent = Intent(requireContext(), NotificationReceiver::class.java).apply {
+            putExtra("name", name)
         }
 
+        val pendingIntent = PendingIntent.getBroadcast(
+            requireContext(),
+            time.toInt(), // unique ID
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, time, pendingIntent)
+
         Toast.makeText(requireContext(), "Notification scheduled!", Toast.LENGTH_SHORT).show()
-        println("Saved notification for $email: $entry")
     }
 
     @SuppressLint("UseKtx")
