@@ -9,6 +9,7 @@ Innovative and Gamified App Features:
 • Cute Visuals & Avatars
 • Gamified Rewards & Customizable Avatars
 • Budget Tracking & Goal Progress
+• Repeatable Notifications Reminders
 
 ---
 
@@ -22,6 +23,9 @@ Features:
 • Budget progress
 • Goal tracking
 • Character Selection
+• Repeatable Notifications Reminders
+• Infographics
+• Profile Stored Online
 
 ---
 
@@ -36,6 +40,8 @@ Application Used:
 • Android Studio
 	• Kotlin
 	• Room Database for local storage
+	• Firestore
+	• Firebase
 
 ---
 
