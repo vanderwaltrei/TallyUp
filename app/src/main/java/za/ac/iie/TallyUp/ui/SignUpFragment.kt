@@ -106,6 +106,7 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                     result.onSuccess { userId ->
                         Log.d("SignUpFragment", "User created successfully with userId: $userId")
 
+                        // ✅ CRITICAL FIX: Save userId to SharedPreferences FIRST
                         val prefs = requireContext().getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
                         prefs.edit {
                             putString("loggedInEmail", email)
@@ -113,12 +114,22 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                             putString("userFirstName", firstName)
                         }
 
+                        Log.d("SignUpFragment", "✅ Saved userId to SharedPreferences: $userId")
+
+                        // ✅ NOW initialize achievements (after userId is saved)
+                        try {
+                            AchievementManager.initializeAchievements(requireContext(), userId)
+                            Log.d("SignUpFragment", "✅ Achievements initialized for user: $userId")
+                        } catch (e: Exception) {
+                            Log.e("SignUpFragment", "❌ Error initializing achievements: ${e.message}", e)
+                            // Don't fail signup if achievements fail
+                        }
+
+                        // Set initial coins
                         za.ac.iie.TallyUp.utils.CharacterManager.setCoins(requireContext(), 200)
+                        Log.d("SignUpFragment", "✅ Set initial coins: 200")
 
-                        // ✅ INITIALIZE ACHIEVEMENTS
-                        AchievementManager.initializeAchievements(requireContext(), userId)
-                        Log.d("SignUpFragment", "Achievements initialized for user: $userId")
-
+                        // Initialize default categories
                         initializeDefaultCategories(userId)
 
                         Toast.makeText(
