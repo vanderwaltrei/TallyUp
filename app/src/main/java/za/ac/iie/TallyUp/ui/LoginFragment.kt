@@ -18,6 +18,7 @@ import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.launch
 import za.ac.iie.TallyUp.R
 import za.ac.iie.TallyUp.firebase.FirebaseRepository
+import za.ac.iie.TallyUp.utils.AchievementManager
 
 class LoginFragment : Fragment(R.layout.fragment_login) {
 
@@ -34,48 +35,43 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         val progressBar = view.findViewById<ProgressBar>(R.id.progress_indicator)
         val signUpText = view.findViewById<TextView>(R.id.sign_up_text)
 
-        // Make entire TextView clickable
         signUpText.setOnClickListener {
             Log.d("LoginFragment", "Sign up text clicked - navigating to SignUpFragment")
             navigateToSignUp()
         }
 
-        // Handle login button click
         loginButton.setOnClickListener {
             val email = emailInput.text.toString().trim()
             val password = passwordInput.text.toString().trim()
 
-            // Check for empty fields
             if (email.isEmpty() || password.isEmpty()) {
                 errorText.text = getString(R.string.error_empty_fields)
                 errorText.visibility = View.VISIBLE
                 return@setOnClickListener
             }
 
-            // Validate email format
             if (!isValidEmail(email)) {
                 errorText.text = "Please enter a valid email address"
                 errorText.visibility = View.VISIBLE
                 return@setOnClickListener
             }
 
-            // Disable login button to prevent multiple taps
             loginButton.isEnabled = false
             progressBar.visibility = View.VISIBLE
             errorText.visibility = View.GONE
 
-            // Firebase login
             lifecycleScope.launch {
                 try {
                     Log.d("LoginFragment", "Attempting Firebase login for email: $email")
 
                     val result = firebaseRepo.login(email, password)
 
-                    // Re-enable login button after query finishes
                     loginButton.isEnabled = true
                     progressBar.visibility = View.GONE
 
                     result.onSuccess { userId ->
+                        Log.d("LoginFragment", "✅ Login successful for userId: $userId")
+
                         // Get user profile to display first name
                         val profileResult = firebaseRepo.getUserProfile()
 
@@ -89,21 +85,54 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                                 putString("userId", userId)
                                 putString("userFirstName", firstName)
                             }
-                            Log.d("LoginFragment", "Login successful, saved user data to prefs")
+                            Log.d("LoginFragment", "✅ Saved login data to SharedPreferences")
+
+                            // ✅ CRITICAL: Initialize achievements for existing users who might not have them
+                            lifecycleScope.launch {
+                                try {
+                                    Log.d("LoginFragment", "🎯 Checking/initializing achievements for userId: $userId")
+
+                                    // Check if user has achievements
+                                    val existingAchievements = AchievementManager.getAllAchievements(requireContext(), userId)
+
+                                    if (existingAchievements.isEmpty()) {
+                                        Log.d("LoginFragment", "⚠️ No achievements found, initializing...")
+                                        AchievementManager.initializeAchievements(requireContext(), userId)
+                                        Log.d("LoginFragment", "✅ Achievements initialized on login")
+                                    } else {
+                                        Log.d("LoginFragment", "✅ User already has ${existingAchievements.size} achievements")
+                                    }
+                                } catch (e: Exception) {
+                                    Log.e("LoginFragment", "❌ Error checking/initializing achievements: ${e.message}", e)
+                                    // Don't fail login if achievements fail
+                                }
+                            }
 
                             Toast.makeText(requireContext(), "Welcome back, $firstName!", Toast.LENGTH_SHORT).show()
 
-                            // Navigate to dashboard
                             requireActivity().supportFragmentManager.beginTransaction()
                                 .replace(R.id.fragment_container, DashboardFragment())
-                                .commit() // Don't add to back stack for login
+                                .commit()
+
                         }.onFailure { profileError ->
                             Log.e("LoginFragment", "Failed to get profile: ${profileError.message}")
-                            // Still proceed with login even if profile fetch fails
+
                             val prefs = requireContext().getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
                             prefs.edit {
                                 putString("loggedInEmail", email)
                                 putString("userId", userId)
+                            }
+
+                            // Still initialize achievements
+                            lifecycleScope.launch {
+                                try {
+                                    val existingAchievements = AchievementManager.getAllAchievements(requireContext(), userId)
+                                    if (existingAchievements.isEmpty()) {
+                                        AchievementManager.initializeAchievements(requireContext(), userId)
+                                    }
+                                } catch (e: Exception) {
+                                    Log.e("LoginFragment", "Error initializing achievements: ${e.message}")
+                                }
                             }
 
                             Toast.makeText(requireContext(), "Welcome back!", Toast.LENGTH_SHORT).show()
@@ -113,7 +142,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                                 .commit()
                         }
                     }.onFailure { error ->
-                        // Login failed - show error
                         errorText.text = when {
                             error.message?.contains("password") == true -> "Invalid email or password"
                             error.message?.contains("network") == true -> "Network error. Please check your connection."
@@ -124,7 +152,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                         Toast.makeText(requireContext(), "Login failed: ${error.message}", Toast.LENGTH_SHORT).show()
                     }
                 } catch (e: Exception) {
-                    // Handle any unexpected errors
                     Log.e("LoginFragment", "Login error: ${e.message}", e)
                     loginButton.isEnabled = true
                     progressBar.visibility = View.GONE
