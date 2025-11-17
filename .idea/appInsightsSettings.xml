@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="za.ac.iie.TallyUp" />
+                  <option name="mobileSdkAppId" value="1:931646304498:android:cb839c567b6f71415b206b" />
+                  <option name="projectId" value="tally-up-ab43e" />
+                  <option name="projectNumber" value="931646304498" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
