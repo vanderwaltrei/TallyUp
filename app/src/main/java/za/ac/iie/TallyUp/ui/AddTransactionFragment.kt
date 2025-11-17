@@ -19,12 +19,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import kotlinx.coroutines.launch
 import za.ac.iie.TallyUp.R
-import za.ac.iie.TallyUp.data.AppDatabase // ✅ ADDED: Import AppDatabase
+import za.ac.iie.TallyUp.data.AppDatabase
 import za.ac.iie.TallyUp.data.Category
 import za.ac.iie.TallyUp.data.Transaction
 import za.ac.iie.TallyUp.databinding.FragmentAddTransactionBinding
 import za.ac.iie.TallyUp.firebase.FirebaseRepository
 import za.ac.iie.TallyUp.ui.auth.AddCategoryDialogFragment
+import za.ac.iie.TallyUp.utils.AchievementManager
 import java.io.File
 import android.app.DatePickerDialog
 import java.text.SimpleDateFormat
@@ -45,7 +46,7 @@ class AddTransactionFragment : Fragment() {
     private var selectedDate: Long? = null
     private var categories = mutableListOf<Category>()
 
-    private lateinit var appDatabase: AppDatabase // ADDED: Database instance
+    private lateinit var appDatabase: AppDatabase
 
     private val photoPickerLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -72,7 +73,6 @@ class AddTransactionFragment : Fragment() {
 
                 Toast.makeText(requireContext(), "${selectedPhotoUris.size} photo(s) attached", Toast.LENGTH_SHORT).show()
 
-                // Update preview strip
                 val previewStrip = binding.photoPreview
                 val photoViews = listOf(binding.photo1, binding.photo2, binding.photo3)
 
@@ -108,12 +108,7 @@ class AddTransactionFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val currentUserId = getCurrentUserId()
 
-        appDatabase = AppDatabase.getDatabase(requireContext()) // ✅ ADDED: Initialise database
-
-        // Debug log to verify user ID
-        println("=== AddTransactionFragment ===")
-        println("Current User ID: $currentUserId")
-        println("==============================")
+        appDatabase = AppDatabase.getDatabase(requireContext())
 
         setupCategoryGrid(currentUserId)
 
@@ -218,23 +213,13 @@ class AddTransactionFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            // Debug log before saving
-            println("=== SAVING TRANSACTION TO FIREBASE ===")
-            println("User ID: $currentUserId")
-            println("Type: $type")
-            println("Amount: $amount")
-            println("Category: $selectedCategory")
-            println("Description: $description")
-            println("======================================")
-
-            // Disable button during save
             binding.saveButton.isEnabled = false
             binding.saveButton.text = "Saving..."
 
             lifecycleScope.launch {
                 try {
                     val transaction = Transaction(
-                        id = 0, // Not used with Firebase
+                        id = 0,
                         amount = amount,
                         type = type,
                         category = selectedCategory,
@@ -244,18 +229,28 @@ class AddTransactionFragment : Fragment() {
                         userId = currentUserId
                     )
 
-                    // ✅ ADDED: Save to local Room database
                     appDatabase.transactionDao().insertTransaction(transaction)
 
-                    // Save to Firebase
                     val result = firebaseRepo.addTransaction(transaction)
 
                     result.onSuccess { transactionId ->
-                        println("Transaction saved successfully with ID: $transactionId")
+                        // ✅ CHECK ACHIEVEMENTS
+                        val unlockedAchievements = AchievementManager.checkTransactionAchievements(
+                            context = requireContext(),
+                            userId = currentUserId,
+                            amount = amount,
+                            type = type,
+                            hasPhotos = photoUris.isNotEmpty()
+                        )
+
+                        // Show achievement notifications
+                        if (unlockedAchievements.isNotEmpty()) {
+                            showAchievementUnlocked(unlockedAchievements)
+                        }
+
                         Toast.makeText(requireContext(), "Transaction saved!", Toast.LENGTH_SHORT).show()
                         requireActivity().supportFragmentManager.popBackStack()
                     }.onFailure { error ->
-                        println("Error saving transaction: ${error.message}")
                         Toast.makeText(
                             requireContext(),
                             "Error saving transaction: ${error.message}",
@@ -265,7 +260,6 @@ class AddTransactionFragment : Fragment() {
                         binding.saveButton.text = "Save Transaction"
                     }
                 } catch (e: Exception) {
-                    println("Unexpected error: ${e.message}")
                     Toast.makeText(
                         requireContext(),
                         "Unexpected error: ${e.message}",
@@ -275,6 +269,16 @@ class AddTransactionFragment : Fragment() {
                     binding.saveButton.text = "Save Transaction"
                 }
             }
+        }
+    }
+
+    private fun showAchievementUnlocked(achievements: List<za.ac.iie.TallyUp.models.Achievement>) {
+        achievements.forEach { achievement ->
+            Toast.makeText(
+                requireContext(),
+                "🏆 Achievement Unlocked: ${achievement.name} (+${achievement.coinReward} coins)",
+                Toast.LENGTH_LONG
+            ).show()
         }
     }
 
@@ -290,13 +294,11 @@ class AddTransactionFragment : Fragment() {
                 val result = firebaseRepo.getCategories()
 
                 result.onSuccess { allCategories ->
-                    // Filter by type and remove duplicates
                     categories = allCategories
                         .filter { it.type == selectedType }
                         .distinctBy { it.name }
                         .toMutableList()
 
-                    // Add "Add New" button at the end
                     categories.add(
                         Category(
                             name = "Add New",

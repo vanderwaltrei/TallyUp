@@ -1,6 +1,7 @@
 package za.ac.iie.TallyUp.ui
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,10 +9,13 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.launch
 import za.ac.iie.TallyUp.R
 import za.ac.iie.TallyUp.databinding.FragmentProfileCharacterBinding
+import za.ac.iie.TallyUp.utils.AchievementManager
 import za.ac.iie.TallyUp.utils.CharacterManager
 
 data class ShopAccessory(
@@ -35,7 +39,9 @@ class ProfileCharacterFragment : Fragment() {
         ShopAccessory("luna_gothic", "Gothic Luna", R.drawable.luna_gothic, 50, false),
         ShopAccessory("luna_strawberry", "Strawberry Luna", R.drawable.luna_strawberry, 50, false),
         ShopAccessory("max_light", "Light Max", R.drawable.max_light, 50, false),
-        ShopAccessory("max_villain", "Villain Max", R.drawable.max_villain, 50, false)
+        ShopAccessory("max_villain", "Villain Max", R.drawable.max_villain, 50, false),
+        ShopAccessory("max_gojo", "Protagonist Max", R.drawable.max_gojo, 50, false),
+        ShopAccessory("max_gamer", "Gamer Max", R.drawable.max_ginger, 50, false)
     )
 
     override fun onCreateView(
@@ -90,7 +96,6 @@ class ProfileCharacterFragment : Fragment() {
 
     private fun showEquipDialog(accessory: ShopAccessory) {
         if (accessory.isEquipped) {
-            // Show option to unequip
             AlertDialog.Builder(requireContext())
                 .setTitle("Unequip ${accessory.name}?")
                 .setMessage("Do you want to switch back to your original character?")
@@ -100,7 +105,6 @@ class ProfileCharacterFragment : Fragment() {
                 .setNegativeButton("Cancel", null)
                 .show()
         } else {
-            // Show option to equip
             AlertDialog.Builder(requireContext())
                 .setTitle("Equip ${accessory.name}?")
                 .setMessage("This will become your active character throughout the app.")
@@ -114,10 +118,8 @@ class ProfileCharacterFragment : Fragment() {
 
     @SuppressLint("NotifyDataSetChanged")
     private fun equipAccessory(accessory: ShopAccessory) {
-        // Unequip any currently equipped accessory
         shopAccessories.forEach { it.isEquipped = false }
 
-        // Equip the selected accessory
         accessory.isEquipped = true
         CharacterManager.saveEquippedCharacter(requireContext(), accessory.id)
 
@@ -129,7 +131,6 @@ class ProfileCharacterFragment : Fragment() {
             Toast.LENGTH_SHORT
         ).show()
 
-        // Refresh the UI to show the new character
         refreshParentFragment()
     }
 
@@ -182,7 +183,27 @@ class ProfileCharacterFragment : Fragment() {
             updateCoinCount()
             shopAdapter.notifyDataSetChanged()
 
-            // Ask if they want to equip it now
+            // ✅ CHECK CHARACTER COLLECTOR ACHIEVEMENT
+            lifecycleScope.launch {
+                val userId = getCurrentUserId()
+                val unlockedAchievement = AchievementManager.checkCharacterCollectorAchievement(
+                    requireContext(),
+                    userId
+                )
+
+                if (unlockedAchievement != null) {
+                    // Show achievement notification
+                    Toast.makeText(
+                        requireContext(),
+                        "🏆 Achievement Unlocked: ${unlockedAchievement.name} (+${unlockedAchievement.coinReward} coins)",
+                        Toast.LENGTH_LONG
+                    ).show()
+
+                    // Update coin display
+                    updateCoinCount()
+                }
+            }
+
             AlertDialog.Builder(requireContext())
                 .setTitle("Purchase Successful!")
                 .setMessage("Would you like to equip ${accessory.name} now?")
@@ -200,12 +221,15 @@ class ProfileCharacterFragment : Fragment() {
         }
     }
 
+    private fun getCurrentUserId(): String {
+        val prefs = requireContext().getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
+        return prefs.getString("userId", "") ?: "default"
+    }
+
     private fun refreshParentFragment() {
-        // Notify parent fragment to refresh
         parentFragment?.let {
             if (it is ProfileFragment) {
-                // ProfileFragment will automatically refresh when we resume
-                activity?.recreate() // Optional: Force full activity refresh
+                activity?.recreate()
             }
         }
     }
@@ -225,7 +249,6 @@ class ProfileCharacterFragment : Fragment() {
     }
 }
 
-// Adapter for the shop items
 class AccessoryShopAdapter(
     private val accessories: List<ShopAccessory>,
     private val onAccessoryClick: (ShopAccessory) -> Unit

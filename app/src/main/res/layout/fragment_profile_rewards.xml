@@ -40,7 +40,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:weightSum="3"
+                    android:weightSum="4"
                     tools:ignore="DisableBaselineAlignment">
 
                     <LinearLayout
@@ -51,6 +51,7 @@
                         android:gravity="center">
 
                         <TextView
+                            android:id="@+id/on_track_count"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/_1"
@@ -75,6 +76,7 @@
                         android:gravity="center">
 
                         <TextView
+                            android:id="@+id/watch_count"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/_0"
@@ -86,9 +88,9 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/in_progress"
+                            android:text="Locked"
                             android:textColor="@color/muted_foreground"
-                            tools:ignore="TextContrastCheck" />
+                            tools:ignore="HardcodedText,TextContrastCheck" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -99,6 +101,7 @@
                         android:gravity="center">
 
                         <TextView
+                            android:id="@+id/critical_count"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/_100"
@@ -113,6 +116,31 @@
                             android:text="@string/complete"
                             android:textColor="@color/muted_foreground"
                             tools:ignore="TextContrastCheck" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <TextView
+                            android:id="@+id/over_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="200"
+                            android:textColor="@color/accent"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            tools:ignore="HardcodedText,TextContrastCheck" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Coins"
+                            android:textColor="@color/muted_foreground"
+                            tools:ignore="HardcodedText,TextContrastCheck" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -143,69 +171,12 @@
                     android:textColor="@color/foreground"
                     android:layout_marginBottom="12dp" />
 
-                <!-- Tally Up User Achievement -->
                 <LinearLayout
+                    android:id="@+id/recent_achievements_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="12dp">
+                    android:orientation="vertical" />
 
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:src="@drawable/ic_trophy"
-                        android:background="@color/accent_light"
-                        android:padding="8dp"
-                        android:contentDescription="@string/app_name" />
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:layout_marginStart="12dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/tally_up_user"
-                            android:textStyle="bold"
-                            android:textColor="@color/foreground" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/sign_up_completed"
-                            android:textColor="@color/muted_foreground"
-                            android:textSize="12sp"
-                            tools:ignore="TextContrastCheck" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center"
-                        tools:ignore="UseCompoundDrawables">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/_100"
-                            android:textColor="@color/accent"
-                            android:textStyle="bold"
-                            tools:ignore="TextContrastCheck" />
-
-<!--                        <ImageView-->
-<!--                            android:layout_width="16dp"-->
-<!--                            android:layout_height="16dp"-->
-<!--                            android:layout_marginStart="4dp"-->
-<!--                            android:src="@drawable/ic_coin"-->
-<!--                            android:tint="@color/accent"-->
-<!--                            tools:ignore="ContentDescription,UseAppTint,ImageContrastCheck" />-->
-                    </LinearLayout>
-                </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -233,68 +204,12 @@
                     android:textColor="@color/foreground"
                     android:layout_marginBottom="12dp" />
 
-                <!-- Tally Up User Achievement -->
-                <LinearLayout
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/all_achievements_recycler"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
+                    android:nestedScrollingEnabled="false" />
 
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:src="@drawable/ic_trophy"
-                        android:background="@color/accent_light"
-                        android:padding="8dp"
-                        android:contentDescription="@string/app_name" />
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:layout_marginStart="12dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/tally_up_user"
-                            android:textStyle="bold"
-                            android:textColor="@color/foreground" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/sign_up_completed"
-                            android:textColor="@color/muted_foreground"
-                            android:textSize="12sp"
-                            tools:ignore="TextContrastCheck" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center"
-                        tools:ignore="UseCompoundDrawables">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/_100"
-                            android:textColor="@color/accent"
-                            android:textStyle="bold"
-                            tools:ignore="TextContrastCheck" />
-
-<!--                        <ImageView-->
-<!--                            android:layout_width="16dp"-->
-<!--                            android:layout_height="16dp"-->
-<!--                            android:layout_marginStart="4dp"-->
-<!--                            android:src="@drawable/ic_coin"-->
-<!--                            android:tint="@color/accent"-->
-<!--                            tools:ignore="ContentDescription,UseAppTint,ImageContrastCheck" />-->
-                    </LinearLayout>
-                </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 

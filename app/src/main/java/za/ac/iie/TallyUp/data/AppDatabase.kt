@@ -10,13 +10,19 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import android.util.Log
+import za.ac.iie.TallyUp.models.Achievement
 
-@Database(entities = [User::class, Category::class, Transaction::class], version = 5, exportSchema = false)
+@Database(
+    entities = [User::class, Category::class, Transaction::class, Achievement::class],
+    version = 6,
+    exportSchema = false
+)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
     abstract fun categoryDao(): CategoryDao
     abstract fun transactionDao(): TransactionDao
+    abstract fun achievementDao(): AchievementDao
 
     companion object {
         @Volatile
@@ -29,7 +35,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "tallyup_database"
                 )
-                    .addMigrations(MIGRATION_4_5)
+                    .addMigrations(MIGRATION_4_5, MIGRATION_5_6)
                     .fallbackToDestructiveMigration()
                     .build()
 
@@ -44,7 +50,7 @@ abstract class AppDatabase : RoomDatabase() {
                 try {
                     val existing = db.categoryDao().getAllCategories()
                     if (existing.isEmpty()) {
-                        val defaultUserId = "default" // or use real user ID if available
+                        val defaultUserId = "default"
 
                         val defaultCategories = listOf(
                             Category(name = "Food", type = "Expense", color = "#FFB085", userId = defaultUserId),
@@ -52,7 +58,7 @@ abstract class AppDatabase : RoomDatabase() {
                             Category(name = "Books", type = "Expense", color = "#B2E2B2", userId = defaultUserId),
                             Category(name = "Fun", type = "Expense", color = "#FFF4A3", userId = defaultUserId),
                             Category(name = "Shopping", type = "Expense", color = "#FFB6C1", userId = defaultUserId),
-                            Category(name = "Other", type = "Expense", color = "#E0E0E0", userId = defaultUserId), // Ensure Other exists
+                            Category(name = "Other", type = "Expense", color = "#E0E0E0", userId = defaultUserId),
                             Category(name = "Salary", type = "Income", color = "#D1B3FF", userId = defaultUserId),
                             Category(name = "Gift", type = "Income", color = "#D1B3FF", userId = defaultUserId),
                             Category(name = "Freelance", type = "Income", color = "#D1B3FF", userId = defaultUserId),
@@ -73,5 +79,27 @@ abstract class AppDatabase : RoomDatabase() {
 val MIGRATION_4_5 = object : Migration(4, 5) {
     override fun migrate(db: SupportSQLiteDatabase) {
         db.execSQL("ALTER TABLE categories ADD COLUMN userId TEXT NOT NULL DEFAULT ''")
+    }
+}
+
+val MIGRATION_5_6 = object : Migration(5, 6) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        // Create achievements table
+        db.execSQL("""
+            CREATE TABLE IF NOT EXISTS achievements (
+                id TEXT PRIMARY KEY NOT NULL,
+                name TEXT NOT NULL,
+                description TEXT NOT NULL,
+                coinReward INTEGER NOT NULL,
+                rarity TEXT NOT NULL,
+                category TEXT NOT NULL,
+                isUnlocked INTEGER NOT NULL DEFAULT 0,
+                progress INTEGER NOT NULL DEFAULT 0,
+                maxProgress INTEGER NOT NULL DEFAULT 1,
+                iconResId INTEGER NOT NULL DEFAULT 0,
+                unlockedAt INTEGER NOT NULL DEFAULT 0,
+                userId TEXT NOT NULL
+            )
+        """)
     }
 }

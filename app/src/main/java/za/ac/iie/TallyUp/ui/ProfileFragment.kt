@@ -59,7 +59,7 @@ class ProfileFragment : Fragment() {
                 0 -> ProfileMainFragment()
                 1 -> ProfileCharacterFragment()
                 2 -> ProfileRewardsFragment()
-//                3 -> ProfileSettingsFragment()
+                3 -> ProfileSettingsFragment()
                 else -> ProfileMainFragment()
             }
         }

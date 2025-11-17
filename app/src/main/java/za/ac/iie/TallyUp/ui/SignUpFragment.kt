@@ -20,6 +20,7 @@ import kotlinx.coroutines.launch
 import za.ac.iie.TallyUp.R
 import za.ac.iie.TallyUp.firebase.FirebaseRepository
 import za.ac.iie.TallyUp.data.Category
+import za.ac.iie.TallyUp.utils.AchievementManager
 
 class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
 
@@ -37,7 +38,6 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
         val createButton = view.findViewById<Button>(R.id.create_account_button)
         val loginLink = view.findViewById<TextView>(R.id.login_link)
 
-        // Enable button only when all fields are filled and passwords match
         val watcher = object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 val allFilled = listOf(
@@ -51,7 +51,6 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                 val passwordsMatch = passwordInput.text.toString() == confirmInput.text.toString()
                 createButton.isEnabled = allFilled && passwordsMatch
 
-                // Visual feedback for password match
                 if (confirmInput.text?.isNotEmpty() == true && !passwordsMatch) {
                     confirmInput.error = "Passwords do not match"
                 } else {
@@ -69,7 +68,6 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
         passwordInput.addTextChangedListener(watcher)
         confirmInput.addTextChangedListener(watcher)
 
-        // Create account logic
         createButton.setOnClickListener {
             val email = emailInput.text.toString().trim()
             val password = passwordInput.text.toString().trim()
@@ -77,7 +75,6 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
             val lastName = lastNameInput.text.toString().trim()
             val confirmPassword = confirmInput.text.toString().trim()
 
-            // Validate inputs
             if (email.isEmpty() || password.isEmpty() || firstName.isEmpty() || lastName.isEmpty()) {
                 Toast.makeText(requireContext(), "Please fill all fields", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -98,11 +95,9 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                 return@setOnClickListener
             }
 
-            // Disable button during processing
             createButton.isEnabled = false
             createButton.text = "Creating Account..."
 
-            // Firebase Authentication
             lifecycleScope.launch {
                 try {
                     Log.d("SignUpFragment", "Attempting Firebase signup for email: $email")
@@ -111,7 +106,6 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                     result.onSuccess { userId ->
                         Log.d("SignUpFragment", "User created successfully with userId: $userId")
 
-                        // Save to SharedPreferences
                         val prefs = requireContext().getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
                         prefs.edit {
                             putString("loggedInEmail", email)
@@ -121,7 +115,10 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
 
                         za.ac.iie.TallyUp.utils.CharacterManager.setCoins(requireContext(), 200)
 
-                        // Initialize default categories for new user
+                        // ✅ INITIALIZE ACHIEVEMENTS
+                        AchievementManager.initializeAchievements(requireContext(), userId)
+                        Log.d("SignUpFragment", "Achievements initialized for user: $userId")
+
                         initializeDefaultCategories(userId)
 
                         Toast.makeText(
@@ -130,7 +127,6 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                             Toast.LENGTH_SHORT
                         ).show()
 
-                        // Navigate to Start Tutorial page
                         requireActivity().supportFragmentManager.beginTransaction()
                             .replace(R.id.fragment_container, StartTutorialFragment())
                             .commit()
@@ -158,7 +154,6 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                         Toast.LENGTH_LONG
                     ).show()
                 } finally {
-                    // Re-enable button
                     requireActivity().runOnUiThread {
                         createButton.isEnabled = true
                         createButton.text = "Create Account"
@@ -167,7 +162,6 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
             }
         }
 
-        // Setup login link
         loginLink.setOnClickListener {
             Log.d("SignUpFragment", "Login link clicked - navigating to LoginFragment")
             requireActivity().supportFragmentManager.beginTransaction()
