@@ -35,9 +35,9 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/_100_coins"
-                    android:textColor="@color/foreground"
                     android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:textColor="@color/foreground" />
 
                 <ImageView
                     android:layout_width="28dp"
@@ -175,6 +175,7 @@
 
         <!-- Accessory Shop -->
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/shopSection"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:cardCornerRadius="12dp"
@@ -196,12 +197,11 @@
                     android:textColor="@color/foreground"
                     android:layout_marginBottom="12dp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/shopRecyclerView"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/character_items_shop_coming_soon"
-                    android:textColor="@color/muted_foreground"
-                    tools:ignore="TextContrastCheck" />
+                    android:nestedScrollingEnabled="false" />
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
