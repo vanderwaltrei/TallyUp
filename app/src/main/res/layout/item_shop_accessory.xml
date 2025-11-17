@@ -17,6 +17,24 @@
         android:gravity="center"
         android:padding="12dp">
 
+        <!-- Equipped Badge (NEW) -->
+        <TextView
+            android:id="@+id/equippedBadge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="EQUIPPED"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:background="@color/accent"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
+            android:layout_gravity="end"
+            android:visibility="gone"
+            tools:ignore="HardcodedText" />
+
         <!-- Purchased Badge -->
         <TextView
             android:id="@+id/purchasedBadge"

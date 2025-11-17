@@ -19,7 +19,8 @@ data class ShopAccessory(
     val name: String,
     val imageRes: Int,
     val price: Int,
-    var isPurchased: Boolean = false
+    var isPurchased: Boolean = false,
+    var isEquipped: Boolean = false
 )
 
 class ProfileCharacterFragment : Fragment() {
@@ -28,8 +29,6 @@ class ProfileCharacterFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var shopAdapter: AccessoryShopAdapter
 
-    // Sample shop accessories - replace R.drawable.ic_* with your actual PNG drawable resources
-    // For example: R.drawable.hat_blue, R.drawable.outfit_casual, etc.
     private val shopAccessories = mutableListOf(
         ShopAccessory("luna_gamer", "Gamer Luna", R.drawable.luna_gamer, 50, false),
         ShopAccessory("luna_goddess", "Light Luna", R.drawable.luna_goddess, 50, false),
@@ -58,17 +57,16 @@ class ProfileCharacterFragment : Fragment() {
 
     @SuppressLint("SetTextI18n")
     private fun updateCoinCount() {
-        // Get the actual coin count from your CharacterManager
         val coins = CharacterManager.getCoins(requireContext())
-
-        // Set the text of your TextView
         binding.coinsCountText.text = "$coins Coins"
     }
 
     private fun loadPurchasedAccessories() {
-        val prefs = requireContext().getSharedPreferences("TallyUpPrefs", android.content.Context.MODE_PRIVATE)
+        val equippedCharacter = CharacterManager.getEquippedCharacter(requireContext())
+
         shopAccessories.forEach { accessory ->
-            accessory.isPurchased = prefs.getBoolean("purchased_${accessory.id}", false)
+            accessory.isPurchased = CharacterManager.isPurchased(requireContext(), accessory.id)
+            accessory.isEquipped = (accessory.id == equippedCharacter)
         }
     }
 
@@ -77,11 +75,7 @@ class ProfileCharacterFragment : Fragment() {
             accessories = shopAccessories,
             onAccessoryClick = { accessory ->
                 if (accessory.isPurchased) {
-                    Toast.makeText(
-                        requireContext(),
-                        "You already own this item!",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    showEquipDialog(accessory)
                 } else {
                     showPurchaseDialog(accessory)
                 }
@@ -91,8 +85,68 @@ class ProfileCharacterFragment : Fragment() {
         binding.shopRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.shopRecyclerView.adapter = shopAdapter
 
-        // Show shop section
         binding.shopSection.visibility = View.VISIBLE
+    }
+
+    private fun showEquipDialog(accessory: ShopAccessory) {
+        if (accessory.isEquipped) {
+            // Show option to unequip
+            AlertDialog.Builder(requireContext())
+                .setTitle("Unequip ${accessory.name}?")
+                .setMessage("Do you want to switch back to your original character?")
+                .setPositiveButton("Unequip") { _, _ ->
+                    unequipAccessory(accessory)
+                }
+                .setNegativeButton("Cancel", null)
+                .show()
+        } else {
+            // Show option to equip
+            AlertDialog.Builder(requireContext())
+                .setTitle("Equip ${accessory.name}?")
+                .setMessage("This will become your active character throughout the app.")
+                .setPositiveButton("Equip") { _, _ ->
+                    equipAccessory(accessory)
+                }
+                .setNegativeButton("Cancel", null)
+                .show()
+        }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun equipAccessory(accessory: ShopAccessory) {
+        // Unequip any currently equipped accessory
+        shopAccessories.forEach { it.isEquipped = false }
+
+        // Equip the selected accessory
+        accessory.isEquipped = true
+        CharacterManager.saveEquippedCharacter(requireContext(), accessory.id)
+
+        shopAdapter.notifyDataSetChanged()
+
+        Toast.makeText(
+            requireContext(),
+            "${accessory.name} equipped! Your character has been updated.",
+            Toast.LENGTH_SHORT
+        ).show()
+
+        // Refresh the UI to show the new character
+        refreshParentFragment()
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun unequipAccessory(accessory: ShopAccessory) {
+        accessory.isEquipped = false
+        CharacterManager.saveEquippedCharacter(requireContext(), null)
+
+        shopAdapter.notifyDataSetChanged()
+
+        Toast.makeText(
+            requireContext(),
+            "Switched back to original character",
+            Toast.LENGTH_SHORT
+        ).show()
+
+        refreshParentFragment()
     }
 
     private fun showPurchaseDialog(accessory: ShopAccessory) {
@@ -122,22 +176,21 @@ class ProfileCharacterFragment : Fragment() {
         val success = CharacterManager.spendCoins(requireContext(), accessory.price)
 
         if (success) {
-            // Mark as purchased
             accessory.isPurchased = true
+            CharacterManager.setPurchased(requireContext(), accessory.id, true)
 
-            // Save purchase to SharedPreferences
-            val prefs = requireContext().getSharedPreferences("TallyUpPrefs", android.content.Context.MODE_PRIVATE)
-            prefs.edit().putBoolean("purchased_${accessory.id}", true).apply()
-
-            // Update UI
             updateCoinCount()
             shopAdapter.notifyDataSetChanged()
 
-            Toast.makeText(
-                requireContext(),
-                "Successfully purchased ${accessory.name}!",
-                Toast.LENGTH_SHORT
-            ).show()
+            // Ask if they want to equip it now
+            AlertDialog.Builder(requireContext())
+                .setTitle("Purchase Successful!")
+                .setMessage("Would you like to equip ${accessory.name} now?")
+                .setPositiveButton("Equip Now") { _, _ ->
+                    equipAccessory(accessory)
+                }
+                .setNegativeButton("Later", null)
+                .show()
         } else {
             Toast.makeText(
                 requireContext(),
@@ -147,12 +200,22 @@ class ProfileCharacterFragment : Fragment() {
         }
     }
 
+    private fun refreshParentFragment() {
+        // Notify parent fragment to refresh
+        parentFragment?.let {
+            if (it is ProfileFragment) {
+                // ProfileFragment will automatically refresh when we resume
+                activity?.recreate() // Optional: Force full activity refresh
+            }
+        }
+    }
+
     override fun onResume() {
         super.onResume()
-        // Refresh the coin count in case the user earns/spends
-        // coins and switches back to this tab.
         if (_binding != null) {
             updateCoinCount()
+            loadPurchasedAccessories()
+            shopAdapter.notifyDataSetChanged()
         }
     }
 
@@ -173,6 +236,7 @@ class AccessoryShopAdapter(
         val nameText: android.widget.TextView = itemView.findViewById(R.id.accessoryName)
         val priceText: android.widget.TextView = itemView.findViewById(R.id.accessoryPrice)
         val purchasedBadge: android.widget.TextView = itemView.findViewById(R.id.purchasedBadge)
+        val equippedBadge: android.widget.TextView = itemView.findViewById(R.id.equippedBadge)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -189,11 +253,17 @@ class AccessoryShopAdapter(
         holder.nameText.text = accessory.name
         holder.priceText.text = "${accessory.price} coins"
 
-        if (accessory.isPurchased) {
+        if (accessory.isEquipped) {
+            holder.equippedBadge.visibility = View.VISIBLE
+            holder.purchasedBadge.visibility = View.GONE
+            holder.itemView.alpha = 1.0f
+        } else if (accessory.isPurchased) {
             holder.purchasedBadge.visibility = View.VISIBLE
-            holder.itemView.alpha = 0.6f
+            holder.equippedBadge.visibility = View.GONE
+            holder.itemView.alpha = 0.8f
         } else {
             holder.purchasedBadge.visibility = View.GONE
+            holder.equippedBadge.visibility = View.GONE
             holder.itemView.alpha = 1.0f
         }
 
