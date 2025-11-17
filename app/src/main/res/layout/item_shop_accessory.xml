@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp"
+    app:cardBackgroundColor="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="12dp">
+
+        <!-- Purchased Badge -->
+        <TextView
+            android:id="@+id/purchasedBadge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="OWNED"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:background="@color/success"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
+            android:layout_gravity="end"
+            android:visibility="gone"
+            tools:ignore="HardcodedText" />
+
+        <!-- Accessory Image (PNG) -->
+        <ImageView
+            android:id="@+id/accessoryImage"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:src="@drawable/ic_shirt"
+            android:scaleType="fitCenter"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:contentDescription="@string/accessory_shop"
+            tools:ignore="ContentDescription" />
+
+        <!-- Accessory Name -->
+        <TextView
+            android:id="@+id/accessoryName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cool Hat"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/foreground"
+            android:gravity="center"
+            tools:ignore="HardcodedText" />
+
+        <!-- Price with Coin Icon -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="4dp">
+
+            <TextView
+                android:id="@+id/accessoryPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="50 coins"
+                android:textSize="12sp"
+                android:textColor="@color/accent"
+                android:textStyle="bold"
+                tools:ignore="HardcodedText" />
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_coin"
+                android:layout_marginStart="4dp"
+                app:tint="@color/accent"
+                android:contentDescription="@string/coins"
+                tools:ignore="ContentDescription" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>
