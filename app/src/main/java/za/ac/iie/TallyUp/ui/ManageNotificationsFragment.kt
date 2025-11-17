@@ -6,6 +6,7 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -150,9 +151,10 @@ class ManageNotificationsFragment : Fragment() {
             putExtra("time", time)
         }
 
+        val requestCode = (name + time).hashCode()
         val pendingIntent = PendingIntent.getBroadcast(
             requireContext(),
-            time.toInt(),
+            requestCode,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
@@ -162,7 +164,7 @@ class ManageNotificationsFragment : Fragment() {
         try {
             when (recurrence) {
                 "Never", "Monthly" -> {
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S &&
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
                         !alarmManager.canScheduleExactAlarms()
                     ) {
                         Toast.makeText(
@@ -182,6 +184,8 @@ class ManageNotificationsFragment : Fragment() {
                     pendingIntent
                 )
             }
+
+            Toast.makeText(requireContext(), "Notification scheduled!", Toast.LENGTH_SHORT).show()
         } catch (e: SecurityException) {
             e.printStackTrace()
             Toast.makeText(

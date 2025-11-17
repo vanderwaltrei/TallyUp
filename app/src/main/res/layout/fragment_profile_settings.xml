@@ -197,5 +197,13 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Fragment container for ManageNotificationsFragment -->
+        <FrameLayout
+            android:id="@+id/profile_fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="16dp"
+            android:visibility="gone" />
+
     </LinearLayout>
 </ScrollView>

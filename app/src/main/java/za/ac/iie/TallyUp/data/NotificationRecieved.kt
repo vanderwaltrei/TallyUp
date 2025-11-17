@@ -37,7 +37,10 @@ class NotificationReceiver : BroadcastReceiver() {
                 .setContentText(name)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
 
-            NotificationManagerCompat.from(context).notify(System.currentTimeMillis().toInt(), builder.build())
+            NotificationManagerCompat.from(context).notify(
+                (name + originalTime).hashCode(), // Stable request code
+                builder.build()
+            )
         } catch (e: SecurityException) {
             e.printStackTrace()
             return
@@ -58,9 +61,10 @@ class NotificationReceiver : BroadcastReceiver() {
                 putExtra("time", newTime)
             }
 
+            val requestCode = (name + newTime).hashCode()
             val pendingIntent = PendingIntent.getBroadcast(
                 context,
-                newTime.toInt(),
+                requestCode,
                 newIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )

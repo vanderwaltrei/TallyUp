@@ -74,8 +74,10 @@ class ProfileSettingsFragment : Fragment() {
         }
 
         binding.btnManageNotifications.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, ManageNotificationsFragment())
+            binding.profileFragmentContainer.visibility = View.VISIBLE
+
+            childFragmentManager.beginTransaction()
+                .replace(R.id.profile_fragment_container, ManageNotificationsFragment())
                 .addToBackStack(null)
                 .commit()
         }
@@ -97,35 +99,44 @@ class ProfileSettingsFragment : Fragment() {
             putExtra("time", time)
         }
 
+        val requestCode = (name + time).hashCode()
         val pendingIntent = PendingIntent.getBroadcast(
             requireContext(),
-            time.toInt(),
+            requestCode,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
         val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-        // Check for exact alarm permission on Android 12+
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            if (!alarmManager.canScheduleExactAlarms()) {
-                Toast.makeText(
-                    requireContext(),
-                    "Exact alarms not allowed. Please enable in system settings.",
-                    Toast.LENGTH_LONG
-                ).show()
-                return
-            }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+            !alarmManager.canScheduleExactAlarms()
+        ) {
+            Toast.makeText(
+                requireContext(),
+                "Exact alarms not allowed. Please enable in system settings.",
+                Toast.LENGTH_LONG
+            ).show()
+            return
         }
 
-        when (recurrence) {
-            "Never", "Monthly" -> alarmManager.setExact(AlarmManager.RTC_WAKEUP, time, pendingIntent)
-            "Weekly" -> alarmManager.setRepeating(
-                AlarmManager.RTC_WAKEUP,
-                time,
-                AlarmManager.INTERVAL_DAY * 7,
-                pendingIntent
-            )
+        try {
+            when (recurrence) {
+                "Never", "Monthly" -> alarmManager.setExact(AlarmManager.RTC_WAKEUP, time, pendingIntent)
+                "Weekly" -> alarmManager.setRepeating(
+                    AlarmManager.RTC_WAKEUP,
+                    time,
+                    AlarmManager.INTERVAL_DAY * 7,
+                    pendingIntent
+                )
+            }
+        } catch (e: SecurityException) {
+            e.printStackTrace()
+            Toast.makeText(
+                requireContext(),
+                "Failed to schedule alarm due to missing permission.",
+                Toast.LENGTH_LONG
+            ).show()
         }
 
         Toast.makeText(requireContext(), "Notification scheduled!", Toast.LENGTH_SHORT).show()
@@ -139,6 +150,11 @@ class ProfileSettingsFragment : Fragment() {
         requireActivity().supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, LoginFragment())
             .commit()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.profileFragmentContainer.visibility = View.GONE
     }
 
     override fun onDestroyView() {
