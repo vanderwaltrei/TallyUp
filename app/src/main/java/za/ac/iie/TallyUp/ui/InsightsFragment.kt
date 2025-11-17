@@ -27,6 +27,7 @@ import za.ac.iie.TallyUp.databinding.FragmentInsightsBinding
 import java.text.SimpleDateFormat
 import java.util.*
 import za.ac.iie.TallyUp.R
+import za.ac.iie.TallyUp.data.AppRepository
 
 class InsightsFragment : Fragment() {
 
@@ -56,6 +57,10 @@ class InsightsFragment : Fragment() {
         setupTransactionList()
         setupTabs()
         loadTransactions()
+
+        val spent = calculateTotalSpentThisMonth()
+        binding.totalSpent.text = "R${String.format("%.2f", spent)}"
+        updateRemaining()
 
         binding.addFirstTransactionBtnAlt.setOnClickListener {
             requireActivity().supportFragmentManager.beginTransaction()
@@ -94,8 +99,14 @@ class InsightsFragment : Fragment() {
             val transactions = withContext(Dispatchers.IO) {
                 appDatabase.transactionDao().getTransactionsForUser(userId)
             }
+
             allTransactions = transactions
             applyFilters()
+
+            val spent = calculateTotalSpentThisMonth()
+            binding.totalSpent.text = "R${String.format("%.2f", spent)}"
+            updateRemaining()
+            updateTransactionCount()
 
             binding.chartContainer.post {
                 when (binding.analysisTabs.selectedTabPosition) {
@@ -209,7 +220,7 @@ class InsightsFragment : Fragment() {
         }
 
         val dataSet = BarDataSet(entries, "Daily Spending")
-        dataSet.color = 0x66FF0000.toInt() // Red with alpha
+        dataSet.color = 0x66FF0000 // Red with alpha
 
         chart.data = BarData(dataSet)
 
@@ -242,13 +253,13 @@ class InsightsFragment : Fragment() {
         val dataSet = BarDataSet(entries, "Category Spending")
         val categoryColors = categoryTotals.map { (category, _) ->
             when (category) {
-                "Transport" -> 0x660000FF.toInt() // Blue
-                "Food" -> 0x66FFA500.toInt()      // Orange
-                "Shopping" -> 0x66FF0000.toInt()  // Red
-                "Other" -> 0x66999999.toInt()     // Grey
-                "Fun" -> 0x66FFFF00.toInt()       // Yellow
-                "Books" -> 0x6600FF00.toInt()     // Green
-                else -> 0x66AAAAAA.toInt()        // fallback grey
+                "Transport" -> 0x660000FF         // Blue
+                "Food" -> 0x66FFA500              // Orange
+                "Shopping" -> 0x66FF0000          // Red
+                "Other" -> 0x66999999             // Grey
+                "Fun" -> 0x66FFFF00               // Yellow
+                "Books" -> 0x6600FF00             // Green
+                else -> 0x66AAAAAA                // fallback grey
             }
         }
         dataSet.colors = categoryColors
@@ -294,6 +305,32 @@ class InsightsFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+    private fun calculateTotalSpentThisMonth(): Double {
+        return allTransactions
+            .filter { it.type == "Expense" }
+            .filter { isThisMonth(it.date) }
+            .sumOf { it.amount }
+    }
 
+    private fun getMonthlyBudget(): Double {
+        val repository = AppRepository(requireContext())
+        val appState = repository.loadAppState()
+        return appState.budgetCategories.sumOf { it.budgeted }
+    }
 
+    private fun updateRemaining() {
+        val spent = calculateTotalSpentThisMonth()
+        val budget = getMonthlyBudget()
+
+        val remaining = budget - spent
+        binding.remainingAmount.text = "R${"%.2f".format(remaining)}"
+    }
+
+    private fun updateTransactionCount() {
+        // Count only transactions in this month
+        val count = allTransactions.count { isThisMonth(it.date) }
+
+        // Update the TextView
+        binding.TranAmount.text = "$count transactions this month"
+    }
 }

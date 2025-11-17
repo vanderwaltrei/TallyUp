@@ -45,7 +45,7 @@ class AddTransactionFragment : Fragment() {
     private var selectedDate: Long? = null
     private var categories = mutableListOf<Category>()
 
-    private lateinit var appDatabase: AppDatabase // ✅ ADDED: Database instance
+    private lateinit var appDatabase: AppDatabase // ADDED: Database instance
 
     private val photoPickerLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
