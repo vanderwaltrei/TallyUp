@@ -1,12 +1,17 @@
-package za.ac.iie.TallyUp.notifications
+@file:Suppress("PackageName")
+
+package za.ac.iie.TallyUp.data
 
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import za.ac.iie.TallyUp.R
 import java.util.*
 
@@ -16,15 +21,26 @@ class NotificationReceiver : BroadcastReceiver() {
         val recurrence = intent.getStringExtra("recurrence") ?: "Never"
         val originalTime = intent.getLongExtra("time", 0L)
 
-        // Show the notification
-        val builder = NotificationCompat.Builder(context, "tallyup_channel")
-            .setSmallIcon(R.drawable.ic_notification)
-            .setContentTitle("TallyUp Reminder")
-            .setContentText(name)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
+        // Check POST_NOTIFICATIONS permission (Android 13+)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(context, android.Manifest.permission.POST_NOTIFICATIONS)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            return // Permission not granted — skip notification
+        }
 
-        with(NotificationManagerCompat.from(context)) {
-            notify(System.currentTimeMillis().toInt(), builder.build())
+        // Show the notification safely
+        try {
+            val builder = NotificationCompat.Builder(context, "tallyup_channel")
+                .setSmallIcon(R.drawable.ic_alert_triangle)
+                .setContentTitle("TallyUp Reminder")
+                .setContentText(name)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+
+            NotificationManagerCompat.from(context).notify(System.currentTimeMillis().toInt(), builder.build())
+        } catch (e: SecurityException) {
+            e.printStackTrace()
+            return
         }
 
         // Reschedule if monthly
@@ -50,7 +66,19 @@ class NotificationReceiver : BroadcastReceiver() {
             )
 
             val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, newTime, pendingIntent)
+
+            // Check exact alarm permission (Android 12+)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+                !alarmManager.canScheduleExactAlarms()
+            ) {
+                return // Can't schedule exact alarms — skip rescheduling
+            }
+
+            try {
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, newTime, pendingIntent)
+            } catch (e: SecurityException) {
+                e.printStackTrace()
+            }
         }
     }
 }

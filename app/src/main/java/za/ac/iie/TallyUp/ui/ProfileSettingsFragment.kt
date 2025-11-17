@@ -7,6 +7,7 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,7 +18,7 @@ import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import za.ac.iie.TallyUp.R
 import za.ac.iie.TallyUp.databinding.FragmentProfileSettingsBinding
-import za.ac.iie.TallyUp.notifications.NotificationReceiver
+import za.ac.iie.TallyUp.data.NotificationReceiver
 import java.util.*
 
 class ProfileSettingsFragment : Fragment() {
@@ -98,22 +99,33 @@ class ProfileSettingsFragment : Fragment() {
 
         val pendingIntent = PendingIntent.getBroadcast(
             requireContext(),
-            time.toInt(), // unique ID
+            time.toInt(),
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
         val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
+        // Check for exact alarm permission on Android 12+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (!alarmManager.canScheduleExactAlarms()) {
+                Toast.makeText(
+                    requireContext(),
+                    "Exact alarms not allowed. Please enable in system settings.",
+                    Toast.LENGTH_LONG
+                ).show()
+                return
+            }
+        }
+
         when (recurrence) {
-            "Never" -> alarmManager.setExact(AlarmManager.RTC_WAKEUP, time, pendingIntent)
+            "Never", "Monthly" -> alarmManager.setExact(AlarmManager.RTC_WAKEUP, time, pendingIntent)
             "Weekly" -> alarmManager.setRepeating(
                 AlarmManager.RTC_WAKEUP,
                 time,
                 AlarmManager.INTERVAL_DAY * 7,
                 pendingIntent
             )
-            "Monthly" -> alarmManager.setExact(AlarmManager.RTC_WAKEUP, time, pendingIntent)
         }
 
         Toast.makeText(requireContext(), "Notification scheduled!", Toast.LENGTH_SHORT).show()

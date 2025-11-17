@@ -1,4 +1,4 @@
-@file:Suppress("PackageName")
+@file:Suppress("PackageName", "UnusedImport")
 
 package za.ac.iie.TallyUp.ui
 
@@ -17,7 +17,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import za.ac.iie.TallyUp.R
 import za.ac.iie.TallyUp.databinding.FragmentManageNotificationsBinding
-import za.ac.iie.TallyUp.notifications.NotificationReceiver
+import za.ac.iie.TallyUp.data.NotificationReceiver
 import za.ac.iie.TallyUp.ui.NotificationAdapter
 import za.ac.iie.TallyUp.ui.NotificationItem
 
@@ -159,15 +159,36 @@ class ManageNotificationsFragment : Fragment() {
 
         val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-        when (recurrence) {
-            "Never" -> alarmManager.setExact(AlarmManager.RTC_WAKEUP, time, pendingIntent)
-            "Weekly" -> alarmManager.setRepeating(
-                AlarmManager.RTC_WAKEUP,
-                time,
-                AlarmManager.INTERVAL_DAY * 7,
-                pendingIntent
-            )
-            "Monthly" -> alarmManager.setExact(AlarmManager.RTC_WAKEUP, time, pendingIntent)
+        try {
+            when (recurrence) {
+                "Never", "Monthly" -> {
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S &&
+                        !alarmManager.canScheduleExactAlarms()
+                    ) {
+                        Toast.makeText(
+                            requireContext(),
+                            "Exact alarms not allowed. Please enable in system settings.",
+                            Toast.LENGTH_LONG
+                        ).show()
+                        return
+                    }
+                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, time, pendingIntent)
+                }
+
+                "Weekly" -> alarmManager.setRepeating(
+                    AlarmManager.RTC_WAKEUP,
+                    time,
+                    AlarmManager.INTERVAL_DAY * 7,
+                    pendingIntent
+                )
+            }
+        } catch (e: SecurityException) {
+            e.printStackTrace()
+            Toast.makeText(
+                requireContext(),
+                "Failed to schedule alarm due to missing permission.",
+                Toast.LENGTH_LONG
+            ).show()
         }
     }
 

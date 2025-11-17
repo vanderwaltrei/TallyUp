@@ -41,7 +41,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // ✅ Step 3: Create the notification channel
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
@@ -50,10 +49,15 @@ class MainActivity : AppCompatActivity() {
                 NotificationManager.IMPORTANCE_HIGH
             ).apply {
                 description = "Reminders for scheduled notifications"
+                enableVibration(true)
+                enableLights(true)
+                setShowBadge(true)
             }
 
             val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            manager.createNotificationChannel(channel)
+            if (manager.getNotificationChannel("tallyup_channel") == null) {
+                manager.createNotificationChannel(channel)
+            }
         }
     }
 
