@@ -2,12 +2,18 @@
 
 package za.ac.iie.TallyUp.ui
 
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.firebase.auth.FirebaseAuth
+import za.ac.iie.TallyUp.R
 import za.ac.iie.TallyUp.databinding.FragmentProfileBinding
 
 class ProfileFragment : Fragment() {
@@ -42,6 +48,45 @@ class ProfileFragment : Fragment() {
                 else -> null
             }
         }.attach()
+    }
+
+    /**
+     * ✅ NEW: Secure Logout function (Data Preserved)
+     * This ensures the "TallyUp_UserUUID.xml" file is NOT deleted.
+     */
+    fun logout() {
+        try {
+            // Step 1: Sign out from Firebase
+            FirebaseAuth.getInstance().signOut()
+
+            // Step 2: Clear ONLY login session data (userId, email, etc.)
+            // We purposefully do NOT clear the AppRepository data file here.
+            val prefs = requireContext().getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
+            prefs.edit().clear().apply()
+
+            Log.d("ProfileFragment", "✅ User logged out - Session cleared, Data preserved")
+            Toast.makeText(requireContext(), "Logged out successfully", Toast.LENGTH_SHORT).show()
+
+            // Step 3: Navigate back to Login
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, LoginFragment())
+                .commit()
+
+        } catch (e: Exception) {
+            Log.e("ProfileFragment", "❌ Error during logout: ${e.message}")
+            Toast.makeText(requireContext(), "Logout failed. Please try again.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    fun showLogoutConfirmation() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Logout")
+            .setMessage("Are you sure you want to logout?")
+            .setPositiveButton("Yes") { _, _ ->
+                logout()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     override fun onDestroyView() {

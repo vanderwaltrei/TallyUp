@@ -11,7 +11,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,6 +24,7 @@ import za.ac.iie.TallyUp.data.AppDatabase
 import za.ac.iie.TallyUp.data.AppRepository
 import za.ac.iie.TallyUp.databinding.FragmentBudgetDashboardBinding
 import za.ac.iie.TallyUp.models.BudgetCategory
+import za.ac.iie.TallyUp.firebase.FirebaseRepository
 import java.util.Calendar
 import java.util.Date
 
@@ -32,6 +35,7 @@ class BudgetDashboardFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var repository: AppRepository
     private lateinit var appDatabase: AppDatabase
+    private val firebaseRepo = FirebaseRepository()
     private var selectedTimePeriod = "All" // Default selection
 
     companion object {
@@ -89,6 +93,20 @@ class BudgetDashboardFragment : Fragment() {
     private fun loadBudgetDashboardData() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
+                // ✅ Load budgets from Firebase first
+                val firebaseResult = firebaseRepo.getBudgetCategories()
+                val firebaseBudgets = firebaseResult.getOrNull()
+
+                // If Firebase has data, use it and update local storage
+                if (firebaseBudgets != null && firebaseBudgets.isNotEmpty()) {
+                    val state = repository.loadAppState()
+                    val updatedState = state.copy(budgetCategories = firebaseBudgets)
+                    repository.saveAppState(updatedState)
+                    Log.d(TAG, "✅ Loaded ${firebaseBudgets.size} budgets from Firebase")
+                } else {
+                    Log.d(TAG, "ℹ️ No budgets found in Firebase, using local data")
+                }
+
                 val state = repository.loadAppState()
                 val userId = getCurrentUserId()
 
@@ -306,7 +324,7 @@ class BudgetDashboardFragment : Fragment() {
     ) {
         Log.d(TAG, "Updating budget for category: $categoryName to R$newAmount")
 
-        // Update the app state
+        // Update the app state locally for immediate UI feedback
         val state = repository.loadAppState()
         val updatedCategories = state.budgetCategories.toMutableList()
 
@@ -325,11 +343,46 @@ class BudgetDashboardFragment : Fragment() {
             updatedCategories.add(BudgetCategory(categoryName, newAmount, spent))
         }
 
-        // Update the app state
+        // Update the local app state
         val updatedState = state.copy(budgetCategories = updatedCategories)
         repository.saveAppState(updatedState)
 
-        Log.d(TAG, "Budget updated and saved to repository")
+        Log.d(TAG, "Budget updated locally")
+
+        // ✅ Save to Firebase
+        lifecycleScope.launch {
+            try {
+                val result = firebaseRepo.saveBudgetCategories(updatedCategories)
+                result.onSuccess {
+                    Log.d(TAG, "✅ Budget saved to Firebase successfully")
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(
+                            requireContext(),
+                            "Budget updated successfully",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }.onFailure { error ->
+                    Log.e(TAG, "❌ Failed to save budget to Firebase: ${error.message}")
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(
+                            requireContext(),
+                            "Failed to sync budget: ${error.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "❌ Error saving budget to Firebase: ${e.message}", e)
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Error syncing budget",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
 
         // Refresh the dashboard
         loadBudgetDashboardData()
@@ -362,7 +415,6 @@ class BudgetDashboardFragment : Fragment() {
 
     private fun getCurrentUserId(): String {
         val prefs = requireContext().getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
-        // ✅ FIXED: This was incorrectly using "loggedInEmail"
         return prefs.getString("userId", "") ?: "default"
     }
 

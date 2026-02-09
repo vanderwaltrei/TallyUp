@@ -18,8 +18,10 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.launch
 import za.ac.iie.TallyUp.R
-import za.ac.iie.TallyUp.firebase.FirebaseRepository
+// ✅ FIXED: Added import for AppRepository
+import za.ac.iie.TallyUp.data.AppRepository
 import za.ac.iie.TallyUp.data.Category
+import za.ac.iie.TallyUp.firebase.FirebaseRepository
 import za.ac.iie.TallyUp.utils.AchievementManager
 
 class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
@@ -38,6 +40,9 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
         val createButton = view.findViewById<Button>(R.id.create_account_button)
         val loginLink = view.findViewById<TextView>(R.id.login_link)
 
+        // ---------------------------------------------------------
+        // Input Validation Watcher
+        // ---------------------------------------------------------
         val watcher = object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 val allFilled = listOf(
@@ -68,6 +73,9 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
         passwordInput.addTextChangedListener(watcher)
         confirmInput.addTextChangedListener(watcher)
 
+        // ---------------------------------------------------------
+        // Create Account Action
+        // ---------------------------------------------------------
         createButton.setOnClickListener {
             val email = emailInput.text.toString().trim()
             val password = passwordInput.text.toString().trim()
@@ -75,6 +83,7 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
             val lastName = lastNameInput.text.toString().trim()
             val confirmPassword = confirmInput.text.toString().trim()
 
+            // Final safety checks before submitting
             if (email.isEmpty() || password.isEmpty() || firstName.isEmpty() || lastName.isEmpty()) {
                 Toast.makeText(requireContext(), "Please fill all fields", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -95,43 +104,69 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                 return@setOnClickListener
             }
 
+            // Disable button to prevent double clicks
             createButton.isEnabled = false
             createButton.text = "Creating Account..."
 
             lifecycleScope.launch {
                 try {
                     Log.d("SignUpFragment", "Attempting Firebase signup for email: $email")
+
+                    // We use the Repo to sign up (which handles Auth + Firestore creation)
                     val result = firebaseRepo.signUp(email, password, firstName, lastName)
 
                     result.onSuccess { userId ->
                         Log.d("SignUpFragment", "User created successfully with userId: $userId")
 
-                        // ✅ CRITICAL FIX: Save userId to SharedPreferences FIRST
+                        // =================================================================
+                        // ✅ CRITICAL FIX: Ensure clean state for new user
+                        // =================================================================
+                        try {
+                            val appRepository = AppRepository(requireContext())
+                            appRepository.clearUserData() // Wipes any old data from previous logins on this device
+                            Log.d("SignUpFragment", "✅ Old cache cleared via AppRepository")
+                        } catch (e: Exception) {
+                            Log.e("SignUpFragment", "⚠️ Warning: Failed to clear old cache: ${e.message}")
+                        }
+
+                        // =================================================================
+                        // Save Credentials to SharedPreferences
+                        // =================================================================
                         val prefs = requireContext().getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
                         prefs.edit {
                             putString("loggedInEmail", email)
                             putString("userId", userId)
                             putString("userFirstName", firstName)
+                            // We save this immediately so subsequent calls can access the ID
                         }
-
                         Log.d("SignUpFragment", "✅ Saved userId to SharedPreferences: $userId")
 
-                        // ✅ NOW initialize achievements (after userId is saved)
+                        // =================================================================
+                        // Initialize User Data (Achievements, Coins, Categories)
+                        // =================================================================
+
+                        // 1. Achievements
                         try {
                             AchievementManager.initializeAchievements(requireContext(), userId)
                             Log.d("SignUpFragment", "✅ Achievements initialized for user: $userId")
                         } catch (e: Exception) {
                             Log.e("SignUpFragment", "❌ Error initializing achievements: ${e.message}", e)
-                            // Don't fail signup if achievements fail
                         }
 
-                        // Set initial coins
-                        za.ac.iie.TallyUp.utils.CharacterManager.setCoins(requireContext(), 200)
-                        Log.d("SignUpFragment", "✅ Set initial coins: 200")
+                        // 2. Initial Coins
+                        try {
+                            za.ac.iie.TallyUp.utils.CharacterManager.setCoins(requireContext(), 200)
+                            Log.d("SignUpFragment", "✅ Set initial coins: 200")
+                        } catch (e: Exception) {
+                            Log.e("SignUpFragment", "❌ Error setting coins: ${e.message}")
+                        }
 
-                        // Initialize default categories
+                        // 3. Default Categories
                         initializeDefaultCategories(userId)
 
+                        // =================================================================
+                        // Success & Navigation
+                        // =================================================================
                         Toast.makeText(
                             requireContext(),
                             "Account created successfully! Welcome, $firstName!",
@@ -143,6 +178,7 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                             .commit()
 
                     }.onFailure { error ->
+                        // Handle Errors
                         Log.e("SignUpFragment", "Sign up error: ${error.message}", error)
 
                         val errorMessage = when {
@@ -155,6 +191,10 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                             else -> "Error creating account: ${error.message}"
                         }
 
+                        // Re-enable button on failure
+                        createButton.isEnabled = true
+                        createButton.text = "Create Account"
+
                         Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
                     }
                 } catch (e: Exception) {
@@ -164,7 +204,8 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                         "Error creating account: ${e.message}",
                         Toast.LENGTH_LONG
                     ).show()
-                } finally {
+
+                    // Re-enable button on exception
                     requireActivity().runOnUiThread {
                         createButton.isEnabled = true
                         createButton.text = "Create Account"
@@ -199,6 +240,7 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                 Category(name = "Allowance", type = "Income", color = "#D1B3FF", userId = userId)
             )
 
+            // Loop through and add categories to Firebase
             defaultCategories.forEach { category ->
                 val result = firebaseRepo.addCategory(category)
                 result.onFailure { error ->

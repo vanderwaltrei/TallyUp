@@ -36,7 +36,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         val signUpText = view.findViewById<TextView>(R.id.sign_up_text)
 
         signUpText.setOnClickListener {
-            Log.d("LoginFragment", "Sign up text clicked - navigating to SignUpFragment")
             navigateToSignUp()
         }
 
@@ -62,8 +61,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
             lifecycleScope.launch {
                 try {
-                    Log.d("LoginFragment", "Attempting Firebase login for email: $email")
-
                     val result = firebaseRepo.login(email, password)
 
                     loginButton.isEnabled = true
@@ -72,95 +69,78 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                     result.onSuccess { userId ->
                         Log.d("LoginFragment", "✅ Login successful for userId: $userId")
 
+                        // ✅ REMOVED: The cache clearing code that was here.
+                        // We do NOT clear data here. The AppRepository will automatically
+                        // load the correct file based on the userId we are about to save.
+
                         // Get user profile to display first name
                         val profileResult = firebaseRepo.getUserProfile()
 
                         profileResult.onSuccess { profile ->
                             val firstName = profile["firstName"] as? String ?: "User"
 
-                            // Save credentials for session management
+                            // Save NEW credentials for session management
                             val prefs = requireContext().getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
                             prefs.edit {
                                 putString("loggedInEmail", email)
                                 putString("userId", userId)
                                 putString("userFirstName", firstName)
                             }
-                            Log.d("LoginFragment", "✅ Saved login data to SharedPreferences")
+                            Log.d("LoginFragment", "✅ Saved new login data to SharedPreferences")
 
-                            // ✅ CRITICAL: Initialize achievements for existing users who might not have them
-                            lifecycleScope.launch {
-                                try {
-                                    Log.d("LoginFragment", "🎯 Checking/initializing achievements for userId: $userId")
-
-                                    // Check if user has achievements
-                                    val existingAchievements = AchievementManager.getAllAchievements(requireContext(), userId)
-
-                                    if (existingAchievements.isEmpty()) {
-                                        Log.d("LoginFragment", "⚠️ No achievements found, initializing...")
-                                        AchievementManager.initializeAchievements(requireContext(), userId)
-                                        Log.d("LoginFragment", "✅ Achievements initialized on login")
-                                    } else {
-                                        Log.d("LoginFragment", "✅ User already has ${existingAchievements.size} achievements")
-                                    }
-                                } catch (e: Exception) {
-                                    Log.e("LoginFragment", "❌ Error checking/initializing achievements: ${e.message}", e)
-                                    // Don't fail login if achievements fail
-                                }
-                            }
+                            initAchievements(userId)
 
                             Toast.makeText(requireContext(), "Welcome back, $firstName!", Toast.LENGTH_SHORT).show()
+                            navigateToDashboard()
 
-                            requireActivity().supportFragmentManager.beginTransaction()
-                                .replace(R.id.fragment_container, DashboardFragment())
-                                .commit()
-
-                        }.onFailure { profileError ->
-                            Log.e("LoginFragment", "Failed to get profile: ${profileError.message}")
-
+                        }.onFailure {
+                            // Fallback: Save ID without name if profile fails
                             val prefs = requireContext().getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
                             prefs.edit {
                                 putString("loggedInEmail", email)
                                 putString("userId", userId)
                             }
 
-                            // Still initialize achievements
-                            lifecycleScope.launch {
-                                try {
-                                    val existingAchievements = AchievementManager.getAllAchievements(requireContext(), userId)
-                                    if (existingAchievements.isEmpty()) {
-                                        AchievementManager.initializeAchievements(requireContext(), userId)
-                                    }
-                                } catch (e: Exception) {
-                                    Log.e("LoginFragment", "Error initializing achievements: ${e.message}")
-                                }
-                            }
-
+                            initAchievements(userId)
                             Toast.makeText(requireContext(), "Welcome back!", Toast.LENGTH_SHORT).show()
-
-                            requireActivity().supportFragmentManager.beginTransaction()
-                                .replace(R.id.fragment_container, DashboardFragment())
-                                .commit()
+                            navigateToDashboard()
                         }
                     }.onFailure { error ->
                         errorText.text = when {
                             error.message?.contains("password") == true -> "Invalid email or password"
-                            error.message?.contains("network") == true -> "Network error. Please check your connection."
-                            else -> "Login failed. Please try again."
+                            error.message?.contains("user-not-found") == true -> "Account not found"
+                            error.message?.contains("network") == true -> "Network error."
+                            else -> "Login failed."
                         }
                         errorText.visibility = View.VISIBLE
-                        Log.d("LoginFragment", "Login failed: ${error.message}")
-                        Toast.makeText(requireContext(), "Login failed: ${error.message}", Toast.LENGTH_SHORT).show()
                     }
                 } catch (e: Exception) {
-                    Log.e("LoginFragment", "Login error: ${e.message}", e)
                     loginButton.isEnabled = true
                     progressBar.visibility = View.GONE
                     errorText.text = "Login failed. Please try again."
                     errorText.visibility = View.VISIBLE
-                    Toast.makeText(requireContext(), "Login error: ${e.message}", Toast.LENGTH_LONG).show()
                 }
             }
         }
+    }
+
+    private fun initAchievements(userId: String) {
+        lifecycleScope.launch {
+            try {
+                val existingAchievements = AchievementManager.getAllAchievements(requireContext(), userId)
+                if (existingAchievements.isEmpty()) {
+                    AchievementManager.initializeAchievements(requireContext(), userId)
+                }
+            } catch (e: Exception) {
+                Log.e("LoginFragment", "❌ Error checking/initializing achievements: ${e.message}", e)
+            }
+        }
+    }
+
+    private fun navigateToDashboard() {
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, DashboardFragment())
+            .commit()
     }
 
     private fun navigateToSignUp() {
