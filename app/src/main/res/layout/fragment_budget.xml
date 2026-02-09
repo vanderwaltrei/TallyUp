@@ -13,7 +13,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Header -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -51,7 +50,6 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Main Budget Summary Card - Redesigned for Clarity -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -66,7 +64,6 @@
                 android:orientation="vertical"
                 android:padding="24dp">
 
-                <!-- Budget Title -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -79,7 +76,6 @@
                     android:layout_marginBottom="8dp"
                     tools:ignore="HardcodedText" />
 
-                <!-- Total Budget Amount - Large and Clear -->
                 <TextView
                     android:id="@+id/tvBudgetAmount"
                     android:layout_width="wrap_content"
@@ -91,14 +87,12 @@
                     android:layout_marginBottom="20dp"
                     tools:text="R 5,000" />
 
-                <!-- Divider -->
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="@color/border"
                     android:layout_marginBottom="20dp" />
 
-                <!-- Spending Summary Row -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -106,7 +100,6 @@
                     android:baselineAligned="false"
                     android:layout_marginBottom="16dp">
 
-                    <!-- Spent This Month -->
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -136,7 +129,6 @@
                             tools:text="R 2,340" />
                     </LinearLayout>
 
-                    <!-- Remaining -->
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -167,7 +159,6 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- Progress Bar with Percentage -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -200,7 +191,6 @@
                         tools:ignore="HardcodedText" />
                 </LinearLayout>
 
-                <!-- Status Message -->
                 <TextView
                     android:id="@+id/tvBudgetStatus"
                     android:layout_width="match_parent"
@@ -218,7 +208,6 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Quick Stats Cards -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -242,7 +231,6 @@
             android:layout_marginBottom="20dp"
             tools:ignore="RtlSymmetry">
 
-            <!-- Days Left Card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -280,7 +268,6 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Daily Budget Card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -319,7 +306,6 @@
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
 
-        <!-- Categories Section Header -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -341,6 +327,7 @@
                 android:letterSpacing="0.01" />
 
             <TextView
+                android:id="@+id/btnViewAll"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="View All"
@@ -354,7 +341,6 @@
                 tools:ignore="HardcodedText" />
         </LinearLayout>
 
-        <!-- Empty State -->
         <LinearLayout
             android:id="@+id/empty_state"
             android:layout_width="match_parent"
@@ -406,7 +392,6 @@
                 tools:ignore="HardcodedText" />
         </LinearLayout>
 
-        <!-- Categories RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/category_recycler"
             android:layout_width="match_parent"
@@ -415,10 +400,10 @@
             android:paddingEnd="16dp"
             android:paddingBottom="16dp"
             android:clipToPadding="false"
+            android:nestedScrollingEnabled="false"
             tools:ignore="RtlSymmetry"
             tools:listitem="@layout/item_category_breakdown" />
 
-        <!-- Help Card -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

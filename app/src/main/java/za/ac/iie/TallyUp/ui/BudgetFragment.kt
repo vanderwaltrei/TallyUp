@@ -22,7 +22,7 @@ import za.ac.iie.TallyUp.data.AppDatabase
 import za.ac.iie.TallyUp.data.AppRepository
 import za.ac.iie.TallyUp.databinding.FragmentBudgetBinding
 import za.ac.iie.TallyUp.models.BudgetCategory
-import java.util.Calendar // Required for date calculations
+import java.util.Calendar
 
 class BudgetFragment : Fragment() {
 
@@ -49,7 +49,12 @@ class BudgetFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         setupBackButton()
+
+        // FIXED: Added listener for View All button
+        setupViewAllButton()
+
         loadBudgetData()
     }
 
@@ -57,6 +62,16 @@ class BudgetFragment : Fragment() {
         binding.backButton.setOnClickListener {
             val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.bottom_navigation)
             bottomNav?.selectedItemId = R.id.navigation_home
+        }
+    }
+
+    private fun setupViewAllButton() {
+        // Navigate to the Dashboard (Detailed View) when clicked
+        binding.btnViewAll.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, BudgetDashboardFragment())
+                .addToBackStack(null)
+                .commit()
         }
     }
 
@@ -138,44 +153,35 @@ class BudgetFragment : Fragment() {
         val lastDay = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
         val daysLeft = lastDay - currentDay
 
-        // Avoid division by zero if it's the last day of the month
         val safeDaysLeft = if (daysLeft < 1) 1 else daysLeft
         val dailyBudget = if (remaining > 0) remaining / safeDaysLeft else 0.0
 
         // --- UPDATE UI ELEMENTS ---
-
-        // Main Amounts
         binding.tvBudgetAmount.text = "R ${"%.2f".format(totalBudget)}"
         binding.tvMonthSpent.text = "R ${"%.2f".format(spent)}"
         binding.tvBudgetRemaining.text = "R ${"%.2f".format(remaining)}"
 
-        // Progress Bar
         binding.budgetProgressBar.progress = percentage.coerceIn(0, 100)
         binding.tvBudgetPercentage.text = "$percentage%"
 
-        // Status Text & Color
         val (statusText, statusColor, statusBg) = when {
-            percentage >= 100 -> Triple("Budget exceeded!", R.color.destructive, R.color.error) // Red
-            percentage >= 85 -> Triple("Slow down, you're almost out!", R.color.warning, R.color.warning_light) // Orange
-            else -> Triple("You're on track! Keep it up.", R.color.success, R.color.success_light) // Green
+            percentage >= 100 -> Triple("Budget exceeded!", R.color.destructive, R.color.error)
+            percentage >= 85 -> Triple("Slow down, you're almost out!", R.color.warning, R.color.warning_light)
+            else -> Triple("You're on track! Keep it up.", R.color.success, R.color.success_light)
         }
 
         binding.tvBudgetStatus.text = statusText
         binding.tvBudgetStatus.setTextColor(requireContext().getColor(statusColor))
         binding.tvBudgetStatus.setBackgroundColor(requireContext().getColor(statusBg))
 
-        // Quick Stats
         binding.tvDaysLeft.text = daysLeft.toString()
-        binding.tvDailyBudget.text = "R ${"%.0f".format(dailyBudget)}" // Rounded to whole number for cleanliness
+        binding.tvDailyBudget.text = "R ${"%.0f".format(dailyBudget)}"
 
-        // Formatting remaining text color based on positive/negative
         if (remaining < 0) {
             binding.tvBudgetRemaining.setTextColor(requireContext().getColor(R.color.destructive))
         } else {
             binding.tvBudgetRemaining.setTextColor(requireContext().getColor(R.color.success))
         }
-
-        Log.d(TAG, "Budget Summary Updated - Total: R$totalBudget, Spent: R$spent, Rem: R$remaining, Daily: R$dailyBudget")
     }
 
     private fun calculateTotalBudget(categories: List<BudgetCategory>): Double {
