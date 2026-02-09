@@ -10,9 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import za.ac.iie.TallyUp.databinding.ItemCategoryBreakdownBinding
 import za.ac.iie.TallyUp.models.BudgetCategory
 import za.ac.iie.TallyUp.data.Transaction
-
-
- // Adapter is for displaying budget category breakdown in BudgetDashboardFragment. This is different from CategoryAdapter which is used for category selection
+import za.ac.iie.TallyUp.R
 
 @Suppress("unused")
 class CategoryBreakdownAdapter(
@@ -25,28 +23,31 @@ class CategoryBreakdownAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         init {
-            val expandContainer = binding.btnExpandContainer
-            val expandText = binding.btnExpandText
-            val expandArrow = binding.btnExpandArrow
-
             // Expand/Collapse functionality
-            expandContainer.setOnClickListener {
+            binding.btnExpandContainer.setOnClickListener {
                 val isExpanded = binding.editSection.visibility == View.VISIBLE
-                binding.editSection.visibility = if (isExpanded) View.GONE else View.VISIBLE
 
-                // Update button text and arrow rotation
-                expandText.text = if (isExpanded) "Edit Budget" else "Close"
-                expandArrow.animate()
-                    .rotation(if (isExpanded) 0f else 90f)
-                    .setDuration(200)
-                    .start()
+                if (isExpanded) {
+                    // Collapse
+                    binding.editSection.visibility = View.GONE
+                    binding.btnExpandContainer.text = "Edit Budget"
+                    // Restore edit icon (Standard Android API)
+                    binding.btnExpandContainer.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_edit, 0, 0, 0)
+                } else {
+                    // Expand
+                    binding.editSection.visibility = View.VISIBLE
+                    binding.btnExpandContainer.text = "Close"
+                    // Remove icon (Standard Android API: 0 means no drawable)
+                    binding.btnExpandContainer.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
+                }
             }
 
-            // Cancel button
+            // Cancel button inside the edit section
             binding.btnCancel.setOnClickListener {
                 binding.editSection.visibility = View.GONE
-                expandText.text = "Edit Budget"
-                expandArrow.animate().rotation(0f).setDuration(200).start()
+                binding.btnExpandContainer.text = "Edit Budget"
+                // Restore edit icon
+                binding.btnExpandContainer.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_edit, 0, 0, 0)
                 binding.editAmount.text.clear()
             }
 
@@ -54,9 +55,13 @@ class CategoryBreakdownAdapter(
             binding.btnSave.setOnClickListener {
                 val newAmount = binding.editAmount.text.toString().toDoubleOrNull()
                 if (newAmount != null) {
+                    // Logic to save the budget would go here
+
+                    // Reset UI
                     binding.editSection.visibility = View.GONE
-                    expandText.text = "Edit Budget"
-                    expandArrow.animate().rotation(0f).setDuration(200).start()
+                    binding.btnExpandContainer.text = "Edit Budget"
+                    // Restore edit icon
+                    binding.btnExpandContainer.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_edit, 0, 0, 0)
                     binding.editAmount.text.clear()
                 }
             }
@@ -84,14 +89,17 @@ class CategoryBreakdownAdapter(
 
         // Bind data
         holder.binding.categoryName.text = category.name
-        holder.binding.categorySpent.text = "R${"%.2f".format(spent)} / R${"%.2f".format(category.budgeted)}"
-        holder.binding.categoryRemaining.text = "R${"%.2f".format(remaining)} left"
+        holder.binding.categorySpentAmount.text = "R ${"%.2f".format(spent)}"
+        holder.binding.categorySubtitle.text = "Budget: R ${"%.2f".format(category.budgeted)}"
+        holder.binding.categoryRemaining.text = "R ${"%.2f".format(remaining)} left"
         holder.binding.progressBar.progress = percent
+        holder.binding.categoryPercentage.text = "$percent% used"
 
         // Reset UI each time (to prevent recycled state issues)
         holder.binding.editSection.visibility = View.GONE
-        holder.binding.btnExpandText.text = "Edit Budget"
-        holder.binding.btnExpandArrow.rotation = 0f
+        holder.binding.btnExpandContainer.text = "Edit Budget"
+        // Ensure icon is visible by default
+        holder.binding.btnExpandContainer.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_edit, 0, 0, 0)
     }
 
     override fun getItemCount() = categories.size

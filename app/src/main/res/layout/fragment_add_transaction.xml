@@ -16,23 +16,22 @@
         android:orientation="vertical"
         android:paddingBottom="100dp">
 
-        <!-- Header with back button -->
+        <!-- Header with back button - Improved spacing -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
+            android:layout_marginBottom="28dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <ImageButton
                 android:id="@+id/back_button"
-                android:layout_width="47dp"
-                android:layout_height="50dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/back"
                 android:src="@drawable/ic_arrow_left"
-                app:tint="@color/foreground"
-                tools:ignore="TouchTargetSizeCheck" />
+                app:tint="@color/foreground" />
 
             <TextView
                 android:layout_width="0dp"
@@ -41,25 +40,26 @@
                 android:layout_weight="1"
                 android:text="@string/add_transaction"
                 android:textColor="@color/foreground"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.01" />
         </LinearLayout>
 
-        <!-- Transaction type card -->
-
+        <!-- Transaction type card - Improved contrast -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            app:cardBackgroundColor="@color/muted"
-            app:cardCornerRadius="24dp"
-            app:cardElevation="0dp">
+            android:layout_marginBottom="28dp"
+            app:cardBackgroundColor="@color/card_background"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp">
 
             <com.google.android.material.button.MaterialButtonToggleGroup
                 android:id="@+id/transaction_type_group"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
+                android:padding="4dp"
                 app:singleSelection="true"
                 app:selectionRequired="true">
 
@@ -67,35 +67,39 @@
                     android:id="@+id/expense_button"
                     style="@style/Widget.Material3.Button"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="56dp"
                     android:layout_weight="1"
                     android:text="Expense (-)"
                     android:textColor="@color/foreground"
-                    app:cornerRadius="24dp"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:cornerRadius="12dp"
                     app:backgroundTint="@color/transaction_toggle_bg"
-                    tools:ignore="HardcodedText,VisualLintButtonSize" />
+                    tools:ignore="HardcodedText" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/income_button"
                     style="@style/Widget.Material3.Button"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="56dp"
                     android:layout_weight="1"
                     android:text="Income (+)"
                     android:textColor="@color/foreground"
-                    app:cornerRadius="24dp"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:cornerRadius="12dp"
                     app:backgroundTint="@color/transaction_toggle_bg"
-                    tools:ignore="HardcodedText,VisualLintButtonSize" />
+                    tools:ignore="HardcodedText" />
             </com.google.android.material.button.MaterialButtonToggleGroup>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Amount card -->
+        <!-- Amount card - Improved visual hierarchy -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
+            android:layout_marginBottom="28dp"
             app:cardBackgroundColor="@color/card_background"
-            app:cardCornerRadius="12dp"
+            app:cardCornerRadius="16dp"
             app:cardElevation="8dp">
 
             <LinearLayout
@@ -103,16 +107,16 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:padding="24dp">
+                android:padding="32dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginBottom="20dp"
                     android:text="@string/amount"
                     android:textColor="@color/muted_foreground"
-                    android:textSize="14sp"
-                    tools:ignore="TextContrastCheck" />
+                    android:textSize="15sp"
+                    android:letterSpacing="0.03" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -126,11 +130,12 @@
                         android:layout_marginEnd="8dp"
                         android:text="@string/r"
                         android:textColor="@color/muted_foreground"
-                        android:textSize="32sp" />
+                        android:textSize="36sp"
+                        android:textStyle="bold" />
 
                     <EditText
                         android:id="@+id/amount_input"
-                        android:layout_width="130dp"
+                        android:layout_width="150dp"
                         android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
                         android:inputType="numberDecimal"
@@ -138,51 +143,54 @@
                         android:text="@string/_0"
                         android:textAlignment="center"
                         android:textColor="@color/foreground"
-                        android:textSize="32sp"
+                        android:textSize="36sp"
                         android:textStyle="bold"
-                        tools:ignore="Autofill,LabelFor,TouchTargetSizeCheck" />
+                        android:minHeight="48dp"
+                        tools:ignore="Autofill,LabelFor" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Category -->
+        <!-- Category - Better label contrast -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:text="@string/category"
             android:textColor="@color/foreground"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.01" />
 
-        <!-- FIXED: RecyclerView with fixed height -->
+        <!-- Category Grid with improved spacing -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/categoryGrid"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:minHeight="200dp"
             android:maxHeight="400dp"
-            android:padding="8dp"
+            android:padding="4dp"
             android:clipToPadding="false"
             android:nestedScrollingEnabled="false"
             android:scrollbars="none" />
 
-        <!-- Description -->
+        <!-- Description - Improved spacing -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="12dp"
             android:text="@string/what_was_this_for"
             android:textColor="@color/foreground"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.01" />
 
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
+            android:layout_marginBottom="28dp"
             app:boxBackgroundColor="@color/card_background"
             app:boxCornerRadiusBottomEnd="12dp"
             app:boxCornerRadiusBottomStart="12dp"
@@ -196,25 +204,27 @@
                 android:hint="@string/e_g_coffee_with_sam"
                 android:inputType="text"
                 android:padding="16dp"
-                tools:ignore="VisualLintTextFieldSize" />
+                android:textSize="15sp"
+                android:minHeight="56dp" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Photo section -->
+        <!-- Photo section - Better visual grouping -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="12dp"
             android:text="@string/receipt_photo_optional"
             android:textColor="@color/foreground"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.01" />
 
         <LinearLayout
             android:id="@+id/photo_section"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginBottom="16dp">
+            android:layout_marginBottom="20dp">
 
             <!-- Preview strip -->
             <LinearLayout
@@ -262,24 +272,27 @@
                 android:id="@+id/photo_upload_button"
                 style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="56dp"
                 android:layout_marginTop="8dp"
                 android:text="@string/add_receipt_photo"
                 android:textColor="@color/muted_foreground"
+                android:textSize="15sp"
                 android:drawableTop="@drawable/ic_camera"
                 android:backgroundTint="@color/card_background"
-                tools:ignore="VisualLintButtonSize" />
+                app:strokeColor="@color/border"
+                app:strokeWidth="1dp" />
         </LinearLayout>
 
-        <!-- Date -->
+        <!-- Date - Improved contrast -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/date_of_transaction"
             android:textColor="@color/foreground"
-            android:textSize="16sp"
+            android:textSize="18sp"
             android:textStyle="bold"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="12dp"
+            android:letterSpacing="0.01" />
 
         <TextView
             android:id="@+id/dateDisplay"
@@ -289,25 +302,25 @@
             android:textSize="16sp"
             android:gravity="start"
             android:textColor="@color/foreground"
-            android:padding="12dp"
+            android:padding="16dp"
             android:background="?attr/selectableItemBackground"
             android:clickable="true"
             android:focusable="true"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginBottom="24dp"
+            android:minHeight="56dp" />
 
-        <!-- Save button -->
+        <!-- Save button - Improved size and contrast -->
         <Button
             android:id="@+id/save_button"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="56dp"
             android:backgroundTint="@color/accent"
-            android:paddingVertical="16dp"
             android:text="@string/save_transaction"
             android:textColor="@color/accent_foreground"
             android:textSize="16sp"
             android:textStyle="bold"
             app:cornerRadius="12dp"
-            tools:ignore="VisualLintButtonSize" />
+            android:elevation="4dp" />
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

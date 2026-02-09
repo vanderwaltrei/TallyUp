@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import za.ac.iie.TallyUp.R
 import za.ac.iie.TallyUp.databinding.ItemCategoryBreakdownBinding
 import za.ac.iie.TallyUp.models.BudgetCategory
 import za.ac.iie.TallyUp.data.Transaction
@@ -58,22 +59,30 @@ class CategoryBreakdownAdapter(
             }
         }
 
-        /** Opens or closes the edit section with animation and arrow rotation */
+        /** Opens or closes the edit section and updates the Button state */
         @SuppressLint("SetTextI18n")
         private fun toggleEditSection(expand: Boolean) {
             if (expand) {
                 binding.editSection.visibility = View.VISIBLE
-                binding.btnExpandText.text = "Close"
-                binding.btnExpandArrow.animate().rotation(90f).setDuration(200).start()
+
+                // Update the MaterialButton directly
+                binding.btnExpandContainer.text = "Close"
+                // Optional: Change icon to a close icon if you have one, or remove it
+                // binding.btnExpandContainer.setIconResource(R.drawable.ic_close)
+
                 binding.editAmount.addTextChangedListener(textWatcher)
                 binding.editAmount.requestFocus()
+
                 // Set current budget as hint when opening
                 val category = categories[adapterPosition]
                 binding.editAmount.hint = "%.2f".format(category.budgeted)
             } else {
                 binding.editSection.visibility = View.GONE
-                binding.btnExpandText.text = "Edit Budget"
-                binding.btnExpandArrow.animate().rotation(0f).setDuration(200).start()
+
+                // Reset the MaterialButton
+                binding.btnExpandContainer.text = "Edit Budget"
+                // binding.btnExpandContainer.setIconResource(R.drawable.ic_edit)
+
                 binding.editAmount.removeTextChangedListener(textWatcher)
                 binding.editAmount.text?.clear()
             }
@@ -86,13 +95,16 @@ class CategoryBreakdownAdapter(
             val category = categories[adapterPosition]
             val spent = getSpentAmount(category.name)
 
-            binding.categorySpent.text =
-                "R${"%.2f".format(spent)} / R${"%.2f".format(newAmount)}"
-            binding.categoryRemaining.text =
-                "R${"%.2f".format(newAmount - spent)} left"
+            // Update visible amounts
+            binding.categorySpentAmount.text = "R ${"%.2f".format(spent)}"
+            binding.categorySubtitle.text = "Budget: R ${"%.2f".format(newAmount)}"
+
+            val remaining = newAmount - spent
+            binding.categoryRemaining.text = "R ${"%.2f".format(remaining)} left"
 
             val percent = if (newAmount > 0) ((spent / newAmount) * 100).toInt() else 0
             binding.progressBar.progress = percent
+            binding.categoryPercentage.text = "$percent% used"
         }
 
         /** Refresh category labels and progress after closing editor */
@@ -103,10 +115,11 @@ class CategoryBreakdownAdapter(
             val remaining = category.budgeted - spent
             val percent = if (category.budgeted > 0) ((spent / category.budgeted) * 100).toInt() else 0
 
-            binding.categorySpent.text =
-                "R${"%.2f".format(spent)} / R${"%.2f".format(category.budgeted)}"
-            binding.categoryRemaining.text = "R${"%.2f".format(remaining)} left"
+            binding.categorySpentAmount.text = "R ${"%.2f".format(spent)}"
+            binding.categorySubtitle.text = "Budget: R ${"%.2f".format(category.budgeted)}"
+            binding.categoryRemaining.text = "R ${"%.2f".format(remaining)} left"
             binding.progressBar.progress = percent
+            binding.categoryPercentage.text = "$percent% used"
         }
 
         private fun getSpentAmount(categoryName: String): Double {
@@ -130,15 +143,22 @@ class CategoryBreakdownAdapter(
 
         with(holder.binding) {
             categoryName.text = category.name
-            categorySpent.text = "R${"%.2f".format(spent)} / R${"%.2f".format(category.budgeted)}"
-            categoryRemaining.text = "R${"%.2f".format(remaining)} left"
+
+            // Fixed ID references based on XML
+            categorySpentAmount.text = "R ${"%.2f".format(spent)}"
+            categorySubtitle.text = "Budget: R ${"%.2f".format(category.budgeted)}"
+
+            categoryRemaining.text = "R ${"%.2f".format(remaining)} left"
+            categoryPercentage.text = "$percent% used"
+
             progressBar.progress = percent
             categoryIcon.setImageResource(getCategoryIcon(category.name))
 
             // Reset states
             editSection.visibility = View.GONE
-            btnExpandText.text = "Edit Budget"
-            btnExpandArrow.rotation = 0f
+            btnExpandContainer.text = "Edit Budget"
+            // btnExpandContainer.setIconResource(R.drawable.ic_edit) // Optional ensure icon reset
+
             editAmount.text?.clear()
             editAmount.hint = "%.2f".format(category.budgeted)
         }
@@ -146,7 +166,6 @@ class CategoryBreakdownAdapter(
 
     override fun getItemCount() = categories.size
 
-    // Add this method to update categories and refresh the adapter
     @SuppressLint("NotifyDataSetChanged")
     fun updateCategories(newCategories: List<BudgetCategory>) {
         categories = newCategories
@@ -155,16 +174,16 @@ class CategoryBreakdownAdapter(
 
     private fun getCategoryIcon(categoryName: String): Int {
         return when (categoryName.lowercase()) {
-            "food" -> za.ac.iie.TallyUp.R.drawable.ic_coffee
-            "transport" -> za.ac.iie.TallyUp.R.drawable.ic_car
-            "books" -> za.ac.iie.TallyUp.R.drawable.ic_book_open
-            "fun" -> za.ac.iie.TallyUp.R.drawable.ic_heart
-            "shopping" -> za.ac.iie.TallyUp.R.drawable.ic_shopping_bag
-            "salary" -> za.ac.iie.TallyUp.R.drawable.ic_coin
-            "gift" -> za.ac.iie.TallyUp.R.drawable.ic_star
-            "freelance" -> za.ac.iie.TallyUp.R.drawable.ic_trending_up
-            "allowance" -> za.ac.iie.TallyUp.R.drawable.ic_piggy_bank
-            else -> za.ac.iie.TallyUp.R.drawable.ic_circle
+            "food" -> R.drawable.ic_coffee
+            "transport" -> R.drawable.ic_car
+            "books" -> R.drawable.ic_book_open
+            "fun" -> R.drawable.ic_heart
+            "shopping" -> R.drawable.ic_shopping_bag
+            "salary" -> R.drawable.ic_coin
+            "gift" -> R.drawable.ic_star
+            "freelance" -> R.drawable.ic_trending_up
+            "allowance" -> R.drawable.ic_piggy_bank
+            else -> R.drawable.ic_circle
         }
     }
 }

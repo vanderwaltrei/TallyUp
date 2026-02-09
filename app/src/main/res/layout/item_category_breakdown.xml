@@ -5,10 +5,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
+    android:layout_marginBottom="12dp"
     app:cardCornerRadius="12dp"
-    app:cardElevation="6dp"
-    app:cardUseCompatPadding="true"
+    app:cardElevation="3dp"
+    app:cardUseCompatPadding="false"
     app:cardBackgroundColor="@color/card_background">
 
     <LinearLayout
@@ -17,86 +17,68 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Top Row -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-
-            <ImageView
-                android:id="@+id/categoryIcon"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:src="@drawable/ic_shopping_bag"
-                android:background="@drawable/circle_background"
-                android:contentDescription="@string/categoryicon" />
-
-            <TextView
-                android:id="@+id/categoryName"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="12dp"
-                android:text="@string/food"
-                android:textColor="@color/foreground"
-                android:textStyle="bold"
-                android:textSize="16sp"/>
-
-            <!-- Expand Button -->
-            <LinearLayout
-                android:id="@+id/btnExpandContainer"
-                android:layout_width="wrap_content"
-                android:layout_height="36dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingHorizontal="12dp"
-                tools:ignore="UseCompoundDrawables,TouchTargetSizeCheck">
-
-                <TextView
-                    android:id="@+id/btnExpandText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/edit_budget"
-                    android:textColor="#0277BD"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
-
-                <ImageView
-                    android:id="@+id/btnExpandArrow"
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:layout_marginStart="4dp"
-                    android:contentDescription="@string/imageview"
-                    android:src="@drawable/ic_arrow_right"
-                    app:tint="@color/black" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <!-- Budget Info -->
+        <!-- Top Row: Icon, Category Name, and Amount -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginTop="8dp">
+            android:layout_marginBottom="12dp">
 
-            <TextView
-                android:id="@+id/categorySpent"
+            <!-- Icon with Background -->
+            <FrameLayout
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/circle_background">
+
+                <ImageView
+                    android:id="@+id/categoryIcon"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_shopping_bag"
+                    android:contentDescription="@string/categoryicon"
+                    app:tint="@color/primary" />
+            </FrameLayout>
+
+            <!-- Category Name and Subtitle -->
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/r0_00_r20"
-                android:textColor="#757575" />
+                android:layout_marginStart="12dp"
+                android:orientation="vertical">
 
+                <TextView
+                    android:id="@+id/categoryName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/food"
+                    android:textColor="@color/foreground"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:layout_marginBottom="2dp" />
+
+                <TextView
+                    android:id="@+id/categorySubtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Budget: R 500"
+                    android:textColor="@color/muted_foreground"
+                    android:textSize="12sp"
+                    tools:ignore="HardcodedText" />
+            </LinearLayout>
+
+            <!-- Spent Amount -->
             <TextView
-                android:id="@+id/categoryRemaining"
+                android:id="@+id/categorySpentAmount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/r20_00_left"
-                android:textColor="#2E7D32" />
+                android:text="R 230"
+                android:textColor="@color/foreground"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                tools:ignore="HardcodedText" />
         </LinearLayout>
 
         <!-- Progress Bar -->
@@ -104,22 +86,52 @@
             android:id="@+id/progressBar"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
-            android:layout_height="6dp"
-            android:progress="0"
+            android:layout_height="8dp"
+            android:progress="46"
             android:max="100"
             android:progressTint="@color/primary"
-            android:layout_marginVertical="6dp"/>
+            android:progressBackgroundTint="@color/muted"
+            android:layout_marginBottom="8dp" />
 
-        <!-- Expandable Edit Section -->
+        <!-- Bottom Row: Remaining and Percentage -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/categoryRemaining"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="R 270 left"
+                android:textColor="@color/success"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/categoryPercentage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="46% used"
+                android:textColor="@color/muted_foreground"
+                android:textSize="12sp"
+                tools:ignore="HardcodedText" />
+        </LinearLayout>
+
+        <!-- Edit Section (Expandable) -->
         <LinearLayout
             android:id="@+id/editSection"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:visibility="gone"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="16dp"
             android:background="@color/primary_soft"
-            android:padding="12dp">
+            android:padding="16dp"
+            app:cornerRadius="8dp">
 
             <TextView
                 android:layout_width="match_parent"
@@ -128,13 +140,14 @@
                 android:textColor="@color/primary"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="8dp"/>
+                android:layout_marginBottom="12dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                android:layout_marginBottom="12dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -143,7 +156,7 @@
                     android:textColor="@color/foreground"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    android:layout_marginEnd="8dp"/>
+                    android:layout_marginEnd="8dp" />
 
                 <EditText
                     android:id="@+id/editAmount"
@@ -156,7 +169,8 @@
                     android:padding="12dp"
                     android:background="@color/white"
                     android:textColor="@color/foreground"
-                    android:textColorHint="@color/muted_foreground"/>
+                    android:textColorHint="@color/muted_foreground"
+                    android:minHeight="48dp" />
             </LinearLayout>
 
             <!-- Buttons -->
@@ -164,8 +178,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="end"
-                android:layout_marginTop="8dp">
+                android:gravity="end">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnCancel"
@@ -189,5 +202,22 @@
                     android:textAllCaps="false" />
             </LinearLayout>
         </LinearLayout>
+
+        <!-- Edit Button -->
+        <Button
+            android:id="@+id/btnExpandContainer"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/edit_budget"
+            android:textColor="@color/primary"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginTop="8dp"
+            app:icon="@drawable/ic_edit"
+            app:iconGravity="textStart"
+            app:iconTint="@color/primary" />
+
     </LinearLayout>
 </androidx.cardview.widget.CardView>
