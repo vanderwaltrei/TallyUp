@@ -22,6 +22,7 @@ import za.ac.iie.TallyUp.data.AppDatabase
 import za.ac.iie.TallyUp.data.AppRepository
 import za.ac.iie.TallyUp.databinding.FragmentBudgetBinding
 import za.ac.iie.TallyUp.models.BudgetCategory
+import java.util.Calendar // Required for date calculations
 
 class BudgetFragment : Fragment() {
 
@@ -48,16 +49,12 @@ class BudgetFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        // Setup back button
         setupBackButton()
-
         loadBudgetData()
     }
 
     private fun setupBackButton() {
         binding.backButton.setOnClickListener {
-            // Navigate to home using bottom navigation (same as GoalsFragment)
             val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.bottom_navigation)
             bottomNav?.selectedItemId = R.id.navigation_home
         }
@@ -69,11 +66,8 @@ class BudgetFragment : Fragment() {
                 val state = repository.loadAppState()
                 val userId = getCurrentUserId()
                 val transactions = appDatabase.transactionDao().getTransactionsForUser(userId)
-
-                // Get ALL categories from database (not just hardcoded ones)
                 val allCategories = appDatabase.categoryDao().getCategoriesForUser(userId)
 
-                // Convert database categories to BudgetCategory objects
                 val dynamicBudgetCategories = convertToBudgetCategories(allCategories, state, transactions)
 
                 withContext(Dispatchers.Main) {
@@ -86,33 +80,24 @@ class BudgetFragment : Fragment() {
         }
     }
 
-    /**
-     * Convert database categories to BudgetCategory objects
-     * Uses existing budget amounts from AppState if available, otherwise sets default budget
-     */
     private fun convertToBudgetCategories(
         dbCategories: List<za.ac.iie.TallyUp.data.Category>,
         state: za.ac.iie.TallyUp.models.AppState,
         transactions: List<za.ac.iie.TallyUp.data.Transaction>
     ): List<BudgetCategory> {
         return dbCategories.map { dbCategory ->
-            // Check if this category exists in the AppState budget categories
             val existingBudgetCategory = state.budgetCategories.find { it.name == dbCategory.name }
 
             if (existingBudgetCategory != null) {
-                // Use the existing budget amount
                 existingBudgetCategory
             } else {
-                // Create new BudgetCategory with default budget
-                // Calculate spent amount from transactions
                 val spent = transactions
                     .filter { it.type == "Expense" && it.category == dbCategory.name }
                     .sumOf { it.amount }
 
-                // Set default budget based on category type or use a sensible default
                 val defaultBudget = when (dbCategory.type) {
-                    "Income" -> 0.0 // Income categories don't need budgets
-                    else -> 100.0 // Default budget for new expense categories
+                    "Income" -> 0.0
+                    else -> 100.0
                 }
 
                 BudgetCategory(
@@ -121,14 +106,13 @@ class BudgetFragment : Fragment() {
                     spent = spent
                 )
             }
-        }.filter { it.budgeted > 0 } // Only show categories that have a budget
+        }.filter { it.budgeted > 0 }
     }
 
     private fun setupRecyclerView(categories: List<BudgetCategory>, transactions: List<za.ac.iie.TallyUp.data.Transaction>) {
         binding.categoryRecycler.layoutManager = LinearLayoutManager(requireContext())
         adapter = CategoryBreakdownAdapter(categories, transactions)
 
-        // Set callback for budget updates
         adapter.onBudgetUpdated = { categoryName, newAmount ->
             updateCategoryBudget(categoryName, newAmount, transactions)
         }
@@ -138,47 +122,64 @@ class BudgetFragment : Fragment() {
 
     @SuppressLint("SetTextI18n")
     private fun updateBudgetSummary(categories: List<BudgetCategory>, transactions: List<za.ac.iie.TallyUp.data.Transaction>) {
-        // Calculate total budget from all categories
+        // 1. Calculate Totals
         val totalBudget = calculateTotalBudget(categories)
-
-        // Calculate total spent from actual transactions
         val spent = transactions
             .filter { it.type == "Expense" }
             .sumOf { it.amount }
+        val remaining = totalBudget - spent
 
-        // Calculate category spending for debugging
-        val categorySpending = calculateCategorySpending(transactions)
+        // 2. Calculate Percentage
+        val percentage = if (totalBudget > 0) ((spent / totalBudget) * 100).toInt() else 0
 
-        // Update the budget amount text view
-        binding.tvBudgetAmount.text = "R${"%.2f".format(totalBudget)}"
-        binding.tvMonthSpent.text = "R${"%.2f".format(spent)} Spent This Month"
+        // 3. Calculate Date/Daily Stats
+        val calendar = Calendar.getInstance()
+        val currentDay = calendar.get(Calendar.DAY_OF_MONTH)
+        val lastDay = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
+        val daysLeft = lastDay - currentDay
 
-        Log.d(TAG, "Budget Summary Updated - Total: R$totalBudget, Spent: R$spent")
+        // Avoid division by zero if it's the last day of the month
+        val safeDaysLeft = if (daysLeft < 1) 1 else daysLeft
+        val dailyBudget = if (remaining > 0) remaining / safeDaysLeft else 0.0
 
-        // Debug category spending
-        Log.d(TAG, "=== CATEGORY SPENDING BREAKDOWN ===")
-        categorySpending.forEach { (category, amount) ->
-            Log.d(TAG, "Category '$category': R$amount")
+        // --- UPDATE UI ELEMENTS ---
+
+        // Main Amounts
+        binding.tvBudgetAmount.text = "R ${"%.2f".format(totalBudget)}"
+        binding.tvMonthSpent.text = "R ${"%.2f".format(spent)}"
+        binding.tvBudgetRemaining.text = "R ${"%.2f".format(remaining)}"
+
+        // Progress Bar
+        binding.budgetProgressBar.progress = percentage.coerceIn(0, 100)
+        binding.tvBudgetPercentage.text = "$percentage%"
+
+        // Status Text & Color
+        val (statusText, statusColor, statusBg) = when {
+            percentage >= 100 -> Triple("Budget exceeded!", R.color.destructive, R.color.error) // Red
+            percentage >= 85 -> Triple("Slow down, you're almost out!", R.color.warning, R.color.warning_light) // Orange
+            else -> Triple("You're on track! Keep it up.", R.color.success, R.color.success_light) // Green
         }
-        Log.d(TAG, "===================================")
+
+        binding.tvBudgetStatus.text = statusText
+        binding.tvBudgetStatus.setTextColor(requireContext().getColor(statusColor))
+        binding.tvBudgetStatus.setBackgroundColor(requireContext().getColor(statusBg))
+
+        // Quick Stats
+        binding.tvDaysLeft.text = daysLeft.toString()
+        binding.tvDailyBudget.text = "R ${"%.0f".format(dailyBudget)}" // Rounded to whole number for cleanliness
+
+        // Formatting remaining text color based on positive/negative
+        if (remaining < 0) {
+            binding.tvBudgetRemaining.setTextColor(requireContext().getColor(R.color.destructive))
+        } else {
+            binding.tvBudgetRemaining.setTextColor(requireContext().getColor(R.color.success))
+        }
+
+        Log.d(TAG, "Budget Summary Updated - Total: R$totalBudget, Spent: R$spent, Rem: R$remaining, Daily: R$dailyBudget")
     }
 
     private fun calculateTotalBudget(categories: List<BudgetCategory>): Double {
-        // Sum all category budget amounts
         return categories.sumOf { it.budgeted }
-    }
-
-    private fun calculateCategorySpending(transactions: List<za.ac.iie.TallyUp.data.Transaction>): Map<String, Double> {
-        val categorySpending = mutableMapOf<String, Double>()
-
-        transactions
-            .filter { it.type == "Expense" }
-            .forEach { transaction ->
-                val currentAmount = categorySpending[transaction.category] ?: 0.0
-                categorySpending[transaction.category] = currentAmount + transaction.amount
-            }
-
-        return categorySpending
     }
 
     private fun updateCategoryBudget(
@@ -186,46 +187,31 @@ class BudgetFragment : Fragment() {
         newAmount: Double,
         transactions: List<za.ac.iie.TallyUp.data.Transaction>
     ) {
-        Log.d(TAG, "Updating budget for category: $categoryName to R$newAmount")
-
-        // Update the app state
         val state = repository.loadAppState()
         val updatedCategories = state.budgetCategories.toMutableList()
-
-        // Find if category already exists in budget categories
         val existingIndex = updatedCategories.indexOfFirst { it.name == categoryName }
 
         if (existingIndex != -1) {
-            // Update existing category
             updatedCategories[existingIndex] = updatedCategories[existingIndex].copy(budgeted = newAmount)
         } else {
-            // Add new category to budget categories
             val spent = transactions
                 .filter { it.type == "Expense" && it.category == categoryName }
                 .sumOf { it.amount }
-
             updatedCategories.add(BudgetCategory(categoryName, newAmount, spent))
         }
 
-        // Update the app state
         val updatedState = state.copy(budgetCategories = updatedCategories)
         repository.saveAppState(updatedState)
-
-        Log.d(TAG, "Budget updated and saved to repository")
-
-        // Refresh the display
         loadBudgetData()
     }
 
     private fun getCurrentUserId(): String {
         val prefs = requireContext().getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
-        // Changed "loggedInEmail" to "userId"
         return prefs.getString("userId", "") ?: "default"
     }
 
     override fun onResume() {
         super.onResume()
-        // Refresh data when returning to fragment
         loadBudgetData()
     }
 
@@ -233,6 +219,4 @@ class BudgetFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
-
 }
