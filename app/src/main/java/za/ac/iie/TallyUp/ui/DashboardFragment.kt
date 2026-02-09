@@ -1,3 +1,5 @@
+@file:Suppress("PackageName")
+
 package za.ac.iie.TallyUp.ui
 
 import android.annotation.SuppressLint
@@ -23,7 +25,6 @@ import za.ac.iie.TallyUp.data.AppDatabase
 import za.ac.iie.TallyUp.utils.CharacterManager
 import za.ac.iie.TallyUp.models.Goal
 import za.ac.iie.TallyUp.models.GoalDatabase
-import za.ac.iie.TallyUp.firebase.FirebaseRepository
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -37,7 +38,6 @@ class DashboardFragment : Fragment() {
     private lateinit var appState: AppState
     private lateinit var goalDatabase: GoalDatabase
     private lateinit var appDatabase: AppDatabase
-    private val firebaseRepo = FirebaseRepository()
     private var goalsList = mutableListOf<Goal>()
     private lateinit var goalAdapter: GoalAdapter
 
@@ -55,7 +55,6 @@ class DashboardFragment : Fragment() {
         goalDatabase = GoalDatabase.getDatabase(requireContext())
         appDatabase = AppDatabase.getDatabase(requireContext())
         appState = repository.loadAppState()
-
         return binding.root
     }
 
@@ -72,18 +71,10 @@ class DashboardFragment : Fragment() {
     private fun setupGoalRecyclerView() {
         goalAdapter = GoalAdapter(
             goalsList,
-            onAddMoneyClicked = { goal ->
-                navigateToGoalsFragment()
-            },
-            onCompleteGoalClicked = { goal ->
-                navigateToGoalsFragment()
-            },
-            onEditGoalClicked = { goal ->
-                navigateToGoalsFragment()
-            },
-            onDeleteGoalClicked = { goal ->
-                navigateToGoalsFragment()
-            }
+            onAddMoneyClicked = { navigateToGoalsFragment() },
+            onCompleteGoalClicked = { navigateToGoalsFragment() },
+            onEditGoalClicked = { navigateToGoalsFragment() },
+            onDeleteGoalClicked = { navigateToGoalsFragment() }
         )
 
         binding.goalsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -101,7 +92,6 @@ class DashboardFragment : Fragment() {
 
         lifecycleScope.launch {
             try {
-                // ✅ FIXED: Read from local Room database instead of Firebase
                 val allTransactions = withContext(Dispatchers.IO) {
                     appDatabase.transactionDao().getTransactionsForUser(userId)
                 }
@@ -141,7 +131,7 @@ class DashboardFragment : Fragment() {
                     binding.recentTransactionsContainer.visibility = View.GONE
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "Error loading recent transactions from Room: ${e.message}")
+                Log.e(TAG, "Error loading recent transactions", e)
                 binding.noTransactionsText.visibility = View.VISIBLE
                 binding.recentTransactionsContainer.visibility = View.GONE
             }
@@ -167,124 +157,69 @@ class DashboardFragment : Fragment() {
     private fun loadTransactionsAndUpdateBudget() {
         val userId = getCurrentUserId()
         lifecycleScope.launch {
-            try {
-                // ✅ FIXED: Read from local Room database instead of Firebase
-                val transactions = withContext(Dispatchers.IO) {
-                    appDatabase.transactionDao().getTransactionsForUser(userId)
-                }
-
-                val totalIncome = transactions
-                    .filter { it.type == "Income" }
-                    .sumOf { it.amount }
-
-                val totalExpenses = transactions
-                    .filter { it.type == "Expense" }
-                    .sumOf { it.amount }
-
-                val categorySpending = calculateCategorySpending(transactions)
-                val monthlyBudget = appState.budgetCategories.sumOf { it.budgeted }
-                val availableToSpend = monthlyBudget - totalExpenses
-
-                val progressPercentage = if (monthlyBudget > 0) {
-                    ((totalExpenses / monthlyBudget) * 100).toInt().coerceIn(0, 100)
-                } else {
-                    0
-                }
-
-                Log.d(TAG, "=== CATEGORY SPENDING ===")
-                categorySpending.forEach { (category, amount) ->
-                    Log.d(TAG, "$category: R$amount")
-                }
-                Log.d(TAG, "Total Expenses: R$totalExpenses")
-                Log.d(TAG, "Monthly Budget: R$monthlyBudget")
-                Log.d(TAG, "Available to Spend: R$availableToSpend")
-                Log.d(TAG, "==========================")
-
-                updateBudgetUI(availableToSpend, totalExpenses, monthlyBudget, progressPercentage, totalIncome)
-
-            } catch (e: Exception) {
-                Log.e(TAG, "Error loading transactions for budget: ${e.message}", e)
-                binding.availableAmount.text = "R0.00"
-                binding.progressText.text = "0%"
-                binding.statusText.text = "Error loading data"
+            val transactions = withContext(Dispatchers.IO) {
+                appDatabase.transactionDao().getTransactionsForUser(userId)
             }
+
+            val totalExpenses = transactions.filter { it.type == "Expense" }.sumOf { it.amount }
+            val monthlyBudget = appState.budgetCategories.sumOf { it.budgeted }
+            val availableToSpend = monthlyBudget - totalExpenses
+
+            val progressPercentage =
+                if (monthlyBudget > 0) ((totalExpenses / monthlyBudget) * 100).toInt().coerceIn(0, 100) else 0
+
+            updateBudgetUI(availableToSpend, progressPercentage)
         }
-    }
-
-    private fun calculateCategorySpending(transactions: List<za.ac.iie.TallyUp.data.Transaction>): Map<String, Double> {
-        val categorySpending = mutableMapOf<String, Double>()
-
-        transactions
-            .filter { it.type == "Expense" }
-            .forEach { transaction ->
-                val currentAmount = categorySpending[transaction.category] ?: 0.0
-                categorySpending[transaction.category] = currentAmount + transaction.amount
-            }
-
-        return categorySpending
     }
 
     @SuppressLint("SetTextI18n")
-    private fun updateBudgetUI(
-        availableToSpend: Double,
-        totalSpent: Double,
-        totalBudget: Double,
-        progressPercentage: Int,
-        totalIncome: Double
-    ) {
-        "R${"%.2f".format(availableToSpend)}".also { binding.availableAmount.text = it }
-        binding.availableSubtitle.text = "Available to Spend"
-
-        binding.progressText.text = "${progressPercentage}%"
-
-        val statusText = when {
-            progressPercentage < 60 -> "On Track!"
-            progressPercentage < 80 -> "Watch It!"
-            else -> "Almost There!"
-        }
-        binding.statusText.text = statusText
+    private fun updateBudgetUI(available: Double, progress: Int) {
+        binding.availableAmount.text = "R${"%.2f".format(available)}"
+        binding.progressText.text = "$progress%"
 
         val context = requireContext()
         when {
-            progressPercentage < 60 -> {
+            progress < 60 -> {
+                binding.statusText.text = "On Track!"
                 binding.statusText.setBackgroundColor(context.getColor(R.color.success_light))
                 binding.statusText.setTextColor(context.getColor(R.color.success))
             }
-            progressPercentage < 80 -> {
+            progress < 80 -> {
+                binding.statusText.text = "Watch It!"
                 binding.statusText.setBackgroundColor(context.getColor(R.color.warning_light))
                 binding.statusText.setTextColor(context.getColor(R.color.warning))
             }
             else -> {
+                binding.statusText.text = "Almost There!"
                 binding.statusText.setBackgroundColor(context.getColor(R.color.error))
                 binding.statusText.setTextColor(context.getColor(R.color.error))
             }
         }
-
-        Log.d(TAG, "Budget UI Updated - Available: R$availableToSpend, Spent: R$totalSpent, Budget: R$totalBudget")
     }
 
     private fun getCurrentUserId(): String {
         val prefs = requireContext().getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
-        return prefs.getString("userId", "") ?: "default"
+        return prefs.getString("userId", "") ?: ""
     }
 
     private fun updateGoalsVisibility() {
-        if (goalsList.isEmpty()) {
-            binding.noGoalsText.visibility = View.VISIBLE
-            binding.goalsRecyclerView.visibility = View.GONE
-        } else {
-            binding.noGoalsText.visibility = View.GONE
-            binding.goalsRecyclerView.visibility = View.VISIBLE
-        }
+        binding.noGoalsText.visibility = if (goalsList.isEmpty()) View.VISIBLE else View.GONE
+        binding.goalsRecyclerView.visibility = if (goalsList.isEmpty()) View.GONE else View.VISIBLE
     }
 
     private fun setupQuickActions() {
         binding.budgetDashboardCard.setOnClickListener {
-            navigateToBudgetDashboard()
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, BudgetFragment())
+                .addToBackStack(null)
+                .commit()
         }
 
         binding.insightsCard.setOnClickListener {
-            navigateToInsights()
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, InsightsFragment())
+                .addToBackStack(null)
+                .commit()
         }
 
         binding.goalsSection.setOnClickListener {
@@ -299,39 +234,17 @@ class DashboardFragment : Fragment() {
             .commit()
     }
 
-    private fun navigateToInsights() {
-        parentFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, InsightsFragment())
-            .addToBackStack(null)
-            .commit()
-    }
-
-    private fun navigateToBudgetDashboard() {
-        parentFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, BudgetDashboardFragment())
-            .addToBackStack(null)
-            .commit()
-    }
-
-    @SuppressLint("SetTextI1Tern")
+    @SuppressLint("SetTextI18n")
     private fun setupUI() {
+        val prefs = requireContext().getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
+        val firstName = prefs.getString("userFirstName", "User")
         val characterName = CharacterManager.getCharacterName(requireContext())
 
-        val prefs = requireContext().getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
-        val firstName = prefs.getString("userFirstName", null) ?: "User"
-
         binding.welcomeText.text = "Hey $firstName! $characterName is here to help!"
-
-        binding.recentSection.visibility = View.VISIBLE
-
-        val characterDrawable = CharacterManager.getCharacterDrawable(requireContext())
-        binding.characterImage.setImageResource(characterDrawable)
-
-        val mood = CharacterManager.getCurrentMood(requireContext())
-        binding.moodIndicator.visibility = if (mood == za.ac.iie.TallyUp.models.Mood.SAD) View.VISIBLE else View.GONE
-
-        val coins = CharacterManager.getCoins(requireContext())
-        binding.coinsText.text = coins.toString()
+        binding.characterImage.setImageResource(
+            CharacterManager.getCharacterDrawable(requireContext())
+        )
+        binding.coinsText.text = CharacterManager.getCoins(requireContext()).toString()
     }
 
     override fun onResume() {

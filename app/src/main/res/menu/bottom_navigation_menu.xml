@@ -12,10 +12,6 @@
         android:icon="@drawable/ic_list"
         android:title="@string/transactions" />
     <item
-        android:id="@+id/navigation_budget"
-        android:icon="@drawable/ic_chart"
-        android:title="@string/budget" />
-    <item
         android:id="@+id/navigation_goals"
         android:iconTint="@color/black"
         android:icon="@drawable/ic_target"

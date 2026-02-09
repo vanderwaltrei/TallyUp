@@ -22,8 +22,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        createNotificationChannel() // ✅ Step 3 added here
-
+        createNotificationChannel()
         setupToolbar()
         setupBottomNavigation()
         setupFAB()
@@ -47,17 +46,9 @@ class MainActivity : AppCompatActivity() {
                 "tallyup_channel",
                 "TallyUp Reminders",
                 NotificationManager.IMPORTANCE_HIGH
-            ).apply {
-                description = "Reminders for scheduled notifications"
-                enableVibration(true)
-                enableLights(true)
-                setShowBadge(true)
-            }
-
+            )
             val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            if (manager.getNotificationChannel("tallyup_channel") == null) {
-                manager.createNotificationChannel(channel)
-            }
+            manager.createNotificationChannel(channel)
         }
     }
 
@@ -77,10 +68,6 @@ class MainActivity : AppCompatActivity() {
                     loadFragment(TransactionsFragment())
                     true
                 }
-                R.id.navigation_budget -> {
-                    loadFragment(BudgetFragment())
-                    true
-                }
                 R.id.navigation_goals -> {
                     loadFragment(GoalsFragment())
                     true
@@ -97,7 +84,6 @@ class MainActivity : AppCompatActivity() {
     private fun setupFAB() {
         binding.fabAddTransaction.setOnClickListener {
             loadFragment(AddTransactionFragment())
-            supportActionBar?.title = "Add Transaction"
         }
     }
 
@@ -110,17 +96,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateNavigationVisibility() {
         val currentFragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
-        val shouldHideNavigation = shouldHideNavigationForFragment(currentFragment)
-
-        if (shouldHideNavigation) {
-            hideNavigation()
-        } else {
-            showNavigation()
-        }
-    }
-
-    private fun shouldHideNavigationForFragment(fragment: Fragment?): Boolean {
-        val fragmentsToHideNav = listOf(
+        val hide = currentFragment?.javaClass?.simpleName in listOf(
             "LoginFragment",
             "SignUpFragment",
             "StartTutorialFragment",
@@ -129,23 +105,12 @@ class MainActivity : AppCompatActivity() {
             "ChooseCharacterTutorialFragment"
         )
 
-        val fragmentClassName = fragment?.javaClass?.simpleName ?: ""
-        return fragmentsToHideNav.contains(fragmentClassName)
-    }
-
-    private fun hideNavigation() {
-        binding.bottomNavigation.visibility = View.GONE
-        binding.fabAddTransaction.visibility = View.GONE
-    }
-
-    private fun showNavigation() {
-        binding.bottomNavigation.visibility = View.VISIBLE
-        binding.fabAddTransaction.visibility = View.VISIBLE
+        binding.bottomNavigation.visibility = if (hide) View.GONE else View.VISIBLE
+        binding.fabAddTransaction.visibility = if (hide) View.GONE else View.VISIBLE
     }
 
     private fun userIsLoggedIn(): Boolean {
         val prefs = getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
-        val email = prefs.getString("loggedInEmail", null)
-        return email != null
+        return prefs.getString("loggedInEmail", null) != null
     }
 }
