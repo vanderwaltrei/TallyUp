@@ -23,7 +23,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         createNotificationChannel()
-        setupToolbar()
         setupBottomNavigation()
         setupFAB()
 
@@ -50,11 +49,6 @@ class MainActivity : AppCompatActivity() {
             val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             manager.createNotificationChannel(channel)
         }
-    }
-
-    private fun setupToolbar() {
-        setSupportActionBar(binding.toolbar)
-        supportActionBar?.title = "TallyUp"
     }
 
     private fun setupBottomNavigation() {
@@ -95,8 +89,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateNavigationVisibility() {
-        val currentFragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
-        val hide = currentFragment?.javaClass?.simpleName in listOf(
+        val currentFragment =
+            supportFragmentManager.findFragmentById(R.id.fragment_container)
+
+        val fragmentName = currentFragment?.javaClass?.simpleName ?: ""
+
+        // Hide bottom nav for auth/tutorial screens
+        val hideBottomNav = fragmentName in listOf(
             "LoginFragment",
             "SignUpFragment",
             "StartTutorialFragment",
@@ -105,8 +104,12 @@ class MainActivity : AppCompatActivity() {
             "ChooseCharacterTutorialFragment"
         )
 
-        binding.bottomNavigation.visibility = if (hide) View.GONE else View.VISIBLE
-        binding.fabAddTransaction.visibility = if (hide) View.GONE else View.VISIBLE
+        binding.bottomNavigation.visibility =
+            if (hideBottomNav) View.GONE else View.VISIBLE
+
+        // 🔥 FAB ONLY on Dashboard
+        binding.fabAddTransaction.visibility =
+            if (fragmentName == "DashboardFragment") View.VISIBLE else View.GONE
     }
 
     private fun userIsLoggedIn(): Boolean {
