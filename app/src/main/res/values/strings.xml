@@ -193,6 +193,8 @@
     <string name="confirm">Confirm</string>
     <string name="notification_name">Notification Name</string>
     <string name="repeat">Repeat</string>
+    <string name="add_expense">Add Expense</string>
+    <string name="add_expence">add_expence</string>
     <string-array name="type_filter_options">
         <item>All</item>
         <item>Income</item>

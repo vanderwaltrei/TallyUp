@@ -124,12 +124,54 @@
             android:orientation="horizontal"
             android:layout_marginBottom="24dp">
 
+            <!-- Add Expense -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/addExpenseCard"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                app:cardCornerRadius="16dp"
+                app:cardBackgroundColor="@color/primary"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="12dp">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@drawable/ic_add"
+                        app:tint="@android:color/white"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/add_expense"
+                        android:textColor="@android:color/white"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="10dp"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Spacer -->
+            <Space
+                android:layout_width="12dp"
+                android:layout_height="1dp"/>
+
+            <!-- Budget Dashboard -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/budgetDashboardCard"
                 android:layout_width="0dp"
                 android:layout_height="100dp"
                 android:layout_weight="1"
-                android:layout_marginEnd="12dp"
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?android:attr/selectableItemBackground"
@@ -147,9 +189,8 @@
                     <ImageView
                         android:layout_width="32dp"
                         android:layout_height="32dp"
-                        android:contentDescription="@string/budget_dashboard"
                         android:src="@drawable/ic_trending_up"
-                        app:tint="@color/primary" />
+                        app:tint="@color/primary"/>
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -158,20 +199,22 @@
                         android:textColor="@color/foreground"
                         android:textSize="13sp"
                         android:textStyle="bold"
-                        android:gravity="center"
                         android:layout_marginTop="10dp"
-                        android:lineSpacingExtra="1dp" />
-
+                        android:gravity="center"/>
                 </LinearLayout>
-
             </androidx.cardview.widget.CardView>
 
+            <!-- Spacer -->
+            <Space
+                android:layout_width="12dp"
+                android:layout_height="1dp"/>
+
+            <!-- Insights -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/insightsCard"
                 android:layout_width="0dp"
                 android:layout_height="100dp"
                 android:layout_weight="1"
-                android:layout_marginStart="12dp"
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?android:attr/selectableItemBackground"
@@ -189,9 +232,8 @@
                     <ImageView
                         android:layout_width="32dp"
                         android:layout_height="32dp"
-                        android:contentDescription="@string/insights"
                         android:src="@drawable/ic_bar_chart"
-                        app:tint="@color/accent" />
+                        app:tint="@color/accent"/>
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -200,13 +242,12 @@
                         android:textColor="@color/foreground"
                         android:textSize="13sp"
                         android:textStyle="bold"
-                        android:layout_marginTop="10dp" />
-
+                        android:layout_marginTop="10dp"/>
                 </LinearLayout>
-
             </androidx.cardview.widget.CardView>
 
         </LinearLayout>
+
 
         <!-- Available to Spend - Improved visual hierarchy -->
         <TextView
