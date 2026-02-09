@@ -44,19 +44,19 @@
         app:itemTextColor="@drawable/bottom_nav_colors"
         tools:ignore="VisualLintBottomNav" />
 
-    <!-- Floating action button floats above container -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_add_transaction"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginEnd="14dp"
-        android:layout_marginBottom="100dp"
-        android:contentDescription="@string/add_transaction"
-        android:src="@drawable/ic_add"
-        app:backgroundTint="@color/accent"
-        app:elevation="12dp"
-        app:tint="@color/accent_foreground"
-        tools:ignore="ImageContrastCheck" />
+<!--    &lt;!&ndash; Floating action button floats above container &ndash;&gt;-->
+<!--    <com.google.android.material.floatingactionbutton.FloatingActionButton-->
+<!--        android:id="@+id/fab_add_transaction"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_gravity="bottom|end"-->
+<!--        android:layout_marginEnd="14dp"-->
+<!--        android:layout_marginBottom="100dp"-->
+<!--        android:contentDescription="@string/add_transaction"-->
+<!--        android:src="@drawable/ic_add"-->
+<!--        app:backgroundTint="@color/accent"-->
+<!--        app:elevation="12dp"-->
+<!--        app:tint="@color/accent_foreground"-->
+<!--        tools:ignore="ImageContrastCheck" />-->
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

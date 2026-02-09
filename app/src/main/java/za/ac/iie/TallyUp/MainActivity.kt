@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
 
         createNotificationChannel()
         setupBottomNavigation()
-        setupFAB()
+//        setupFAB()
 
         supportFragmentManager.addOnBackStackChangedListener {
             updateNavigationVisibility()
@@ -75,11 +75,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupFAB() {
-        binding.fabAddTransaction.setOnClickListener {
-            loadFragment(AddTransactionFragment())
-        }
-    }
+//    private fun setupFAB() {
+//        binding.fabAddTransaction.setOnClickListener {
+//            loadFragment(AddTransactionFragment())
+//        }
+//    }
 
     private fun loadFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
@@ -107,9 +107,9 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNavigation.visibility =
             if (hideBottomNav) View.GONE else View.VISIBLE
 
-        // 🔥 FAB ONLY on Dashboard
-        binding.fabAddTransaction.visibility =
-            if (fragmentName == "DashboardFragment") View.VISIBLE else View.GONE
+//        // 🔥 FAB ONLY on Dashboard
+//        binding.fabAddTransaction.visibility =
+//            if (fragmentName == "DashboardFragment") View.VISIBLE else View.GONE
     }
 
     private fun userIsLoggedIn(): Boolean {
