@@ -8,6 +8,7 @@ import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import za.ac.iie.TallyUp.databinding.ActivityMainBinding
@@ -19,12 +20,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         createNotificationChannel()
         setupBottomNavigation()
-//        setupFAB()
 
         supportFragmentManager.addOnBackStackChangedListener {
             updateNavigationVisibility()
@@ -75,12 +76,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-//    private fun setupFAB() {
-//        binding.fabAddTransaction.setOnClickListener {
-//            loadFragment(AddTransactionFragment())
-//        }
-//    }
-
     private fun loadFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
@@ -94,7 +89,6 @@ class MainActivity : AppCompatActivity() {
 
         val fragmentName = currentFragment?.javaClass?.simpleName ?: ""
 
-        // Hide bottom nav for auth/tutorial screens
         val hideBottomNav = fragmentName in listOf(
             "LoginFragment",
             "SignUpFragment",
@@ -106,10 +100,6 @@ class MainActivity : AppCompatActivity() {
 
         binding.bottomNavigation.visibility =
             if (hideBottomNav) View.GONE else View.VISIBLE
-
-//        // 🔥 FAB ONLY on Dashboard
-//        binding.fabAddTransaction.visibility =
-//            if (fragmentName == "DashboardFragment") View.VISIBLE else View.GONE
     }
 
     private fun userIsLoggedIn(): Boolean {

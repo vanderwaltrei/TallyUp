@@ -233,12 +233,6 @@ class BudgetDashboardFragment : Fragment() {
             0
         }
 
-        // Update UI with real data
-        binding.progressText.text = "$progressPercentage% Used"
-        binding.totalBudgetText.text = "R${"%.2f".format(totalSpent)} / R${"%.2f".format(totalBudget)}"
-        binding.budgetProgressBar.progress = progressPercentage
-        binding.remainingBudgetText.text = "R${"%.2f".format(remainingBudget)} Remaining"
-
         Log.d(TAG, "Budget Health Updated - Period: $selectedTimePeriod, Spent: R$totalSpent, Budget: R$totalBudget, Progress: $progressPercentage%")
     }
 
@@ -262,12 +256,6 @@ class BudgetDashboardFragment : Fragment() {
                 }
             }
         }
-
-        // Update performance summary cards
-        binding.onTrackCount.text = "$onTrackCount\nOn Track"
-        binding.watchCount.text = "$watchCount\nWatch"
-        binding.criticalCount.text = "$criticalCount\nCritical"
-        binding.overCount.text = "$overCount\nOver"
 
         Log.d(TAG, "Performance Summary - On Track: $onTrackCount, Watch: $watchCount, Critical: $criticalCount, Over: $overCount")
     }

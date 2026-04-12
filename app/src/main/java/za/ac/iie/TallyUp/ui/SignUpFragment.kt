@@ -4,6 +4,7 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Rect
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -13,6 +14,7 @@ import android.view.animation.AnimationUtils
 import android.view.animation.OvershootInterpolator
 import android.widget.Button
 import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.edit
@@ -34,6 +36,11 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // ── Keyboard scroll fix ──────────────────────────────────────────────
+        requireActivity().window.setSoftInputMode(
+            android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN
+        )
+
         // ── View references ──────────────────────────────────────────────────
         val characterContainer   = view.findViewById<LinearLayout>(R.id.character_container)
         val welcomeTitle         = view.findViewById<TextView>(R.id.welcome_title)
@@ -51,7 +58,7 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
         // ── Entrance animations ──────────────────────────────────────────────
         playEntranceAnimations(characterContainer, welcomeTitle, welcomeSubtitle, formCard)
 
-        // ── Input validation watcher (your original logic, preserved exactly) ─
+        // ── Input validation watcher ─────────────────────────────────────────
         val watcher = object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 val allFilled = listOf(
@@ -102,7 +109,6 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                 val lastName        = lastNameInput.text.toString().trim()
                 val confirmPassword = confirmInput.text.toString().trim()
 
-                // Final safety checks (your original logic, preserved exactly)
                 if (email.isEmpty() || password.isEmpty() ||
                     firstName.isEmpty() || lastName.isEmpty()) {
                     shakeView(formCard)
@@ -133,7 +139,6 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                     return@animateButtonPress
                 }
 
-                // Disable button to prevent double clicks
                 createButton.isEnabled = false
                 createButton.text = "Creating Account..."
 
@@ -146,7 +151,6 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                         result.onSuccess { userId ->
                             Log.d("SignUpFragment", "User created successfully: $userId")
 
-                            // Clear old cached data for clean state
                             try {
                                 val appRepository = AppRepository(requireContext())
                                 appRepository.clearUserData()
@@ -155,7 +159,6 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                                 Log.e("SignUpFragment", "⚠️ Cache clear warning: ${e.message}")
                             }
 
-                            // Save credentials to SharedPreferences
                             val prefs = requireContext()
                                 .getSharedPreferences("TallyUpPrefs", Context.MODE_PRIVATE)
                             prefs.edit {
@@ -165,7 +168,6 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                             }
                             Log.d("SignUpFragment", "✅ Saved userId: $userId")
 
-                            // Initialize achievements
                             try {
                                 AchievementManager.initializeAchievements(requireContext(), userId)
                                 Log.d("SignUpFragment", "✅ Achievements initialized")
@@ -173,7 +175,6 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                                 Log.e("SignUpFragment", "❌ Achievements error: ${e.message}", e)
                             }
 
-                            // Set initial coins
                             try {
                                 za.ac.iie.TallyUp.utils.CharacterManager
                                     .setCoins(requireContext(), 200)
@@ -182,7 +183,6 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                                 Log.e("SignUpFragment", "❌ Coins error: ${e.message}")
                             }
 
-                            // Initialize default categories
                             initializeDefaultCategories(userId)
 
                             Toast.makeText(
@@ -287,7 +287,7 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
         view.postDelayed(action, 80)
     }
 
-    // ── Business logic helpers (your original code, preserved exactly) ───────
+    // ── Business logic helpers ───────────────────────────────────────────────
 
     private suspend fun initializeDefaultCategories(userId: String) {
         try {

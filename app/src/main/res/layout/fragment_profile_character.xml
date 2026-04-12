@@ -18,8 +18,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="2dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp"
+            app:cardUseCompatPadding="true"
+            app:cardPreventCornerOverlap="true"
             app:cardBackgroundColor="@color/card_background">
 
             <LinearLayout
@@ -50,139 +52,15 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Your Collection -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="2dp"
-            app:cardBackgroundColor="@color/card_background">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/your_collection"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/foreground"
-                    android:layout_marginBottom="12dp" />
-
-                <!-- Casual Outfit -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="8dp">
-
-                    <ImageView
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:src="@drawable/ic_shirt"
-                        android:background="@color/accent_soft"
-                        android:padding="8dp"
-                        android:contentDescription="@string/casual_outfit"
-                        tools:ignore="ContentDescription" />
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:layout_marginStart="12dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/casual_outfit"
-                            android:textStyle="bold"
-                            android:textColor="@color/foreground" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/common"
-                            android:textColor="@color/muted_foreground"
-                            tools:ignore="TextContrastCheck" />
-
-                    </LinearLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/equipped"
-                        android:textColor="@color/accent"
-                        android:textStyle="bold"
-                        tools:ignore="TextContrastCheck" />
-
-                </LinearLayout>
-
-                <!-- Backpack -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-
-                    <ImageView
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:src="@drawable/ic_shopping_bag"
-                        android:background="@color/primary_soft"
-                        android:padding="8dp"
-                        android:contentDescription="@string/backpack"
-                        tools:ignore="ContentDescription" />
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:layout_marginStart="12dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/backpack"
-                            android:textStyle="bold"
-                            android:textColor="@color/foreground" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/common"
-                            android:textColor="@color/muted_foreground"
-                            tools:ignore="TextContrastCheck" />
-
-                    </LinearLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/equipped"
-                        android:textColor="@color/accent"
-                        android:textStyle="bold"
-                        tools:ignore="TextContrastCheck" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
         <!-- Accessory Shop -->
         <androidx.cardview.widget.CardView
             android:id="@+id/shopSection"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="2dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp"
+            app:cardUseCompatPadding="true"
+            app:cardPreventCornerOverlap="true"
             app:cardBackgroundColor="@color/card_background">
 
             <LinearLayout
