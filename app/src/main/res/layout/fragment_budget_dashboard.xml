@@ -1,88 +1,357 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    android:paddingHorizontal="16dp"
-    android:paddingTop="24dp"
-    android:paddingBottom="48dp"
-    android:clipToPadding="false"
-    android:scrollbars="vertical"
-    android:fitsSystemWindows="false">
+    android:background="@color/background">
 
-    <LinearLayout
+    <!-- Top App Bar -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingBottom="16dp">
+        android:background="@color/background"
+        app:elevation="0dp">
 
-        <!-- Header -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="0dp"
+            app:cardBackgroundColor="@color/card_background"
+            app:cardElevation="4dp"
+            app:cardUseCompatPadding="false">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="16dp">
+
+                <ImageButton
+                    android:id="@+id/back_button"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/back"
+                    android:src="@drawable/ic_arrow_left"
+                    app:tint="@color/foreground" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="All Categories"
+                        android:textColor="@color/foreground"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.01"
+                        tools:ignore="HardcodedText" />
+
+                    <TextView
+                        android:id="@+id/tvCategoryCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0 categories"
+                        android:textColor="@color/muted_foreground"
+                        android:textSize="13sp"
+                        tools:ignore="HardcodedText" />
+
+                </LinearLayout>
+
+                <ImageButton
+                    android:id="@+id/btnSort"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Sort"
+                    android:src="@drawable/ic_star"
+                    app:tint="@color/foreground"
+                    tools:ignore="HardcodedText" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- Main Scrollable Content -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="100dp"
+        android:clipToPadding="false"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="20dp"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
-            <ImageButton
-                android:id="@+id/back_button"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="@android:color/transparent"
-                android:src="@drawable/ic_arrow_left"
-                android:contentDescription="@string/back"
-                app:tint="@color/foreground" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
+            <!-- Summary Banner -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                app:cardBackgroundColor="@color/primary"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="6dp"
+                app:cardUseCompatPadding="true"
+                app:cardPreventCornerOverlap="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Total Budget Overview"
+                        android:textColor="#CCFFFFFF"
+                        android:textSize="13sp"
+                        android:textAllCaps="true"
+                        android:letterSpacing="0.08"
+                        android:layout_marginBottom="4dp"
+                        tools:ignore="HardcodedText" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:baselineAligned="false"
+                        android:layout_marginBottom="16dp">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/tvTotalBudgeted"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="R 0.00"
+                                android:textColor="@color/white"
+                                android:textSize="28sp"
+                                android:textStyle="bold"
+                                tools:ignore="HardcodedText" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Total Budgeted"
+                                android:textColor="#CCFFFFFF"
+                                android:textSize="12sp"
+                                tools:ignore="HardcodedText" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:gravity="end">
+
+                            <TextView
+                                android:id="@+id/tvTotalSpent"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="R 0.00"
+                                android:textColor="@color/white"
+                                android:textSize="28sp"
+                                android:textStyle="bold"
+                                tools:ignore="HardcodedText" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Total Spent"
+                                android:textColor="#CCFFFFFF"
+                                android:textSize="12sp"
+                                android:gravity="end"
+                                tools:ignore="HardcodedText" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <!-- Overall Progress Bar -->
+                    <ProgressBar
+                        android:id="@+id/overallProgressBar"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="10dp"
+                        android:progress="0"
+                        android:max="100"
+                        android:progressTint="@color/white"
+                        android:progressBackgroundTint="#55FFFFFF"
+                        android:layout_marginBottom="8dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tvOverallPercentage"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="0% used"
+                            android:textColor="#CCFFFFFF"
+                            android:textSize="13sp"
+                            tools:ignore="HardcodedText" />
+
+                        <TextView
+                            android:id="@+id/tvTotalRemaining"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="R 0.00 left"
+                            android:textColor="#CCFFFFFF"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            tools:ignore="HardcodedText" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Sort / Filter Chips -->
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="none"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:layout_marginBottom="12dp"
+                tools:ignore="RtlSymmetry">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chipGroupSort"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:singleSelection="true"
+                    app:selectionRequired="true">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipAll"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="All"
+                        android:checked="true"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        tools:ignore="HardcodedText" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipOverBudget"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Over Budget"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        tools:ignore="HardcodedText" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipOnTrack"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="On Track"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        tools:ignore="HardcodedText" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipHighestSpend"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Highest Spend"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        tools:ignore="HardcodedText" />
+
+                </com.google.android.material.chip.ChipGroup>
+
+            </HorizontalScrollView>
+
+            <!-- Empty State -->
+            <LinearLayout
+                android:id="@+id/empty_state"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
                 android:orientation="vertical"
-                android:layout_marginStart="16dp">
+                android:padding="48dp"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/ic_piggy_bank"
+                    android:contentDescription="@string/no_goals"
+                    app:tint="@color/muted_foreground"
+                    android:layout_marginBottom="16dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/categories"
+                    android:text="No Categories Yet"
                     android:textColor="@color/foreground"
-                    android:textSize="24sp"
+                    android:textSize="18sp"
                     android:textStyle="bold"
-                    android:letterSpacing="0.01" />
+                    android:layout_marginBottom="8dp"
+                    tools:ignore="HardcodedText" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Manage your spending categories"
+                    android:text="Add a budget category to start tracking your spending."
                     android:textColor="@color/muted_foreground"
                     android:textSize="14sp"
-                    android:layout_marginTop="2dp" />
+                    android:gravity="center"
+                    android:layout_marginBottom="24dp"
+                    tools:ignore="HardcodedText" />
+
             </LinearLayout>
+
+            <!-- Categories RecyclerView -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/category_recycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:clipToPadding="false"
+                android:nestedScrollingEnabled="false"
+                tools:ignore="RtlSymmetry"
+                tools:listitem="@layout/item_category_breakdown" />
+
         </LinearLayout>
 
-        <!-- Time Period Filter -->
-        <Spinner
-            android:id="@+id/time_period_spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:background="@drawable/spinner_background"
-            android:minHeight="48dp"
-            android:paddingHorizontal="16dp"
-            android:paddingVertical="8dp"
-            android:popupBackground="@color/card_background"
-            android:spinnerMode="dropdown" />
+    </androidx.core.widget.NestedScrollView>
 
-        <!-- Category List -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/category_recycler"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp" />
+    <!-- FAB: Add Category -->
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fabAddCategory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="24dp"
+        android:text="Add Category"
+        android:textColor="@color/white"
+        app:icon="@drawable/ic_add"
+        app:iconTint="@color/white"
+        app:backgroundTint="@color/primary"
+        app:elevation="6dp"
+        tools:ignore="HardcodedText" />
 
-        <!-- Bottom spacer -->
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="32dp" />
-
-    </LinearLayout>
-</ScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,6 +1,6 @@
 @file:Suppress("PackageName")
 
-package za.ac.iie.TallyUp.adapters
+package za.ac.iie.TallyUp.adapters  // ✅ correct package
 
 import android.annotation.SuppressLint
 import android.text.Editable
@@ -17,10 +17,10 @@ import za.ac.iie.TallyUp.data.Transaction
 @Suppress("DEPRECATION")
 class CategoryBreakdownAdapter(
     private var categories: List<BudgetCategory>,
-    private val transactions: List<Transaction>
+    private var transactions: List<Transaction>  // ✅ var so updateTransactions can replace it
 ) : RecyclerView.Adapter<CategoryBreakdownAdapter.ViewHolder>() {
 
-    // Callback for budget update events
+    // Callback invoked when the user saves a new budget amount for a category
     var onBudgetUpdated: ((categoryName: String, newAmount: Double) -> Unit)? = null
 
     @SuppressLint("UseKtx")
@@ -42,90 +42,50 @@ class CategoryBreakdownAdapter(
                 toggleEditSection(!isExpanded)
             }
 
-            // Cancel editing
+            // Cancel collapses without saving
             binding.btnCancel.setOnClickListener {
                 toggleEditSection(false)
-                updateCategoryTexts()
+                binding.editAmount.text.clear()
             }
 
-            // Save new budget
+            // Save fires the callback and collapses
             binding.btnSave.setOnClickListener {
                 val newAmount = binding.editAmount.text.toString().toDoubleOrNull()
-                if (newAmount != null && newAmount > 0) {
-                    val category = categories[adapterPosition]
+                if (newAmount != null && newAmount >= 0) {
+                    val category = categories[bindingAdapterPosition]
                     onBudgetUpdated?.invoke(category.name, newAmount)
                     toggleEditSection(false)
+                    binding.editAmount.text.clear()
+                } else {
+                    binding.editAmount.error = "Enter a valid amount"
                 }
             }
         }
 
-        /** Opens or closes the edit section and updates the Button state */
-        @SuppressLint("SetTextI18n")
-        private fun toggleEditSection(expand: Boolean) {
+        fun toggleEditSection(expand: Boolean) {
             if (expand) {
                 binding.editSection.visibility = View.VISIBLE
-
-                // Update the MaterialButton directly
                 binding.btnExpandContainer.text = "Close"
-                // Optional: Change icon to a close icon if you have one, or remove it
-                // binding.btnExpandContainer.setIconResource(R.drawable.ic_close)
-
+                binding.btnExpandContainer.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
                 binding.editAmount.addTextChangedListener(textWatcher)
-                binding.editAmount.requestFocus()
-
-                // Set current budget as hint when opening
-                val category = categories[adapterPosition]
-                binding.editAmount.hint = "%.2f".format(category.budgeted)
             } else {
                 binding.editSection.visibility = View.GONE
-
-                // Reset the MaterialButton
                 binding.btnExpandContainer.text = "Edit Budget"
-                // binding.btnExpandContainer.setIconResource(R.drawable.ic_edit)
-
+                binding.btnExpandContainer.setCompoundDrawablesWithIntrinsicBounds(
+                    R.drawable.ic_edit, 0, 0, 0
+                )
                 binding.editAmount.removeTextChangedListener(textWatcher)
-                binding.editAmount.text?.clear()
             }
         }
 
-        /** Update preview text and progress as user types */
-        @SuppressLint("SetTextI18n")
-        private fun updateBudgetPreview(entered: String) {
-            val newAmount = entered.toDoubleOrNull() ?: 0.0
-            val category = categories[adapterPosition]
-            val spent = getSpentAmount(category.name)
-
-            // Update visible amounts
-            binding.categorySpentAmount.text = "R ${"%.2f".format(spent)}"
-            binding.categorySubtitle.text = "Budget: R ${"%.2f".format(newAmount)}"
-
-            val remaining = newAmount - spent
-            binding.categoryRemaining.text = "R ${"%.2f".format(remaining)} left"
-
-            val percent = if (newAmount > 0) ((spent / newAmount) * 100).toInt() else 0
-            binding.progressBar.progress = percent
-            binding.categoryPercentage.text = "$percent% used"
-        }
-
-        /** Refresh category labels and progress after closing editor */
-        @SuppressLint("SetTextI18n")
-        private fun updateCategoryTexts() {
-            val category = categories[adapterPosition]
-            val spent = getSpentAmount(category.name)
-            val remaining = category.budgeted - spent
-            val percent = if (category.budgeted > 0) ((spent / category.budgeted) * 100).toInt() else 0
-
-            binding.categorySpentAmount.text = "R ${"%.2f".format(spent)}"
-            binding.categorySubtitle.text = "Budget: R ${"%.2f".format(category.budgeted)}"
-            binding.categoryRemaining.text = "R ${"%.2f".format(remaining)} left"
-            binding.progressBar.progress = percent
-            binding.categoryPercentage.text = "$percent% used"
-        }
-
-        private fun getSpentAmount(categoryName: String): Double {
-            return transactions.filter { it.category == categoryName }.sumOf { it.amount }
+        private fun updateBudgetPreview(input: String) {
+            // Optional: live preview logic can go here
         }
     }
+
+    // ─────────────────────────────────────────────
+    // RecyclerView overrides
+    // ─────────────────────────────────────────────
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemCategoryBreakdownBinding.inflate(
@@ -137,53 +97,60 @@ class CategoryBreakdownAdapter(
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val category = categories[position]
-        val spent = transactions.filter { it.category == category.name }.sumOf { it.amount }
+
+        val spent = transactions
+            .filter { it.type == "Expense" && it.category == category.name }
+            .sumOf { it.amount }
+
         val remaining = category.budgeted - spent
-        val percent = if (category.budgeted > 0.0) ((spent / category.budgeted) * 100).toInt() else 0
+        val percent = if (category.budgeted > 0.0) {
+            ((spent / category.budgeted) * 100.0).toInt().coerceIn(0, 100)
+        } else 0
 
-        with(holder.binding) {
-            categoryName.text = category.name
+        holder.binding.categoryName.text        = category.name
+        holder.binding.categorySpentAmount.text = "R ${"%.2f".format(spent)}"
+        holder.binding.categorySubtitle.text    = "Budget: R ${"%.2f".format(category.budgeted)}"
+        holder.binding.categoryRemaining.text   = "R ${"%.2f".format(remaining)} left"
+        holder.binding.progressBar.progress     = percent
+        holder.binding.categoryPercentage.text  = "$percent% used"
 
-            // Fixed ID references based on XML
-            categorySpentAmount.text = "R ${"%.2f".format(spent)}"
-            categorySubtitle.text = "Budget: R ${"%.2f".format(category.budgeted)}"
-
-            categoryRemaining.text = "R ${"%.2f".format(remaining)} left"
-            categoryPercentage.text = "$percent% used"
-
-            progressBar.progress = percent
-            categoryIcon.setImageResource(getCategoryIcon(category.name))
-
-            // Reset states
-            editSection.visibility = View.GONE
-            btnExpandContainer.text = "Edit Budget"
-            // btnExpandContainer.setIconResource(R.drawable.ic_edit) // Optional ensure icon reset
-
-            editAmount.text?.clear()
-            editAmount.hint = "%.2f".format(category.budgeted)
+        // Color remaining text based on status
+        val context = holder.binding.root.context
+        val remainingColor = when {
+            remaining < 0  -> context.getColor(R.color.destructive)
+            percent >= 85  -> context.getColor(R.color.warning)
+            else           -> context.getColor(R.color.success)
         }
+        holder.binding.categoryRemaining.setTextColor(remainingColor)
+
+        // Always reset expand state to avoid recycled-view glitches
+        holder.toggleEditSection(false)
+        holder.binding.editAmount.text.clear()
     }
 
     override fun getItemCount() = categories.size
 
+    // ─────────────────────────────────────────────
+    // Public update methods (used by BudgetDashboardFragment filter chips)
+    // ─────────────────────────────────────────────
+
+    /**
+     * Replace the displayed category list and refresh the RecyclerView.
+     * Called whenever a filter chip is selected in BudgetDashboardFragment.
+     */
     @SuppressLint("NotifyDataSetChanged")
     fun updateCategories(newCategories: List<BudgetCategory>) {
         categories = newCategories
         notifyDataSetChanged()
     }
 
-    private fun getCategoryIcon(categoryName: String): Int {
-        return when (categoryName.lowercase()) {
-            "food" -> R.drawable.ic_coffee
-            "transport" -> R.drawable.ic_car
-            "books" -> R.drawable.ic_book_open
-            "fun" -> R.drawable.ic_heart
-            "shopping" -> R.drawable.ic_shopping_bag
-            "salary" -> R.drawable.ic_coin
-            "gift" -> R.drawable.ic_star
-            "freelance" -> R.drawable.ic_trending_up
-            "allowance" -> R.drawable.ic_piggy_bank
-            else -> R.drawable.ic_circle
-        }
+    /**
+     * Update the transaction list used to calculate per-category spending,
+     * then refresh the RecyclerView.
+     */
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateTransactions(newTransactions: List<Transaction>) {
+        transactions = newTransactions
+        notifyDataSetChanged()
     }
 }
